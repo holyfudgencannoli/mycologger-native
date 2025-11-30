@@ -1,0 +1,104 @@
+
+import { SQLiteDatabase } from "expo-sqlite";
+import { safeExec, safeRun, safeSelect, safeSelectOne, safeSelectAll } from "../utils";
+
+
+const VALID_TYPES = new Set([
+  "inventory_item",
+  "raw_material",
+  "bio_material",
+  "consumable_item",
+  "hardware_item",
+  "recipe_batch"
+  // add more as needed
+]);
+     
+export function usageLogTable(type: string) {
+  if (!VALID_TYPES.has(type)) {
+    throw new Error(`Invalid type: ${type}`);
+  }
+  return `${type}_usage_logs`;
+}
+
+
+
+export async function create(
+    db: SQLiteDatabase,
+    type: string,
+    item_id: number,
+    task_id: number,
+    usage_amout: number,
+    usage_unit: string,
+    notes: string,
+    last_updated: number,
+) {
+  const result = await safeRun(db,
+    `INSERT INTO ${usageLogTable(type)} (item_id, task_id, usage_amout, usage_unit, notes, last_updated) VALUES (?, ?, ?, ?, ?, ?)`,
+    [item_id, task_id, usage_amout, usage_unit, notes, last_updated]
+  );
+
+  return result.lastInsertRowId;
+}
+
+export async function readAll(db: SQLiteDatabase, type: string) {
+  return await safeSelectAll(db, `SELECT * FROM ${usageLogTable(type)} ORDER BY id ASC`);
+}
+
+export async function getById(
+    db: SQLiteDatabase,
+    id: number,
+    type: string,
+
+) {
+  return await safeSelectOne<{
+    id: number;
+    item_id: number,
+    task_id: number,
+    usage_amout: number,
+    usage_unit: string,
+    notes: string,
+    last_updated: number,
+  }>(db, `SELECT * FROM ${usageLogTable(type)} WHERE id = ?`, [id]);
+}
+
+export async function update(
+    db: SQLiteDatabase,
+    type: string,
+    item_id: number,
+    task_id: number,
+    usage_amout: number,
+    usage_unit: string,
+    notes: string,
+    last_updated: number,
+) {
+  const result = await safeRun(
+    db,
+    `UPDATE ${usageLogTable(type)}
+       SET item_id = ?, task_id = ?, usage_amout = ?, usage_unit = ?, notes = ?, last_updated = ?
+       WHERE id = ?`,
+    [item_id, task_id, usage_amout, usage_unit, notes, last_updated]
+  );
+
+  return result.changes; // number of rows updated
+}
+
+export async function destroy(db: SQLiteDatabase, id: number, type: string) {
+  const result = await safeRun(
+    db,
+    `DELETE FROM ${usageLogTable(type)} WHERE id = ?`,
+    [id]
+  );
+
+  return result.changes; // rows deleted
+}
+
+export async function exists(db: SQLiteDatabase, id: number, type: string) {
+  const row = await safeSelectOne<{ count: number }>(
+    db,
+    `SELECT COUNT(*) as count FROM ${usageLogTable(type)} WHERE id = ?`,
+    [id]
+  );
+
+  return row?.count === 1;
+}
+

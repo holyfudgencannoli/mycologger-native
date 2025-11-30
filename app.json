@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "mycologger-0.0.1",
-    "slug": "mycologger-0.0.1",
-    "version": "1.0.0",
+    "name": "mycologger",
+    "slug": "mycologger",
+    "version": "0.0.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",

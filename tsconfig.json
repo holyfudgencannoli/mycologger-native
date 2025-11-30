@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "types": ["node"],
+    "baseUrl": ".",
+    "paths": {
+			"@assets": ["assets"],
+			"@assets/*": ["assets/*"],
+			"@constants": ["src/constants"],
+			"@constants/*": ["src/constants/*"],
+			"@custom": ["custom_modules"],
+			"@custom/*": ["custom_modules/*"],
+      "@db": ["src/db"],
+      "@db/*": ["src/db/*"],
+      "@hooks": ["src/hooks"],
+      "@hooks/*": ["src/hooks/*"],
+      "@utils": ["src/utils"],
+      "@utils/*": ["src/utils/*"],
+      "@components": ["src/components"],
+      "@components/*": ["src/components/*"],
+      "@features": ["src/features"],
+      "@features/*": ["src/features/*"],
+      "@services": ["src/services"],
+      "@services/*": ["src/services/*"],
+      "@navigation": ["src/navigation"],
+      "@navigation/*": ["src/navigation/*"]
+      // add more as you want
+    }
+  },
+  "extends": "expo/tsconfig.base"
+}
