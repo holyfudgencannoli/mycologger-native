@@ -1,17 +1,18 @@
 import { StyleSheet } from 'react-native';
-import { ScreenPrimative } from "../../../../mycologger/components/ScreenPrimative";
-import { ImageBG } from "../../../../mycologger/components/ImageBG";
+import { ScreenPrimative } from "@components/screen-primative";
+import { ImageBG } from "@components/image-bg";
 import { useFocusEffect } from "@react-navigation/native";
 import { useCallback, useState } from "react";
 import { Surface } from "react-native-paper";
-import * as RawMat from '../../../../mycologger/data/db/raw-materials'
+import * as RawMat from '@db/raw-materials'
 import { useSQLiteContext } from "expo-sqlite";
 
 import * as Form from '@custom/react-native-forms/src'
 import { useForm } from 'react-hook-form';
+import PurchaseLogForm from './purchase-log-form';
 
 
-export default function NewRMPurchaseLogScreen() {
+export default function NewPurchaseLog() {
     const db = useSQLiteContext();
     const { control, handleSubmit, formState: { errors }, } = useForm({
         defaultValues: {
@@ -46,7 +47,7 @@ export default function NewRMPurchaseLogScreen() {
 
 
     return(
-        <ImageBG image={require('../../assets/bg.jpg')}>
+        <ImageBG image={require('@assets/bg.jpg')}>
             <ScreenPrimative scroll edges={[]}>
                 <Surface style={styles.surface}>
                     <Form.Control name='name'>
@@ -72,8 +73,8 @@ export default function NewRMPurchaseLogScreen() {
                         />
                     </Form.Control>
                 </Surface>
-                {/* {formVisible ? 
-                    <CreateRawMaterialPurchase 
+                {formVisible ? 
+                    <PurchaseLogForm 
                         name={name}
                         category={category}
                         subcategory={subcategory}
@@ -81,7 +82,7 @@ export default function NewRMPurchaseLogScreen() {
                         setSubcategory={setSubcategory}
                     /> : 
                     <></>
-                } */}
+                }
             </ScreenPrimative>
         </ImageBG>
     )

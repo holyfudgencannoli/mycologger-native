@@ -21,7 +21,7 @@ interface PurchaseLogData {
 
 
 
-const DetailModal = ({ visible, setModalOpen, item}) => {
+export const ConsumablesPurchaseLogModal = ({ visible, setModalOpen, item}) => {
     const [purchaseLogs, setPurchaseLogs] = useState<PurchaseLogData[]>([]);
 
     const closeModal = () => {
@@ -108,5 +108,5 @@ const styles = StyleSheet.create({
     },
 });
 
-export default DetailModal;
+export default ConsumablesPurchaseLogModal;
         

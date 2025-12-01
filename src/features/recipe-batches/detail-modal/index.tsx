@@ -2,27 +2,16 @@ import { useFocusEffect } from '@react-navigation/native';
 import React, { useCallback, useState } from 'react';
 import { View, Modal, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
 
-interface PurchaseLogData {
+interface RecipeData {
     id: number;
-    brand: string;
-    log_date: string;
-    purchase_date: string;
-    purchase_amount: number;
-    purchase_unit: string;
-    cost: number;
-    notes: string;
-    receipt_entry_id: number;
-    inventory_log_id: number;
-    item_id: number;
-    vendor_id: number;
-    user_id: number;
+    name: string;
+    ingredients: JSON;
 }
 
 
 
 
-const DetailModal = ({ visible, setModalOpen, item}) => {
-    const [purchaseLogs, setPurchaseLogs] = useState<PurchaseLogData[]>([]);
+const RecipeBatchModal = ({ visible, setModalOpen, item}) => {
 
     const closeModal = () => {
         // Close the modal (e.g., using a parent component's state)
@@ -30,12 +19,7 @@ const DetailModal = ({ visible, setModalOpen, item}) => {
         console.log('Modal closed'); // Replace with your actual close logic
     };
 
-    useFocusEffect(
-        useCallback(() => {
-            setPurchaseLogs(item? item.purchase_logs : [])
-        }, [])
-    )
-
+    const { name, real_amount, real_unit, loss, notes, recipe_id } = item
     return (
         <View style={styles.modalContainer}>
             <Modal
@@ -45,20 +29,10 @@ const DetailModal = ({ visible, setModalOpen, item}) => {
                 visible={visible} // Make sure the modal is visible initially
             >
                 <View style={styles.modalContent}>
-                    <Text style={styles.headerText}>Purchase Logs</Text>
-                    <FlatList
-                        data={item? item.purchase_logs : []}
-                        keyExtractor={(item) => item.id} // Use a unique key for each item
-                        renderItem={({ item }) => (
-                            <View style={styles.logItem}>
-                                <Text>{item.date}</Text>
-                                <Text>{item.supplier}</Text>
-                                <Text>{item.material}</Text>
-                                <Text>${item.price.toFixed(2)}</Text>
-                                {item.notes && <Text>{item.notes}</Text>}
-                            </View>
-                        )}
-                    />
+                    <Text>{name}</Text>
+                    <Text>Real Yield: {real_amount} {real_unit}</Text>
+                    <Text>Loss: {loss}</Text>
+                    <Text>Notes: {notes}</Text>
                     <TouchableOpacity style={styles.closeButton} onPress={closeModal}>
                         <Text style={styles.closeButtonText}>Close</Text>
                     </TouchableOpacity>
@@ -90,11 +64,11 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     logItem: {
-        flexDirection: 'row',
+        flexDirection: 'column',
         justifyContent: 'space-between',
         paddingVertical: 8,
         borderBottomWidth: 1,
-        borderBottomColor: '#ccc',
+        borderBottomColor: '#000',
     },
     closeButton: {
         backgroundColor: 'red',
@@ -108,5 +82,5 @@ const styles = StyleSheet.create({
     },
 });
 
-export default DetailModal;
+export default RecipeBatchModal;
         

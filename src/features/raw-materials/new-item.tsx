@@ -1,4 +1,4 @@
-import { Button, StyleSheet } from 'react-native';
+import { Button, StyleSheet, View } from 'react-native';
 import * as Form from 'custom_modules/react-native-forms/src';
 import { useCallback, useEffect, useState } from 'react';
 import { Surface } from 'react-native-paper';
@@ -8,36 +8,42 @@ import * as RawMat from '@db/raw-materials'
 import * as InvLog from '@db/inventory-logs'
 
 import { useSQLiteContext } from 'expo-sqlite';
+import { useNavigation } from '@react-navigation/native';
+import { RawMaterialParamList, RootDrawerParamsList } from '@navigation';
+import { DrawerNavigationProp } from '@react-navigation/drawer';
+import { LinearGradient } from 'expo-linear-gradient';
+import { ScreenPrimative } from '@components/screen-primative';
 // import { useFocusEffect } from '@react-navigation/native';
+
+type NavigationProps = DrawerNavigationProp<RootDrawerParamsList>
 
 export default function NewItem() {
 	const [items, setItems] = useState([])
 	const [selectedItem, setSelectedItem] = useState(null)
 	const [category, setCategory] = useState('');
 	const [subcategory, setSubcategory] = useState('');
+	const navigation = useNavigation<NavigationProps>()
 
 
 
 	const db = useSQLiteContext();
 
-		const { control, handleSubmit, formState: { errors }, } = useForm({
-			defaultValues: {
-				name: '',
-				category: '',
-				subcategory: ''
-			},
-		});
+	const { control, handleSubmit, formState: { errors }, } = useForm({
+		defaultValues: {
+			name: '',
+			category: '',
+			subcategory: ''
+		},
+	});
 
 	const getData = async() => {
 		const data = await RawMat.readAll(db)
 		setItems(data)
 	}
 
-	useEffect(
-		useCallback(() => {
-			getData()
-		}, [])
-	)
+	useEffect(() => {
+		getData()
+	}, [])
 
 	const onSubmit = async() => {
 		const nowMs = new Date().getTime()
@@ -45,33 +51,46 @@ export default function NewItem() {
 		const invItemId = await InvItem.create(db, TYPE, nowMs)
 		const rawMatId = await RawMat.create(db, invItemId, selectedItem.name, category, subcategory)
 		InvLog.create(db, TYPE, rawMatId, 0, 'Unit', nowMs)
+		navigation.navigate("Dashboard")
 	};
 
 	return(
-		<Surface style={{ backgroundColor: 'rgba( 160, 160, 160, 0.3)',  padding: 24 }}>
-			<Form.Control name='name' >
-				<Form.Select 
-					style={{ backgroundColor: 'white' }}
-					options={items}
-					selectedValue={selectedItem}
-					onValueChange={setSelectedItem}
-					placeholder='Select Item'
-					size='lg'
-				/>
-			</Form.Control>
-			<Form.Control label='Item Category' labelStyle={{ color: 'grey' }} name='category'>
-				<Form.Input size='lg'style={{ color: 'green' }} value={category} onChangeText={setCategory}  />
-			</Form.Control>
-			<Form.Control label='Item Subcategory' name='subcategory'>
-				<Form.Input value={subcategory} onChangeText={setSubcategory}  />
-			</Form.Control>
-			<Button title='Submit' onPress={() => handleSubmit(onSubmit)} />
-		</Surface>
+		<ScreenPrimative edges={[]}>
+			<View style={styles.container}>	
+				<LinearGradient
+					start={{ x: 0, y: 0 }}
+					end={{ x: 0.3, y: 0.9 }}
+					colors={['#94F8', '#00f', '#057']}
+					style={{ flex: 1, padding: 24}}
+				>
+						<Form.Control name='name' >
+							<Form.Select 
+								style={{ backgroundColor: 'transparent', flex: 1  }}
+								options={items}
+								selectedValue={selectedItem}
+								onValueChange={setSelectedItem}
+								placeholder='Select Item'
+								size='lg'
+							/>
+						</Form.Control>
+						<Form.Control label='Item Category' labelStyle={{ color: 'white' }} name='category'>
+							<Form.Input size='lg' style={{ color: 'white', flex: 1 }} value={category} onChangeText={setCategory}  />
+						</Form.Control>
+						<Form.Control label='Item Subcategory' labelStyle={{ color: 'white' }} name='subcategory'>
+							<Form.Input size='lg' value={subcategory} style={{ color: 'white', flex: 1 }} onChangeText={setSubcategory}  />
+						</Form.Control>
+						<View style={{ marginTop: 36 }}>
+							<Button color={'#f74a63cc'} title='Submit' onPress={() => handleSubmit(onSubmit)} />
+						</View>
+				</LinearGradient>	
+			</View>
+		</ScreenPrimative>
+		
 	)
 
 }
 
 
 const styles = StyleSheet.create({
-    container: { flex: 1, justifyContent: "center", alignItems: "center" }
+    container: { flex: 1 }
 });

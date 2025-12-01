@@ -13,7 +13,7 @@ const Input = forwardRef<TextInput, InputProps>((props, ref) => {
   const styles = StyleSheet.create({
     base: {
       borderWidth: 1,
-      borderColor: theme.colors.secondary,
+      borderColor: theme.colors.primary,
       borderRadius: theme.borderRadius,
       paddingHorizontal: theme.spacing.sm,
       paddingVertical: size === 'sm' ? theme.spacing.xs : size === 'lg' ? theme.spacing.md : theme.spacing.sm,

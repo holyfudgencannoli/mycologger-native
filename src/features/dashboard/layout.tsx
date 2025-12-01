@@ -1,12 +1,23 @@
 import { StyleSheet, Text, View } from "react-native";
 import { ScreenPrimative } from "@components/screen-primative";
+import { LinearGradient } from 'expo-linear-gradient'
+import { Surface } from "react-native-paper";
 
 export default function Dashboard() {
 
 	return(
-		<ScreenPrimative>
+		<ScreenPrimative edges={[]}>
 			<View style={styles.container}>
-				<Text>Dashboard</Text>           
+        <LinearGradient 
+          start={{ x: 0, y: 0 }}
+          end={{ x: 0.3, y: 0.9 }}
+          colors={['#94F8', '#00f', '#057']}
+          style={{ flex: 1 }}
+        >
+          <View style={{ padding: 48 }}>
+
+          </View>
+        </LinearGradient>  
 			</View>
 		</ScreenPrimative>      
 	)
@@ -15,43 +26,5 @@ export default function Dashboard() {
 
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16, backgroundColor: '#fff' },
-
-  button:{
-    color: 'black'
-  },
-  reactLogo: {
-    height: 360,
-    width: 420,
-    bottom: 0,
-    left: -10,
-    position: 'absolute',
-    alignItems: 'center'
-  },
-  listTitle:{
-    textAlign:'center',
-    fontWeight:'bold',
-    fontSize: 28,
-    padding: 36,
-
-    
-  },
-  list: {
-    // padding:32
-  },
-  listItem: {
-    fontSize: 24,
-
-    margin: 8
-  },
-  taskRow: {
-    backgroundColor: '#fff',
-    flexDirection: 'cloumn',
-    alignItems: 'center',
-    marginBottom: 16,
-    padding: 8,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
-  }
+  container: { flex: 1, backgroundColor: '#fff' },
 });

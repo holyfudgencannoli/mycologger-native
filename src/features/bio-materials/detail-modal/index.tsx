@@ -1,6 +1,8 @@
 import { useFocusEffect } from '@react-navigation/native';
 import React, { useCallback, useState } from 'react';
 import { View, Modal, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
+import * as PurchLogs from '@db/purchase-logs'
+import { useSQLiteContext } from "expo-sqlite";
 
 interface PurchaseLogData {
     id: number;
@@ -22,13 +24,20 @@ interface PurchaseLogData {
 
 
 const DetailModal = ({ visible, setModalOpen, item}) => {
-    const [purchaseLogs, setPurchaseLogs] = useState<PurchaseLogData[]>([]);
+    const [purchaseLogs, setPurchaseLogs] = useState<any>();
+    const db = useSQLiteContext();
 
     const closeModal = () => {
         // Close the modal (e.g., using a parent component's state)
         setModalOpen(false)
         console.log('Modal closed'); // Replace with your actual close logic
     };
+
+    const getLogs = async() => {
+        const logs = await PurchLogs.readAll(db, 'bio_materials')
+        setPurchaseLogs(logs)
+
+    }
 
     useFocusEffect(
         useCallback(() => {

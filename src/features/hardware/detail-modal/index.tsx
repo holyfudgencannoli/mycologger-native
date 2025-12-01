@@ -18,10 +18,7 @@ interface PurchaseLogData {
     user_id: number;
 }
 
-
-
-
-const DetailModal = ({ visible, setModalOpen, item}) => {
+export const DetailModal = ({ visible, setModalOpen, item}) => {
     const [purchaseLogs, setPurchaseLogs] = useState<PurchaseLogData[]>([]);
 
     const closeModal = () => {

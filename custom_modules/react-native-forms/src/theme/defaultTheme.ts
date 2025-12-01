@@ -1,11 +1,11 @@
 export const defaultTheme = {
   colors: {
-    primary: '#0d6efd',
-    secondary: '#6c757d',
+    primary: '#ffffff',
+    secondary: '#0d6efd',
     danger: '#dc3545',
     background: '#fff',
     surface: '#f8f9fa',
-    textPrimary: '#212529',
+    textPrimary: '#ffffff',
     textSecondary: '#495057',
     error: '#dc3545',
   },

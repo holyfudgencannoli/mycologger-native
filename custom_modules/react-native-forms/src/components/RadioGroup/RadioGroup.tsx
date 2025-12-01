@@ -28,7 +28,7 @@ const RadioGroup = forwardRef<View, RadioGroupProps>((props, ref) => {
       height: size === 'sm' ? 12 : size === 'lg' ? 20 : 16,
       borderRadius: 8,
       borderWidth: 1,
-      borderColor: theme.colors.secondary,
+      borderColor: theme.colors.primary,
       marginRight: theme.spacing.xs,
     },
     selectedCircle: {

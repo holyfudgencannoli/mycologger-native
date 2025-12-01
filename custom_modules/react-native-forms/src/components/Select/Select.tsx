@@ -25,12 +25,12 @@ const Select = forwardRef<View, SelectProps>((props, ref) => {
   const styles = StyleSheet.create({
     container: {
       borderWidth: 1,
-      borderColor: theme.colors.secondary,
+      borderColor: theme.colors.primary,
       borderRadius: theme.borderRadius,
       paddingHorizontal: theme.spacing.sm,
       paddingVertical: size === 'sm' ? theme.spacing.xs : size === 'lg' ? theme.spacing.md : theme.spacing.sm,
     },
-    placeholder: { color: theme.colors.textSecondary, fontSize: 16 },
+    placeholder: { color: theme.colors.textPrimary, fontSize: 16 },
   });
 
   return (
@@ -39,15 +39,14 @@ const Select = forwardRef<View, SelectProps>((props, ref) => {
         selectedValue={selectedValue}
         onValueChange={onValueChange}
         mode="dialog"
-        itemStyle={{ height: 44 }}
+        itemStyle={{ height: 44, color: theme.colors.primary }}
       >
         {placeholder && (
-          <Picker.Item label={placeholder} value="" color={theme.colors.textSecondary} />
+          <Picker.Item label={placeholder} value="" color={theme.colors.primary} />
         )}
         {options.map((opt: any) => (
-                <Picker.Item label={opt.name} value={{...opt}} />
-            )
-        )}
+          <Picker.Item label={opt.name} value={{...opt}} />
+        ))}
       </Picker>
     </View>
   );

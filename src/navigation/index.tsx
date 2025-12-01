@@ -1,13 +1,26 @@
 import { NavigationContainer } from "@react-navigation/native";
 // import { createNativeStackNavigator } from '@react-navigation/native-stack'
-// import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs'
-import { createDrawerNavigator } from "@react-navigation/drawer";
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
+import { createDrawerNavigator, DrawerNavigationProp } from "@react-navigation/drawer";
 // import ExecuteBatch from "../AgarCultures/ExecuteBatch";
+import { getHeaderTitle } from '@react-navigation/elements';
+
+import * as RawMat from '@features/raw-materials'
+import * as BioMat from '@features/bio-materials'
+import * as ConItem from '@features/consumables'
+import * as HW from '@features/hardware'
+import * as Rec from '@features/recipes'
+import * as Batches from '@features/recipe-batches'
 
 
 // import Login from "../Authentication/Login";
 // // import LogoutScreen from "../../screens/HomeStack/LogoutScreen";
 import { Dashboard } from "@features/dashboard";
+import NewRecipe from "@features/recipes/new-recipe";
+import RecipeList from "@features/recipes/recipe-list";
+import RecipeBatchList from "@features/recipe-batches/recipe-batch-list";
+import Header from "@components/header";
+import { black } from "react-native-paper/lib/typescript/styles/themes/v2/colors";
 
 // import RawMaterialList from '../RawMaterials/RawMaterialListScreen';
 // import NewRMFormScreen from '../RawMaterials/NewRMFormScreen';
@@ -48,9 +61,44 @@ import { Dashboard } from "@features/dashboard";
 
 // // import CreateBioMaterial from '../BioMaterial/CreateBioMaterial';
 // // import BioMaterialList from '../BioMaterial/BioMaterialList';
+// shattering
+export type RootDrawerParamsList = {
+    'Dashboard': undefined,
+    'Raw Materials': undefined,
+    'Bio Materials': {params: any[]},
+    'Consumable Items': undefined,
+    'Hardware': undefined,
+    'Recipes': undefined
+}
+
+export type RawMaterialParamList = {
+  "New Raw Material": undefined;
+  "New Purchase Log": undefined;
+};
+
+export type BioMaterialParamList = {
+  "New Bio-Material": undefined;
+  "New Purchase Log": undefined;
+};
+
+export type ConsumableItemParamList = {
+  "New Item": undefined;
+  "New Purchase Log": undefined;
+};
+
+export type HardwareItemParamList = {
+  "New Item": undefined;
+  "New Purchase Log": undefined;
+};
 
 
+export type RecipeParamList = {
+  "New Recipe": undefined;
+  "Recipes": undefined;
+  "Batches": undefined;
+};
 
+export type NavigationProps = DrawerNavigationProp<RootDrawerParamsList>
 
 
 export default function Navigation() {
@@ -72,19 +120,45 @@ export default function Navigation() {
 //     )
 // }
 
-const Drawer = createDrawerNavigator()
+const Drawer = createDrawerNavigator<RootDrawerParamsList, any>()
 
 function DrawerNavigator() {
     console.log("Root navigator mounted");
 
     return(
-        <Drawer.Navigator initialRouteName="Dashboard" screenOptions={{ unmountOnBlur: true, popToTopOnBlur: true,  }}>
+        <Drawer.Navigator 
+            initialRouteName="Dashboard" 
+            screenOptions={{
+                header: ({ navigation, route, options }) => {
+                    const title = getHeaderTitle(options, route.name);
+
+                    return <Header navigation={navigation} title={title} style={options.headerStyle} textStyle={options.headerTitleStyle} />;
+                },
+                headerStyle: {
+                    height: 50,         // ← Change header height
+                    backgroundColor: '#6600ff55',
+                    width: '100%',
+                    borderColor: 'white',
+                    borderWidth: 2,
+                
+                },
+                headerTitleStyle: {
+                    fontSize: 24,
+                    padding: 8,
+                    paddingLeft: 16,
+                    color: 'white',
+                    // lineHeight: 24,
+                    fontWeight: 'bold',
+                },
+                headerTintColor: 'white',
+            }}
+        >
             <Drawer.Screen component={Dashboard} name="Dashboard"  />
-            {/* <Drawer.Screen component={RawMaterialNavigator} name='Raw Materials' /> */}
-            {/* <Drawer.Screen component={BioMaterialNavigator} name='Bio Materials'/> */}
-            {/* <Drawer.Screen component={ConsumablesNavigator} name='Consumables'/> */}
-            {/* <Drawer.Screen component={HardwareNavigator} name='Hardware'/> */}
-            {/* <Drawer.Screen component={ReceipesNavigator} name='Recipes'/> */}
+            <Drawer.Screen component={RawMaterialNavigator} name='Raw Materials' />
+            <Drawer.Screen component={BioMaterialNavigator} name='Bio Materials'/>
+            <Drawer.Screen component={ConsumablesNavigator} name='Consumable Items'/>
+            <Drawer.Screen component={HardwareNavigator} name='Hardware'/>
+            <Drawer.Screen component={ReceipesNavigator} name='Recipes'/>
             {/* <Drawer.Screen component={CulturesNavigator} name='Cultures'/> */}
             {/* <Drawer.Screen component={InventoryNavigator} name='Inventory' options={{ unmountOnBlur: true }}/> */}
             {/* <Drawer.Screen component={ProductsNavGroup} name='Products'/>
@@ -99,51 +173,57 @@ function DrawerNavigator() {
     )
 }
 
-// const RawMaterial = createMaterialTopTabNavigator()
+const RawMaterial = createMaterialTopTabNavigator<RawMaterialParamList, any>()
 
-// function RawMaterialNavigator() {
-//     return(
-//         <RawMaterial.Navigator screenLayout={Layout}>
-//             <RawMaterial.Screen component={NewRMFormScreen} name="New Raw Material" />
-//             <RawMaterial.Screen component={NewRMPurchaseLogScreen} name="New Purchase Log" />
-//         </RawMaterial.Navigator>    
-//     )
-// }
+function RawMaterialNavigator() {
+    return(
+        <RawMaterial.Navigator 
+            screenOptions={{
+                tabBarLabelStyle: { fontSize: 16, color: 'white' },
+                // tabBarItemStyle: { borderColor: 'white', borderWidth: 1 },
+                tabBarStyle: { backgroundColor: '#94f8' },
+            }}
+        >
+            <RawMaterial.Screen component={RawMat.NewItem} name="New Raw Material" />
+            <RawMaterial.Screen component={RawMat.NewPurchaseLog} name="New Purchase Log" />
+        </RawMaterial.Navigator>    
+    )
+}
 
-// const BioMaterial = createMaterialTopTabNavigator()
+const BioMaterial = createMaterialTopTabNavigator<BioMaterialParamList, any>()
 
-// function BioMaterialNavigator() {
-//     return(
-//         <BioMaterial.Navigator>
-//             <BioMaterial.Screen component={NewBioMatFormScreen} name="New Bio-Material" />
-//             <BioMaterial.Screen component={BioMaterialListScreen} name="Bio-Material List" />
-//             <BioMaterial.Screen component={NewBioMatPurchaseLogScreen} name="New Purchase Log" />
-//         </BioMaterial.Navigator>
-//     )
-// }
+function BioMaterialNavigator() {
+    return(
+        <BioMaterial.Navigator>
+            <BioMaterial.Screen component={BioMat.NewItem} name="New Bio-Material" />
+            {/* <BioMaterial.Screen component={BioMat} name="Bio-Material List" /> */}
+            <BioMaterial.Screen component={BioMat.NewPurchaseLog} name="New Purchase Log" />
+        </BioMaterial.Navigator>
+    )
+}
 
-// const Consumables = createMaterialTopTabNavigator();
+const Consumables = createMaterialTopTabNavigator<ConsumableItemParamList, any>();
 
-// function ConsumablesNavigator () {
-//     return(
-//         <Consumables.Navigator>
-//             <Consumables.Screen component={NewConsumableFormScreen} name="New Item"/>
-//             <Consumables.Screen component={NewConsumablePurchaseLogScreen} name="New Purchase Log"/>
-//         </Consumables.Navigator>
-//     )
-// }
+function ConsumablesNavigator () {
+    return(
+        <Consumables.Navigator>
+            <Consumables.Screen component={ConItem.NewItem} name="New Item"/>
+            <Consumables.Screen component={ConItem.NewPurchaseLog} name="New Purchase Log"/>
+        </Consumables.Navigator>
+    )
+}
 
 
-// const Hardware = createMaterialTopTabNavigator();
+const Hardware = createMaterialTopTabNavigator<HardwareItemParamList, any>();
 
-// function HardwareNavigator () {
-//     return(
-//         <Hardware.Navigator>
-//             <Hardware.Screen component={NewHardwareFormScreen} name="New Item"/>
-//             <Hardware.Screen component={NewHardwarePurchaseLogScreen} name="New Purchase Log"/>
-//         </Hardware.Navigator>
-//     )
-// }
+function HardwareNavigator () {
+    return(
+        <Hardware.Navigator>
+            <Hardware.Screen component={HW.NewItem} name="New Item"/>
+            <Hardware.Screen component={HW.NewPurchaseLog} name="New Purchase Log"/>
+        </Hardware.Navigator>
+    )
+}
 
 // const PurchaseLogList = createMaterialTopTabNavigator()
 
@@ -156,17 +236,17 @@ function DrawerNavigator() {
 //     )
 // }
 
-// const Recipes = createMaterialTopTabNavigator()
+const Recipes = createMaterialTopTabNavigator<RecipeParamList, any>();
 
-// function ReceipesNavigator() {
-//     return(
-//         <Recipes.Navigator screenOptions={{ unmountOnBlur: true }} >
-//             <Recipes.Screen component={NewRecipeForm} name="New Recipe"/>
-//             <Recipes.Screen component={RecipeListScreen} name="Recipes"/>
-//             <Recipes.Screen component={RecipeBatchListScreen} name="Batches List"/>
-//         </Recipes.Navigator>
-//     )
-// }
+function ReceipesNavigator() {
+    return(
+        <Recipes.Navigator>
+            <Recipes.Screen component={NewRecipe} name="New Recipe"/>
+            <Recipes.Screen component={RecipeList} name="Recipes"/>
+            <Recipes.Screen component={RecipeBatchList} name="Batches"/>
+        </Recipes.Navigator>
+    )
+}
 
 // const Cultures = createMaterialTopTabNavigator();
 

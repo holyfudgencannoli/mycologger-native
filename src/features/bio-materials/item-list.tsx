@@ -1,45 +1,43 @@
 // import { useState, useCallback, useEffect } from "react"
-// import { useAuth } from "../../../../mycologger/hooks/useAuthContext"
+// import { useAuth } from "../../hooks/useAuthContext"
 // import { Modal, Surface,TextInput } from "react-native-paper";
 // import { StyleSheet, Text, View, ImageBackground, Button, Alert } from 'react-native';
 // import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 // import { SafeAreaView } from 'react-native-safe-area-context';
-// import { useTheme } from "../../../../mycologger/hooks/useTheme";
+// import { useTheme } from "../../hooks/useTheme";
 // import { useFocusEffect } from "@react-navigation/native";
-// import { FetchRawMaterials } from "../../../../mycologger/components/js/fetch/get/FetchRawMaterials";
-// import { ScrollableDataTable } from "../../../../mycologger/components/DataListWrapper";
-// import { RawMaterial } from "../../../../mycologger/components/js/interfaceModels/RawMaterial";
-// import { ImageBG } from "../../../../mycologger/components/ImageBG";
-// import { ScreenPrimative } from "../../../../mycologger/components/ScreenPrimative";
-// import RawMaterialsPurchaseLogModal from "./detail-modal";
-// import { apiFetch } from "../../../../mycologger/services/apiFetch";
+// import { ScrollableDataTable } from "../../components/DataListWrapper";
+// import { ImageBG } from "../../components/ImageBG";
+// import { ScreenPrimative } from "../../components/ScreenPrimative";
+// import BioMaterialsPurchaseLogModal from "./PurchaseLogs/Modal";
+// import { apiFetch } from "../../services/apiFetch";
 // import { useSQLiteContext } from "expo-sqlite";
-// import * as RawMat from '../../../../mycologger/data/db/raw-materials'
+// import * as BioMat from './../../data/db/bio-materials'
 
 
-// export default function RawMaterialList() {
-//     const db =  useSQLiteContext();
-//     const{ user, token } = useAuth();
-//     const [rawMaterials, setRawMaterials] = useState([])
+// export default function BioMaterialListScreen() {
+//     const db = useSQLiteContext();
+//     const [bioMaterials, setBioMaterials] = useState([])
 //     const [modalOpen, setModalOpen] = useState(false)
 //     const [currentItem, setCurrentItem] = useState()
 //     const { theme, toggleTheme } = useTheme()
 
-//     const getRMData = async() => {
-//         const data = await RawMat.readAll(db)
-//         setRawMaterials(data)
+//     const getBioMatData = async() => {
+//         const data: any = await BioMat.readAll(db)
+//         setBioMaterials(data)
 //     }
 
 //     useFocusEffect(
 //         useCallback(() => {
-//             getRMData()
-//         }, [token])
+//             getBioMatData()
+//             console.log(bioMaterials)
+//         }, [])
 //     )
 
 //     const columns = [
 //         {key: 'name', title: 'Item Name'},
 //         {key: 'category', title: 'Category'},
-//         {key: 'subcategory', title: 'Subcategory'}
+//         {key: 'species_latin', title: 'Species Latin'}
 //     ]
 
 //     function openModal(item) {
@@ -56,10 +54,10 @@
 //             <ScreenPrimative>
 //                 <Surface style={styles.surfaceMetaContainer}>                        
 //                     <Surface style={styles.surfaceContainer}>
-//                     {rawMaterials && rawMaterials.length > 0 ? (
+//                     {bioMaterials && bioMaterials.length > 0 ? (
 //                         <>
 //                         <ScrollableDataTable 
-//                             data={rawMaterials? rawMaterials : []}
+//                             data={bioMaterials? bioMaterials : []}
 //                             columns={columns}
 //                             headerTextStyle={{ textAlign: 'center', color: 'rgba(255,255,255,0.7)', textShadowColor:'blue', textShadowRadius: 4 }}
 //                             cellTextStyle={{ textAlign: 'center', color: 'white', textShadowColor: 'black', textShadowRadius:4 }}
@@ -67,7 +65,7 @@
 //                             onRowPress={(item) => {openModal(item)}}
 //                         />
 //                         {modalOpen && (
-//                             <RawMaterialsPurchaseLogModal
+//                             <BioMaterialsPurchaseLogModal
 //                                 visible={modalOpen}
 //                                 setModalOpen={setModalOpen}
 //                                 item={currentItem}
