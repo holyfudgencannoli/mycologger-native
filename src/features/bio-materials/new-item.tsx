@@ -9,7 +9,6 @@ import * as InvLog from '@db/inventory-logs'
 
 import { useSQLiteContext } from 'expo-sqlite';
 import { LinearGradient } from 'expo-linear-gradient';
-import { white } from 'react-native-paper/lib/typescript/styles/themes/v2/colors';
 // import { useFocusEffect } from '@react-navigation/native';
 
 export default function NewItem() {
@@ -53,6 +52,7 @@ export default function NewItem() {
 				start={{ x: 0, y: 0 }}
 				end={{ x: 0.3, y: 0.9 }}
 				colors={['#94F8', '#00f', '#057']}
+                style={{ flex: 1, padding: 24}}
 				
 			>
 				<Form.Control name='name' labelStyle={{ color: 'white' }}>

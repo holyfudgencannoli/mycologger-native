@@ -71,26 +71,10 @@ export type RootDrawerParamsList = {
     'Recipes': undefined
 }
 
-export type RawMaterialParamList = {
-  "New Raw Material": undefined;
-  "New Purchase Log": undefined;
-};
-
-export type BioMaterialParamList = {
-  "New Bio-Material": undefined;
-  "New Purchase Log": undefined;
-};
-
-export type ConsumableItemParamList = {
+export type InventoryItemParamList = {
   "New Item": undefined;
   "New Purchase Log": undefined;
 };
-
-export type HardwareItemParamList = {
-  "New Item": undefined;
-  "New Purchase Log": undefined;
-};
-
 
 export type RecipeParamList = {
   "New Recipe": undefined;
@@ -173,7 +157,7 @@ function DrawerNavigator() {
     )
 }
 
-const RawMaterial = createMaterialTopTabNavigator<RawMaterialParamList, any>()
+const RawMaterial = createMaterialTopTabNavigator<InventoryItemParamList, any>()
 
 function RawMaterialNavigator() {
     return(
@@ -184,29 +168,41 @@ function RawMaterialNavigator() {
                 tabBarStyle: { backgroundColor: '#94f8' },
             }}
         >
-            <RawMaterial.Screen component={RawMat.NewItem} name="New Raw Material" />
+            <RawMaterial.Screen component={RawMat.NewItem} name="New Item" />
             <RawMaterial.Screen component={RawMat.NewPurchaseLog} name="New Purchase Log" />
         </RawMaterial.Navigator>    
     )
 }
 
-const BioMaterial = createMaterialTopTabNavigator<BioMaterialParamList, any>()
+const BioMaterial = createMaterialTopTabNavigator<InventoryItemParamList, any>()
 
 function BioMaterialNavigator() {
     return(
-        <BioMaterial.Navigator>
-            <BioMaterial.Screen component={BioMat.NewItem} name="New Bio-Material" />
+        <BioMaterial.Navigator
+            screenOptions={{
+                tabBarLabelStyle: { fontSize: 16, color: 'white' },
+                // tabBarItemStyle: { borderColor: 'white', borderWidth: 1 },
+                tabBarStyle: { backgroundColor: '#94f8' },
+            }}
+        >
+            <BioMaterial.Screen component={BioMat.NewItem} name="New Item" />
             {/* <BioMaterial.Screen component={BioMat} name="Bio-Material List" /> */}
             <BioMaterial.Screen component={BioMat.NewPurchaseLog} name="New Purchase Log" />
         </BioMaterial.Navigator>
     )
 }
 
-const Consumables = createMaterialTopTabNavigator<ConsumableItemParamList, any>();
+const Consumables = createMaterialTopTabNavigator<InventoryItemParamList, any>();
 
 function ConsumablesNavigator () {
     return(
-        <Consumables.Navigator>
+        <Consumables.Navigator
+            screenOptions={{
+                tabBarLabelStyle: { fontSize: 16, color: 'white' },
+                // tabBarItemStyle: { borderColor: 'white', borderWidth: 1 },
+                tabBarStyle: { backgroundColor: '#94f8' },
+            }}
+        >
             <Consumables.Screen component={ConItem.NewItem} name="New Item"/>
             <Consumables.Screen component={ConItem.NewPurchaseLog} name="New Purchase Log"/>
         </Consumables.Navigator>
@@ -214,11 +210,17 @@ function ConsumablesNavigator () {
 }
 
 
-const Hardware = createMaterialTopTabNavigator<HardwareItemParamList, any>();
+const Hardware = createMaterialTopTabNavigator<InventoryItemParamList, any>();
 
 function HardwareNavigator () {
     return(
-        <Hardware.Navigator>
+        <Hardware.Navigator
+            screenOptions={{
+                tabBarLabelStyle: { fontSize: 16, color: 'white' },
+                // tabBarItemStyle: { borderColor: 'white', borderWidth: 1 },
+                tabBarStyle: { backgroundColor: '#94f8' },
+            }}
+        >
             <Hardware.Screen component={HW.NewItem} name="New Item"/>
             <Hardware.Screen component={HW.NewPurchaseLog} name="New Purchase Log"/>
         </Hardware.Navigator>
@@ -240,7 +242,13 @@ const Recipes = createMaterialTopTabNavigator<RecipeParamList, any>();
 
 function ReceipesNavigator() {
     return(
-        <Recipes.Navigator>
+        <Recipes.Navigator
+            screenOptions={{
+                tabBarLabelStyle: { fontSize: 16, color: 'white' },
+                // tabBarItemStyle: { borderColor: 'white', borderWidth: 1 },
+                tabBarStyle: { backgroundColor: '#94f8' },
+            }}
+        >
             <Recipes.Screen component={NewRecipe} name="New Recipe"/>
             <Recipes.Screen component={RecipeList} name="Recipes"/>
             <Recipes.Screen component={RecipeBatchList} name="Batches"/>

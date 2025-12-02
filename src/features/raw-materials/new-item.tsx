@@ -9,7 +9,7 @@ import * as InvLog from '@db/inventory-logs'
 
 import { useSQLiteContext } from 'expo-sqlite';
 import { useNavigation } from '@react-navigation/native';
-import { RawMaterialParamList, RootDrawerParamsList } from '@navigation';
+import { RootDrawerParamsList } from '@navigation';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ScreenPrimative } from '@components/screen-primative';
@@ -20,6 +20,7 @@ type NavigationProps = DrawerNavigationProp<RootDrawerParamsList>
 export default function NewItem() {
 	const [items, setItems] = useState([])
 	const [selectedItem, setSelectedItem] = useState(null)
+	const [name, setName] = useState('');
 	const [category, setCategory] = useState('');
 	const [subcategory, setSubcategory] = useState('');
 	const navigation = useNavigation<NavigationProps>()
@@ -63,15 +64,8 @@ export default function NewItem() {
 					colors={['#94F8', '#00f', '#057']}
 					style={{ flex: 1, padding: 24}}
 				>
-						<Form.Control name='name' >
-							<Form.Select 
-								style={{ backgroundColor: 'transparent', flex: 1  }}
-								options={items}
-								selectedValue={selectedItem}
-								onValueChange={setSelectedItem}
-								placeholder='Select Item'
-								size='lg'
-							/>
+						<Form.Control label='Item Name' labelStyle={{ color: 'white' }} name='name'>
+							<Form.Input size='lg' style={{ color: 'white', flex: 1 }} value={name} onChangeText={setName}  />
 						</Form.Control>
 						<Form.Control label='Item Category' labelStyle={{ color: 'white' }} name='category'>
 							<Form.Input size='lg' style={{ color: 'white', flex: 1 }} value={category} onChangeText={setCategory}  />

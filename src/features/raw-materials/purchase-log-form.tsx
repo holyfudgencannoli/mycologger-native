@@ -162,11 +162,9 @@ export default function PurchaseLogForm({
     return (
         <Surface style={styles.surfaceMetaContainer}>                        
             <Surface style={styles.surfaceContainer}>
-                    <Text style={styles.title}>New Purchase Log</Text>        
-                    <Text style={styles.subtitle}>(Raw Materials)</Text>        
-            </Surface>
-            
-            <Surface style={styles.surfaceContainer}>
+                <Form.Control labelStyle={styles.label} label='Item Name' name='name'>
+                    <Form.Input style={{ backgroundColor:'white', width: '100%' }} value={name}  />
+                </Form.Control>
                 <Form.Control labelStyle={styles.label} label='Item Category' name='category'>
                     <Form.Input style={{ backgroundColor:'white', width: '100%' }} value={category} onChangeText={setCategory}  />
                 </Form.Control>
@@ -174,18 +172,22 @@ export default function PurchaseLogForm({
                     <Form.Input style={{ backgroundColor:'white', width: '100%' }} value={subcategory} onChangeText={setSubcategory}  />
                 </Form.Control>
                 <Surface style={styles.surface}>
-                    <Form.Select 
-                        onValueChange={(value: any)=> {
-                            if (value.id === 999999) {
-                                setBrand(null)
-                                setNewBrand(true)
-                            } else{
-                                setBrand(value)
-                                setNewBrand(false)
-                            }
-                        }}
-                        options={brands}
-                    />
+                    <Form.Control name="brand" label="Brand" labelStyle={styles.label} >
+                        <Form.Select 
+                            style={{ width: '100%', backgroundColor: 'white' }}
+                            onValueChange={(value: any)=> {
+                                if (value.id === 999999) {
+                                    setBrand(null)
+                                    setNewBrand(true)
+                                } else{
+                                    setBrand(value)
+                                    setNewBrand(false)
+                                }
+                            }}
+                            options={brands}
+                        />
+                    </Form.Control>
+                    
                 </Surface>  
                     
                 <Surface style={styles.surface}>
@@ -233,8 +235,9 @@ export default function PurchaseLogForm({
                     />
                 </Surface>
                 <Surface style={styles.surface}>
-                    <Form.Control name="vendor">
+                    <Form.Control name="vendor" label="Vendor" labelStyle={styles.label}>
                         <Form.Select 
+                            style={{ width: '100%', backgroundColor: 'white' }}
                             onValueChange={(value: any)=> {
                                 if (value.id === 999999) {
                                     setVendor(null)
