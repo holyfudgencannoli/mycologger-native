@@ -310,6 +310,8 @@ export type TaskParamList = {
   "New Maintenance Task": undefined;
   "Task List": undefined;
   "New Agar Culture": {params: any[]};
+  "New Liquid Culture": {params: any[]};
+  "New Spawn Culture": {params: any[]};
   "New Batch From Recipe": undefined;
 };
 
@@ -320,10 +322,10 @@ function TasksNavigator() {
         <Tasks.Navigator initialRouteName="Task List">
             <Tasks.Screen component={TaskListScreen} name='Task List' options={{ headerShown: false }}/>
             <Tasks.Screen component={NewTaskForm} name='New Task' options={{ headerShown: false }}/>
-            <Tasks.Screen component={Agar.Batch.default} name="New Agar Culture" options={{ headerShown: false }}/>
+            <Tasks.Screen component={Agar.Batch} name="New Agar Culture" options={{ headerShown: false }}/>
             <Tasks.Screen component={ExecuteRecipeBatch} name="New Batch From Recipe" options={{ headerShown: false }}/>
-            {/* <Tasks.Screen component={Spawn.Batch.default} name="New Spawn Culture" options={{ headerShown: false }}/>
-            <Tasks.Screen component={Liquid.Batch.default} name="New Liquid Culture" options={{ headerShown: false }}/> */}
+            <Tasks.Screen component={Spawn.Batch} name="New Spawn Culture" options={{ headerShown: false }}/>
+            <Tasks.Screen component={Liquid.Batch} name="New Liquid Culture" options={{ headerShown: false }}/>
             <Tasks.Screen component={CreateMaintenanceTask} name='New Maintenance Task' options={{ headerShown: false }}/>
 
         </Tasks.Navigator>

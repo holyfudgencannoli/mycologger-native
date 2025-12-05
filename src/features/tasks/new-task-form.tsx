@@ -21,7 +21,7 @@ import { ScreenPrimative } from "@components/screen-primative";
 
 /* ------------------------------------------------------------------ */
 /* Types (optional – remove if you’re not using TS)                   */
-type Category = "recipe" | "agar culture" | "liquid culture" | "spawn culture" | "task";
+type Category = "recipe" | "agar_culture" | "liquid_culture" | "spawn_culture" | "task";
 
 export type TimePair = {
   id: string;
@@ -177,13 +177,13 @@ export default function NewTaskForm() {
       case "recipe":
         navigation.navigate("New Batch From Recipe", { id: pair.id, startTime: pair.startTime, endTime: pair.endTime });
         break;
-      case "agar culture":
+      case "agar_culture":
         navigation.navigate("New Agar Culture", { id: pair.id, startTime: pair.startTime, endTime: pair.endTime });
         break;
-      case "liquid culture":
+      case "liquid_culture":
         navigation.navigate("New Liquid Culture", { id: pair.id });
         break;
-      case "spawn culture":
+      case "spawn_culture":
         navigation.navigate("New Spawn Culture", { id: pair.id });
         break;
       case "task":

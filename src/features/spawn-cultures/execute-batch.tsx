@@ -18,6 +18,14 @@ import { LinearGradient } from "expo-linear-gradient";
 import { RouteProp } from "@react-navigation/native";
 import { NavigationProps, RootDrawerParamsList } from "@navigation";
 import { RecipeBatch } from "@features/recipe-batches/types";
+import * as Form from '@custom/react-native-forms/src'
+import { INV_UNITS } from "@constants/units";
+
+type formattedRecipe ={
+    _id: string,
+    id: number, 
+    value: string
+}
 
 type TaskRouteProps = RouteProp<RootDrawerParamsList, any>
 
@@ -121,68 +129,41 @@ export default function ExecuteAgarBatch() {
                         colors={['#94F8', '#00f', '#057']}
                         style={{ flex: 1, padding: 16}}
                     >
-                    <Surface style={styles.surfaceContainer}>
-                        <Surface style={styles.surface}>
-                            <PaperSelect
-                                label="Select Batch to Use"
-                                value={selectedRecipeBatchName}
-                                onSelection={(value: any) => {
-                                    const selected = value.selectedList[0];
-                                    if (selected) {
-                                        setSelectedRecipeBatchId(selected.id);
-                                        console.log(selected)
-                                        setSelectedRecipeBatchName(selected.value)
-                                    }
+                        <Surface style={{ backgroundColor: '#0008', margin: 16, padding: 16 }}>
+                            <Text style={styles.title}>Execute New Agar Batch</Text>
+                        </Surface>
+                        <Form.Control labelStyle={styles.label} label="Select Batch to Use" name="batch">
+                            <Form.Select 
+                                options={recipeBatches}
+                                style={{ width: '100%' }}
+                                onValueChange={(value: formattedRecipe) => {
+                                    setSelectedRecipeBatchId(value.id)
+                                    setSelectedRecipeBatchName(value.value)
                                 }}
-
-                                arrayList={recipeBatches}
-                                selectedArrayList={[]}
-                                multiEnable={false}
-                                hideSearchBox={false}
-                                textInputMode="outlined"
                             />
-                        </Surface>
-                        <Surface style={styles.surfaceContainer}>
-                            <Surface style={styles.surface}>
-                                <Text style={styles.subtitle}>
-                                    Volume Per Container
-                                </Text>
-                            </Surface>
-                            <View style={{ justifyContent: 'space-around' }}>
-                                <TextInput
-                                    label="Volume"
-                                    value={volume}
-                                    onChangeText={setVolume}
-                                    mode="outlined"
-                                />
-                                <PaperSelect
-                                    label="Select Volume Unit"
-                                    value={volumeUnit}
-                                    onSelection={(value: any) => {
-                                        const selected = value.selectedList[0];
-                                        if (selected) {
-                                            setVolumeUnit(selected.value);
-                                        }
-                                    }}
-
-                                    arrayList={formattedUnits}
-                                    selectedArrayList={[]}
-                                    multiEnable={false}
-                                    hideSearchBox={false}
-                                    textInputMode="outlined"
-                                />
-                            </View>
-                        </Surface>
-                        <Surface style={styles.surface}>
-                            <TextInput
-                                label="Quantity"
+                        </Form.Control>
+                        <Form.Control labelStyle={styles.label} label="Volume Per Container" name="volumePer" >
+                            <Form.Input
+                                value={volume}
+                                onChangeText={setVolume} 
+                                style={{ width: '50%', textAlign: 'center', backgroundColor: 'transparent', color: 'white' }}
+                            />
+                            <Form.Select
+                                style={{ width: '50%', backgroundColor: 'transparent' }} 
+                                options={[...INV_UNITS]}
+                                onValueChange={(value: any) => {
+                                    setVolumeUnit(value.value)
+                                    console.log(value.value)
+                                }}
+                            />
+                        </Form.Control>
+                        <Form.Control labelStyle={styles.label} label="Number of Containers" name="quantity" >
+                            <Form.Input
                                 value={quantity}
-                                onChangeText={setQuantity}
-                                mode="outlined"
+                                onChangeText={setQuantity} 
+                                style={{ width: '100%', textAlign: 'center', backgroundColor: 'transparent', color: 'white' }}
                             />
-                        </Surface>
-                        <Button title="Execute" onPress={handleExecute}/>
-                    </Surface>
+                        </Form.Control>
                     </LinearGradient>
                 </ScrollView>
             </View>
@@ -217,6 +198,23 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 18,
+    textAlign:  'center',
+    fontWeight: 'bold',
+    color: 'red',
+    textShadowColor: 'blue',
+    textShadowRadius: 16,
+  },
+  label: {
+    fontSize: 18,
+    textAlign:  'center',
+    fontWeight: 'bold',
+    color: 'red',
+    textShadowColor: 'blue',
+    textShadowRadius: 16,
+  },
+  
+  title: {
+    fontSize: 24,
     textAlign:  'center',
     fontWeight: 'bold',
     color: 'red',

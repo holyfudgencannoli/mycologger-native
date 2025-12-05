@@ -12,7 +12,7 @@ export interface Option {
 export interface SelectProps {
   options: any[];
   selectedValue?: string | number;
-  onValueChange: (value: string | number, index: number) => void;
+  onValueChange: (value: {}, index: number) => void;
   placeholder?: string;
   size?: 'sm' | 'md' | 'lg';
   style?: object;

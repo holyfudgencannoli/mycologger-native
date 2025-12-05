@@ -157,14 +157,14 @@ export default function CreateRecipe({ setUnsaved }: { setUnsaved: (value: boole
                 <Form.Control labelStyle={styles.label} label="Ingredient Usage" name="ingredientUsage" >
                     <Form.Input
                         value={amount}
-                        onChangeText={setUnit} 
+                        onChangeText={setAmount} 
                         style={{ width: '50%', backgroundColor: 'transparent', color: 'white' }}
                     />
                     <Form.Select
                         style={{ width: '50%', backgroundColor: 'transparent' }} 
                         options={[...INV_UNITS]}
                         onValueChange={(value: any) => {
-                            setYieldUnit(value.value)
+                            setUnit(value.value)
                             console.log(value.value)
                         }}
                     />
