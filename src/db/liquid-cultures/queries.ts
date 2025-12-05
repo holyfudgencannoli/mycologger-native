@@ -1,11 +1,12 @@
 
 import { SQLiteDatabase } from "expo-sqlite";
 import { safeExec, safeRun, safeSelect, safeSelectOne, safeSelectAll } from "../utils";
+import { LiquidCulture } from "@features/liquid-cultues/types";
 
 export async function create(
   db: SQLiteDatabase,
     media_id: number,
-    recipe_id: number,
+    recipe_batch_id: number,
     volume_amount: number,
     volume_unit: string,
     last_updated: number,
@@ -17,41 +18,28 @@ export async function create(
     harvested_id: number
 ) {
   const result = await safeRun(db,
-    "INSERT INTO liquid_cultures (media_id, recipe_id, volume_amount, volume_unit, last_updated, sterilized_id, inoculated_id, germinated_id, colonized_id, contaminated_id, harvested_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-    [media_id, recipe_id, volume_amount, volume_unit, last_updated, sterilized_id, inoculated_id, germinated_id, colonized_id, contaminated_id, harvested_id]
+    "INSERT INTO liquid_cultures (media_id, recipe_batch_id, volume_amount, volume_unit, last_updated, sterilized_id, inoculated_id, germinated_id, colonized_id, contaminated_id, harvested_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+    [media_id, recipe_batch_id, volume_amount, volume_unit, last_updated, sterilized_id, inoculated_id, germinated_id, colonized_id, contaminated_id, harvested_id]
   );
 
   return result.lastInsertRowId;
 }
 
 export async function readAll(db: SQLiteDatabase) {
-  return await safeSelectAll(db, "SELECT * FROM liquid_cultures ORDER BY id ASC");
+  return await safeSelectAll<LiquidCulture>(db, "SELECT * FROM liquid_cultures ORDER BY id ASC");
 }
 
 export async function getById(
   db: SQLiteDatabase,
   id: number
 ) {
-  return await safeSelectOne<{
-    id: number;
-    media_id: number;
-        recipe_id: number;
-        volume_amount: number;
-        volume_unit: string;
-        last_updated: number;
-        sterilized_id: number;
-        inoculated_id: number;
-        germinated_id: number;
-        colonized_id: number;
-        contaminated_id: number;
-        harvested_id: number;
-  }>(db, "SELECT * FROM liquid_cultures WHERE id = ?", [id]);
+  return await safeSelectOne<LiquidCulture>(db, "SELECT * FROM liquid_cultures WHERE id = ?", [id]);
 }
 
 export async function update(
     db: SQLiteDatabase,
     media_id: number,
-        recipe_id: number,
+        recipe_batch_id: number,
         volume_amount: number,
         volume_unit: string,
         last_updated: number,
@@ -65,9 +53,9 @@ export async function update(
   const result = await safeRun(
     db,
     `UPDATE liquid_cultures
-       SET media_id = ?, recipe_id = ?, volume_amount = ?, volume_unit = ?, last_updated = ?, sterilized_id = ?, inoculated_id = ?, germinated_id = ?, colonized_id = ?, contaminated_id = ?, harvested_id = ?
+       SET media_id = ?, recipe_batch_id = ?, volume_amount = ?, volume_unit = ?, last_updated = ?, sterilized_id = ?, inoculated_id = ?, germinated_id = ?, colonized_id = ?, contaminated_id = ?, harvested_id = ?
        WHERE id = ?`,
-    [media_id, recipe_id, volume_amount, volume_unit, last_updated, sterilized_id, inoculated_id, germinated_id, colonized_id, contaminated_id, harvested_id]
+    [media_id, recipe_batch_id, volume_amount, volume_unit, last_updated, sterilized_id, inoculated_id, germinated_id, colonized_id, contaminated_id, harvested_id]
   );
 
   return result.changes; // number of rows updated
