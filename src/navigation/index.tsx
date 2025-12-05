@@ -24,6 +24,9 @@ import Header from "@components/header";
 import { black } from "react-native-paper/lib/typescript/styles/themes/v2/colors";
 import TaskListScreen from "@features/tasks/task-list";
 import NewTaskForm from "@features/tasks/new-task-form";
+import DBManagement from "@features/db-management";
+import ExecuteRecipeBatch from "@features/recipe-batches/execute-recipe-batch";
+import CreateMaintenanceTask from "@features/tasks/new-maintenance-task";
 
 // import RawMaterialList from '../RawMaterials/RawMaterialListScreen';
 // import NewRMFormScreen from '../RawMaterials/NewRMFormScreen';
@@ -72,7 +75,8 @@ export type RootDrawerParamsList = {
     'Hardware': undefined,
     'Recipes': undefined, 
     'Cultures': undefined,
-    'Tasks': undefined
+    'Tasks': {params: [{ startTime: any, endTime: any }]},
+    'DB Management': undefined
 }
 
 export type InventoryItemParamList = {
@@ -94,11 +98,6 @@ export type CultureParamList = {
 };
 
 
-export type TaskParamList = {
-  "New Task": undefined;
-  "New Maintenance Task": undefined;
-  "Task List": undefined;
-};
 export type NavigationProps = DrawerNavigationProp<RootDrawerParamsList>
 
 
@@ -160,8 +159,8 @@ function DrawerNavigator() {
             <Drawer.Screen component={ConsumablesNavigator} name='Consumable Items'/>
             <Drawer.Screen component={HardwareNavigator} name='Hardware'/>
             <Drawer.Screen component={ReceipesNavigator} name='Recipes'/>
-            <Drawer.Screen component={CulturesNavigator} name='Cultures'/>
             {/* <Drawer.Screen component={CulturesNavigator} name='Cultures'/> */}
+            {/* <Drawer.Screen component={DBManagement} name='DB Management'/> */}
             {/* <Drawer.Screen component={InventoryNavigator} name='Inventory' options={{ unmountOnBlur: true }}/> */}
             {/* <Drawer.Screen component={ProductsNavGroup} name='Products'/>
             <Drawer.Screen component={TasksNavGroup} name='Tasks'/>
@@ -305,6 +304,15 @@ function CulturesNavigator() {
 //     )
 // }
 
+
+export type TaskParamList = {
+  "New Task": undefined;
+  "New Maintenance Task": undefined;
+  "Task List": undefined;
+  "New Agar Culture": {params: any[]};
+  "New Batch From Recipe": undefined;
+};
+
 const Tasks = createNativeStackNavigator<TaskParamList, any>(); 
 
 function TasksNavigator() {
@@ -312,11 +320,11 @@ function TasksNavigator() {
         <Tasks.Navigator initialRouteName="Task List">
             <Tasks.Screen component={TaskListScreen} name='Task List' options={{ headerShown: false }}/>
             <Tasks.Screen component={NewTaskForm} name='New Task' options={{ headerShown: false }}/>
-            {/* <Tasks.Screen component={Agar.Batch.default} name="New Agar Culture" options={{ headerShown: false }}/>
+            <Tasks.Screen component={Agar.Batch.default} name="New Agar Culture" options={{ headerShown: false }}/>
             <Tasks.Screen component={ExecuteRecipeBatch} name="New Batch From Recipe" options={{ headerShown: false }}/>
-            <Tasks.Screen component={Spawn.Batch.default} name="New Spawn Culture" options={{ headerShown: false }}/>
-            <Tasks.Screen component={Liquid.Batch.default} name="New Liquid Culture" options={{ headerShown: false }}/>
-            <Tasks.Screen component={CreateMaintenanceTask} name='New Maintenance Task' options={{ headerShown: false }}/> */}
+            {/* <Tasks.Screen component={Spawn.Batch.default} name="New Spawn Culture" options={{ headerShown: false }}/>
+            <Tasks.Screen component={Liquid.Batch.default} name="New Liquid Culture" options={{ headerShown: false }}/> */}
+            <Tasks.Screen component={CreateMaintenanceTask} name='New Maintenance Task' options={{ headerShown: false }}/>
 
         </Tasks.Navigator>
     )

@@ -6,26 +6,27 @@ import { useFocusEffect } from "@react-navigation/native";
 import { ScrollableDataTable } from "@components/scrollable-data-table";
 import { ImageBG } from "@components/image-bg";
 import { ScreenPrimative } from "@components/screen-primative";
-import { CultureDetailModal } from "./CultureDetailModal";
+import { CultureDetailModal } from "./detail-model";
 import * as Culture from '@db/culture-media'
 import * as Agar from '@db/agar-cultures'
 import { useSQLiteContext } from "expo-sqlite";
 import { ScrollView } from "react-native-gesture-handler";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Form from '@custom/react-native-forms/src'
+import { AgarCulture } from "./types";
 
 
 export default function AgarCulturesListScreen() {
     const db = useSQLiteContext();    
     const [recipes, setRecipes] = useState([])
     const [modalOpen, setModalOpen] = useState(false)
-    const [currentItem, setCurrentItem] = useState()
+    const [currentItem, setCurrentItem] = useState<AgarCulture>()
     const { theme, toggleTheme } = useTheme()
-    const [agars, setAgars] = useState([{}])
+    const [agars, setAgars] = useState<AgarCulture[]>([])
 
     const getData = async() => {
-        const Agars = await Agar.readAll(db)
-        console.log(Agars)
+        const Agars: AgarCulture[] = await Agar.readAll(db)
+        console.log(Agars)  
         setAgars(Agars)
     }
 

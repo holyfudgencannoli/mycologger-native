@@ -1,2 +1,2 @@
-export * as Batch from './ExecuteBatch'
-export * as CultureList from './CulturesList'
+export * as Batch from './execute-batch'
+export * as CultureList from './cultures-list'

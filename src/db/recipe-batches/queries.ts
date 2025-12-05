@@ -1,6 +1,7 @@
 
 import { SQLiteDatabase } from "expo-sqlite";
 import { safeExec, safeRun, safeSelect, safeSelectOne, safeSelectAll } from "../utils";
+import { RecipeBatch } from "@features/recipe-batches/types";
 
 export async function create(
     db: SQLiteDatabase,
@@ -31,7 +32,7 @@ export async function create(
 }
 
 export async function readAll(db: SQLiteDatabase) {
-  return await safeSelectAll(db, "SELECT * FROM recipe_batches ORDER BY id ASC");
+  return await safeSelectAll<RecipeBatch>(db, "SELECT * FROM recipe_batches ORDER BY id ASC");
 }
 
 export async function getById(
@@ -70,7 +71,7 @@ export async function getByName(
 
 export async function update(
     db: SQLiteDatabase,
-	recipe_id: number,
+	  recipe_id: number,
     quantity: number,
     real_amount: number,
     real_unit: string,

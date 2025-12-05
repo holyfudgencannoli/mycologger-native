@@ -1,6 +1,7 @@
 
 import { SQLiteDatabase } from "expo-sqlite";
 import { safeExec, safeRun, safeSelect, safeSelectOne, safeSelectAll } from "../utils";
+import { AgarCulture } from "@features/agar-cultures/types";
 
 export async function create(
   db: SQLiteDatabase,
@@ -25,20 +26,7 @@ export async function create(
 }
 
 export async function readAll(db: SQLiteDatabase) {
-  return await safeSelectAll<[{
-		id: number;
-		media_id: number;
-		recipe_batch_id: number;
-		volume_amount: number;
-		volume_unit: string;
-		last_updated: number;
-		sterilized_id: number;
-		inoculated_id: number;
-		germinated_id: number;
-		colonized_id: number;
-		contaminated_id: number;
-		harvested_id: number;
-	}]>(db, "SELECT * FROM agar_cultures ORDER BY id ASC");
+  return await safeSelectAll<AgarCulture>(db, "SELECT * FROM agar_cultures ORDER BY id ASC");
 }
 
 
@@ -46,20 +34,7 @@ export async function getById(
   db: SQLiteDatabase,
   id: number
 ) {
-  return await safeSelectOne<{
-    id: number;
-    media_id: number;
-		recipe_batch_id: number;
-		volume_amount: number;
-		volume_unit: string;
-		last_updated: number;
-		sterilized_id: number;
-		inoculated_id: number;
-		germinated_id: number;
-		colonized_id: number;
-		contaminated_id: number;
-		harvested_id: number;
-  }>(db, "SELECT * FROM agar_cultures WHERE id = ?", [id]);
+  return await safeSelectOne<AgarCulture>(db, "SELECT * FROM agar_cultures WHERE id = ?", [id]);
 }
 
 export async function update(

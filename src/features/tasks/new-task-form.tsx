@@ -230,12 +230,13 @@ export default function NewTaskForm() {
                         onValueChange={(value: any) => {
                           // Update the specific pair in state
                           console.log("Category", value.value)
-
+                          
                           setTimes((prev) =>
                             prev.map((p) =>
                               p.id === item.id ? { ...p, category: value.value } : p
                             )
                           );
+                          
                         }}
                         style={{ width: '50%' }}
                       />

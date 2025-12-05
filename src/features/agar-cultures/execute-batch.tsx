@@ -7,7 +7,7 @@ import { useFocusEffect, useNavigation, useRoute } from "@react-navigation/nativ
 import { useCallback, useState } from "react";
 import { useTheme } from "../../hooks/useTheme";
 import { PaperSelect } from "react-native-paper-select";
-import * as RecipeBatch from '@db/recipe-batches'
+import * as Batches from '@db/recipe-batches'
 import * as Culture from '@db/culture-media'
 import * as Agar from '@db/agar-cultures'
 import * as Usage from '@db/usage_logs'
@@ -15,25 +15,29 @@ import * as Task from '@db/tasks'
 import { convertToBase } from "@utils/unitConversion";
 import { ScrollView } from "react-native-gesture-handler";
 import { LinearGradient } from "expo-linear-gradient";
+import { RouteProp } from "@react-navigation/native";
+import { NavigationProps, RootDrawerParamsList } from "@navigation";
+import { RecipeBatch } from "@features/recipe-batches/types";
 
+type TaskRouteProps = RouteProp<RootDrawerParamsList, any>
 
 export default function ExecuteAgarBatch() {  
     const db =  useSQLiteContext()
-    const navigation = useNavigation();
-    const route = useRoute();
+    const navigation = useNavigation<NavigationProps>();
+    const route = useRoute<TaskRouteProps>();
     const { startTime, endTime } = route.params
     const [volume, setVolume] = useState("")
     const [volumeUnit, setVolumeUnit] = useState("")
     const [notes, setNotes] = useState("")
     const [quantity, setQuantity] = useState("")
-    const [recipeBatches, setRecipeBatches] = useState([])
+    const [recipeBatches, setRecipeBatches] = useState<{_id: string, id: number, value: string}[]>([])
     const [selectedRecipeBatchId, setSelectedRecipeBatchId] = useState(0)
     const [selectedRecipeBatchName, setSelectedRecipeBatchName] = useState('')
     const [loading, setLoading] = useState(true)
     const { theme } = useTheme()
 
     const getRecipeBatchData = async () => {
-        const items = await RecipeBatch.readAll(db)
+        const items: RecipeBatch[] = await Batches.readAll(db)
         const formatted = items.map((item, index) => ({
             _id: String(index),
             id: item.id,
