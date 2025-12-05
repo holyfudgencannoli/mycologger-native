@@ -10,6 +10,9 @@ import * as BioMat from '@db/bio-materials'
 import * as PurchLog from '@db/purchase-logs'
 import { Picker } from "@react-native-picker/picker";
 import * as Vendor from '@db/vendors'
+import { ScrollView } from 'react-native-gesture-handler';
+import { LinearGradient } from 'expo-linear-gradient';
+import * as Form from '@custom/react-native-forms/src'
 
 
 
@@ -65,66 +68,59 @@ export default function NewPurchaseLog() {
 
 
     return(
-        <ImageBG image={require('@assets/bg.jpg')}>
-            <ScreenPrimative scroll edges={[]}>
-                <Surface style={styles.surface}>
-                    <Picker
-                       dropdownIconColor={'blanchedalmond'}
-                        style={{ color: 'blanchedalmond' }}
-                        onValueChange={(value: {id: number, name: string, category: string, species_latin: string}) => {
-                            if (value.id === 999999) {
-                                setFormVisible(true)
-                                setIsNewItem(true)
-                                setName('')
-                                setCategory('')
-                                setSpeciesLatin('')
-                            } else {
-                                setFormVisible(true)
-                                setIsNewItem(false)
-                                setName(value.name)
-                                setCategory(value.category)
-                                setSpeciesLatin(value.species_latin)
-                            }
+            <ScreenPrimative edges={[]}>
+                <View style={styles.container}>
+                    <ScrollView>
+                        <LinearGradient
+                            start={{ x: 0, y: 0 }}
+                            end={{ x: 0.3, y: 0.9 }}
+                            colors={['#94F8', '#00f', '#057']}
+                            style={{ flex: 1, padding: 16}}
+                        >
+                            <Form.Control name='name'>
+                                <Form.Select
+                                    style={{ color: 'rgba(255, 0, 155, 1)', width: '100%' }}
+                                    type='embed'
+                                    size='lg'
+                                    onValueChange={async(value: any) => {
+                                        if (value.id === 999999) {
+                                            setFormVisible(true)
+                                            setIsNewItem(true)
+                                            setName('')
+                                            setCategory('')
+                                            setSpeciesLatin('')
+                                        } else {
+                                            setFormVisible(true)
+                                            setIsNewItem(false)
+                                            setName(value.name)
+                                            setCategory(value.category)
+                                            setSpeciesLatin(value.species_latin)
+                                        }
 
-                        }}    
-                    >
-                        {items.map((item) => {
-                            return(
-                                <Picker.Item label={item.name} value={{...item}} />
-                            )
-                        })}
-                    </Picker>
-                    {/* <FormInputAutocomplete 
-                        options={itemNames}
-                        placeholder="Item Name"
-                        onChangeText={setName}
-                        inputValue={name}
-                        onSelect={itemLookup}
-                    /> */}
-                </Surface>
-                {formVisible ? 
-                    <PurchaseLogForm
-                        name={name}
-                        category={category}
-                        speciesLatin={speciesLatin}
-                        setName={setName}
-                        setCategory={setCategory}
-                        setSpeciesLatin={setSpeciesLatin}
-                    /> : <></>}
-            </ScreenPrimative>
-        </ImageBG>
+                                    }}    
+                                    options={items}
+                                />
+                            </Form.Control>
+                    {formVisible ? 
+                        <PurchaseLogForm
+                            name={name}
+                            category={category}
+                            speciesLatin={speciesLatin}
+                            setName={setName}
+                            setCategory={setCategory}
+                            setSpeciesLatin={setSpeciesLatin}
+                        /> : 
+                        <></>
+                    }
+                    </LinearGradient>
+                </ScrollView>
+            </View>                    
+        </ScreenPrimative>
     )
 
 }
 
 
 const styles = StyleSheet.create({
-  surface: {
-    padding: 16,
-    backgroundColor: 'rgba(60,60,160,0.8)',
-    display: 'flex',
-    width: 250,
-    margin: 'auto'
-    // marginBottom: 8
-  },
+    container: { flex: 1 }
 });

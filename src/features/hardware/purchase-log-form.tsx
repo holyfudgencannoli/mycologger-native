@@ -1,18 +1,25 @@
-import { useState } from "react"
-import { Surface } from "react-native-paper";
-import { StyleSheet, Text, Button, Alert, View } from 'react-native';
+import { useState, useCallback } from "react"
+import { Surface,TextInput } from "react-native-paper";
+import { StyleSheet, Text, View, ImageBackground, Button, Alert } from 'react-native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useEffect } from "react";
+import { uploadReceiptToCloudflare } from "../../services/UploadReceiptToCloudflare";
+// import UploadReceipt from "../UploadReceipt";
+// import CreateVendor from "./CreateVendor";
 import * as InvItem from '@db/inventory-items'
-import * as RawMat from '@db/bio-materials'
+import * as ConItem from '@db/consumable-items'
 import * as PurchLog from '@db/purchase-logs'
 import * as InvLog from '@db/inventory-logs'
 import * as Vendor from '@db/vendors'
 import * as Brand from '@db/brands'
 import * as cnv from '@utils/unitConversion'
 import { useSQLiteContext } from "expo-sqlite";
+import { Picker } from "@react-native-picker/picker";
+
 import * as Form from '@custom/react-native-forms/src'
 import { INV_UNITS, PUR_UNITS } from "@constants/units";
 import { useForm } from "react-hook-form";
+import * as HW from '@db/hardware-items'
 
 
 
@@ -65,7 +72,7 @@ export default function PurchaseLogForm({
   
     
     const getData = async() => {
-        const data = await RawMat.readAll(db)
+        const data = await HW.readAll(db)
         setItems(data)
     }
 
@@ -105,76 +112,6 @@ export default function PurchaseLogForm({
         // InvLog.create(db, TYPE, rawMatId, 0, 'Unit', nowMs)
         // navigation.navigate("Dashboard")
     };
-    
-    // const handleSubmit = async () => {
-    //     if (!image) {
-    //         Alert.alert("Error", "Please select a receipt image");
-    //         return;
-    //     }
-    //     // const { fileKey, publicUrl } = await uploadReceiptToCloudflare({
-    //     //     image,
-    //     //     token,
-    //     //     contentType
-    //     // })
-
-    //     // const payload = {
-    //     //     name: name,
-    //     //     category: category,
-    //     //     subcategory: subcategory,
-    //     //     brand: brand,
-    //     //     purchaseDate: purchaseDatetime,
-    //     //     purchaseQuantity: parseInt(purchaseQuantity),
-    //     //     purchaseUnit: purchaseUnit,
-    //     //     inventoryQuantity: parseInt(inventoryQuantity),
-    //     //     inventoryUnit: inventoryUnit,
-    //     //     cost: parseInt(cost),
-    //     //     vendor: vendor,
-    //     //     user: user,
-    //     //     filename: fileKey,
-    //     //     imageUrl: publicUrl,
-    //     //     receiptMemo: receiptMemo,
-    //     //     notes : notes,
-    //     //     vendorPhone: vendorPhone,
-    //     //     vendorEmail: vendorEmail,
-    //     //     vendorWebsite: vendorWebsite,
-    //     // }
-        
-    //     const created_at = new Date().getTime();
-    //     const invItemId = await InvItem.create(db, 'bio_materials', created_at)
-    //     const rawMatId = await RawMat.create(db, invItemId, name, category, subcategory)
-    //     await PurchLog.create(
-    //         db,
-    //         'bio_materials',
-    //         rawMatId,
-    //         created_at,
-    //         purchaseDatetime.getTime(),
-    //         purchaseUnit,
-    //         cnv.convertFromBase({
-    //             value: parseFloat(purchaseQuantity),
-    //             to: purchaseUnit
-    //         }), inventoryUnit,
-    //         cnv.convertFromBase({
-    //             value: parseFloat(inventoryQuantity),
-    //             to: inventoryUnit
-    //         }),
-    //         vendor,
-    //         brand,
-    //         parseFloat(cost)
-    //     )
-    //     await InvLog.create(
-    //         db,
-    //         'bio_materials',
-    //         rawMatId,
-    //         cnv.convertToBase({
-    //             value: parseFloat(purchaseQuantity) * parseFloat(inventoryQuantity),
-    //             from: inventoryUnit
-    //         }),
-    //         inventoryUnit,
-    //         created_at
-    //     )
-    //     return {invItemId, rawMatId}
-    // }
-
 
     return (
         <>
@@ -234,7 +171,7 @@ export default function PurchaseLogForm({
                 <Form.Input 
                     value={cost}
                     onChangeText={setCost}
-                    style={{ backgroundColor: 'transparent', width: '100%' }} 
+                     style={{ backgroundColor: 'transparent', width: '100%' }} 
                 />
             </Form.Control>
             <Form.Control name="vendor" label="Vendor" labelStyle={styles.label}>
@@ -266,6 +203,7 @@ export default function PurchaseLogForm({
         </>
     )
 }
+
 
 
 const styles = StyleSheet.create({

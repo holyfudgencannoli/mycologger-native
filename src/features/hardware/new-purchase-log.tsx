@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, ImageBackground, Button, Alert } from 'react-native';
+import { StyleSheet, Text, View, ImageBackground, Button, Alert, ScrollView } from 'react-native';
 import { ScreenPrimative } from "@components/screen-primative";
 import { ImageBG } from "@components/image-bg";
 import { useFocusEffect } from "@react-navigation/native";
@@ -7,9 +7,11 @@ import { Surface } from "react-native-paper";
 import { Picker } from "@react-native-picker/picker";
 import * as Consumable from '@db/consumable-items'
 import { useSQLiteContext } from "expo-sqlite";
-import CreateConsumableItemPurchase from "./new-purchase-log-form";
-import NewPurchaseLogForm from './new-purchase-log-form';
-
+import CreateConsumableItemPurchase from "./purchase-log-form";
+import PurchaseLogForm from './purchase-log-form';
+import * as HW from '@db/hardware-items'
+import { LinearGradient } from 'expo-linear-gradient';
+import * as Form from '@custom/react-native-forms/src'
 
 
 export default function NewPurchaseLog() {
@@ -24,11 +26,11 @@ export default function NewPurchaseLog() {
     const [category, setCategory] = useState("")
     const [subcategory, setSubcategory] = useState("")
 
-    const [isNewItem, setIsNewItem] = useState(true)
+    const [newItem, setNewItem] = useState(false)
 
 
     const getItemNames = async() => {
-        const items = await Consumable.readAll(db)
+        const items = await HW.readAll(db)
         setItems([...items, { id: 999999, name: 'New Item' }])
     }
 
@@ -39,63 +41,59 @@ export default function NewPurchaseLog() {
     )
 
     return(
-        <ImageBG image={require('@assets/bg.jpg')}>
-            <ScreenPrimative scroll edges={[]}>
-                <Surface style={styles.surface}>
-                    <Picker
-                       dropdownIconColor={'blanchedalmond'}
-                        style={{ color: 'blanchedalmond' }}
-                        onValueChange={(value: {id: number, name: string, category: string, subcategory: string}) => {
-                            if (value.id === 999999) {
-                                setFormVisible(true)
-                                setIsNewItem(true)
-                                setName('')
-                                setCategory('')
-                                setSubcategory('')
-                            } else {
-                                setFormVisible(true)
-                                setIsNewItem(false)
-                                setName(value.name)
-                                setCategory(value.category)
-                                setSubcategory(value.subcategory)
-                            }
-
-                        }}    
+        <ScreenPrimative edges={[]}>
+            <View style={styles.container}>
+                <ScrollView>
+                    <LinearGradient
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 0.3, y: 0.9 }}
+                        colors={['#94F8', '#00f', '#057']}
+                        style={{ flex: 1, padding: 16}}
                     >
-                        {items.map((item) => {
-                            return(
-                                <Picker.Item label={item.name} value={{...item}} />
-                            )
-                        })}
-                    </Picker>
-                    {/* <FormInputAutocomplete 
-                        options={itemNames}
-                        placeholder="Item Name"
-                        onChangeText={setName}
-                        inputValue={name}
-                        onSelect={itemLookup}
-                    /> */}
-                </Surface>
-                {formVisible ? 
-                    <NewPurchaseLogForm
-                        name={name}
-                        category={category}
-                        subcategory={subcategory}
-                        setName={setName}
-                        setCategory={setCategory}
-                        setSubcategory={setSubcategory}
-                    /> : <></>}
-            </ScreenPrimative>
-        </ImageBG>
+                        <Form.Control name='name'>
+                            <Form.Select
+                                style={{ color: 'rgba(255, 0, 155, 1)', width: '100%' }}
+                                type='embed'
+                                size='lg'
+                                onValueChange={async(value: any) => {
+                                    if (value.id === 999999) {
+                                        setNewItem(true)
+                                        setName('')
+                                        setCategory('')
+                                        setSubcategory('')
+                                        setFormVisible(true)
+
+                                    } else {
+                                        setNewItem(false)
+                                        setName(value.name)
+                                        setCategory(value.email)
+                                        setSubcategory(value.phone)
+                                        setFormVisible(true)
+                                    }
+
+                                }}    
+                                options={items}
+                            />
+                        </Form.Control>
+                    {formVisible ? 
+                        <PurchaseLogForm 
+                            name={name}
+                            category={category}
+                            subcategory={subcategory}
+                            setCategory={setCategory}
+                            setSubcategory={setSubcategory}
+                        /> : 
+                        <></>
+                    }
+                    </LinearGradient>
+                </ScrollView>
+            </View>                    
+        </ScreenPrimative>
     )
 
 }
 
 
 const styles = StyleSheet.create({
-  surface: {
-    padding: 16,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    // marginBottom: 8
-  },
+    container: { flex: 1 }
 });

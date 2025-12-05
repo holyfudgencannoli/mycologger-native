@@ -16,11 +16,12 @@ export interface SelectProps {
   placeholder?: string;
   size?: 'sm' | 'md' | 'lg';
   style?: object;
+  type?: 'embed' | 'above';
 }
 
 const Select = forwardRef<View, SelectProps>((props, ref) => {
   const theme = useTheme();
-  const { options, selectedValue, onValueChange, placeholder, size = 'md', style } = props;
+  const { options, selectedValue, onValueChange, placeholder, size = 'md', style, type = 'above' } = props;
 
   const styles = StyleSheet.create({
     container: {
@@ -30,12 +31,38 @@ const Select = forwardRef<View, SelectProps>((props, ref) => {
       paddingHorizontal: theme.spacing.sm,
       paddingVertical: size === 'sm' ? theme.spacing.xs : size === 'lg' ? theme.spacing.md : theme.spacing.sm,
     },
+    embeddedContainer: {
+      paddingHorizontal: theme.spacing.sm,
+      paddingVertical: size === 'sm' ? theme.spacing.xs : size === 'lg' ? theme.spacing.md : theme.spacing.sm
+    },
     placeholder: { color: theme.colors.textPrimary, fontSize: 16 },
   });
-
-  return (
-    <View ref={ref} style={[styles.container, style]}>
+  if (type === 'above') {
+    return (
+      <View ref={ref} style={[styles.container, style]}>
+        <Picker
+          style={{ color: 'white' }}
+          dropdownIconColor={'white'}
+          selectedValue={selectedValue}
+          onValueChange={onValueChange}
+          mode="dialog"
+          itemStyle={{ height: 44, color: theme.colors.primary }}
+        >
+          {placeholder && (
+            <Picker.Item label={placeholder} value="" color={theme.colors.primary} />
+          )}
+          {options.map((opt: any) => (
+            <Picker.Item label={opt.name} value={{...opt}} />
+          ))}
+        </Picker>
+      </View>
+    );
+  } else if (type === 'embed') {
+    return(
       <Picker
+        ref={ref}
+        style={{ ...style, ...styles.embeddedContainer, color: 'white', backgroundColor: 'transparent' }}
+        dropdownIconColor={'white'}
         selectedValue={selectedValue}
         onValueChange={onValueChange}
         mode="dialog"
@@ -48,8 +75,8 @@ const Select = forwardRef<View, SelectProps>((props, ref) => {
           <Picker.Item label={opt.name} value={{...opt}} />
         ))}
       </Picker>
-    </View>
-  );
+    )
+  }
 });
 
 Select.displayName = 'Select';

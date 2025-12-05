@@ -1,49 +1,60 @@
-import { Alert, Platform, StyleSheet } from "react-native";
+import { Alert, Platform, StyleSheet, View } from "react-native";
 import { ImageBG } from "@components/image-bg";
 import { ScreenPrimative } from "@components/screen-primative";
 import CreateRecipe from "./new-recipe-form";
 import { useState } from "react";
 import { useNavigation, usePreventRemove } from "@react-navigation/native";
+import { ScrollView } from "react-native-gesture-handler";
+import { LinearGradient } from "expo-linear-gradient";
 
 export default function NewRecipe() {    
-    const [unsaved, setUnsaved] = useState(false)
-    const navigation = useNavigation();
-    
+  const [unsaved, setUnsaved] = useState(false)
+  const navigation = useNavigation();
+  
 
-    usePreventRemove(unsaved, ({ data }) => {
-        if (Platform.OS === 'web') {
-            const discard = confirm(
-                'You have unsaved changes. Discard them and leave the screen?'
-            );
+  usePreventRemove(unsaved, ({ data }) => {
+    if (Platform.OS === 'web') {
+      const discard = confirm(
+        'You have unsaved changes. Discard them and leave the screen?'
+      );
 
-            if (discard) {
-                navigation.dispatch(data.action);
-            }
-        } else {
-            Alert.alert(
-                'Discard changes?',
-                'You have unsaved changes. Discard them and leave the screen?',
-                [
-                    { text: "Don't leave", style: 'cancel', onPress: () => {} },
-                    {
-                        text: 'Discard',
-                        style: 'destructive',
-                        onPress: () => navigation.dispatch(data.action),
-                    },
-                ]
-            );
-        }
-    });
+      if (discard) {
+        navigation.dispatch(data.action);
+      }
+    } else {
+      Alert.alert(
+        'Discard changes?',
+        'You have unsaved changes. Discard them and leave the screen?',
+        [
+          { text: "Don't leave", style: 'cancel', onPress: () => {} },
+          {
+            text: 'Discard',
+            style: 'destructive',
+            onPress: () => navigation.dispatch(data.action),
+          },
+        ]
+      );
+    }
+  });
 
 
 
-    return(
-        <ImageBG image={require('@assets/bg.jpg')}>
-            <ScreenPrimative scroll contentContainerStyle={styles.container} edges={[]}>
-                <CreateRecipe setUnsaved={setUnsaved} />
-            </ScreenPrimative>
-        </ImageBG>
-    )
+  return(
+    <ScreenPrimative edges={[]}>
+      <View style={styles.container}>	
+        <ScrollView style={{ flex: 1 }}>
+          <LinearGradient
+            start={{ x: 0, y: 0 }}
+            end={{ x: 0.3, y: 0.9 }}
+            colors={['#94F8', '#00f', '#057']}
+            style={{ flex: 1, padding: 16}}
+          >
+            <CreateRecipe setUnsaved={setUnsaved} />
+          </LinearGradient>
+        </ScrollView>
+      </View>
+    </ScreenPrimative>
+  )
 }
 
 

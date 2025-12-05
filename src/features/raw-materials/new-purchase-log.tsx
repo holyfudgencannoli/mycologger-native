@@ -48,18 +48,21 @@ export default function NewPurchaseLog() {
     )
 
 
+
+
     return(
         <ScreenPrimative edges={[]}>
             <View style={styles.container}>	
-                <ScrollView>
-                <LinearGradient
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 0.3, y: 0.9 }}
-                    colors={['#94F8', '#00f', '#057']}
-                    style={{ flex: 1, padding: 16}}
-                >
+                <ScrollView style={{ flex: 1 }}>
+                    <LinearGradient
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 0.3, y: 0.9 }}
+                        colors={['#94F8', '#00f', '#057']}
+                        style={{ flex: 1, padding: 16}}
+                    >
                         <Form.Control name='name'>
                             <Form.Select  
+                                type='embed'
                                 style={{ color: 'rgba(255, 0, 155, 1)', width: '100%' }}
                                 onValueChange={async(value: any) => {
                                     if (value.id === 999999) {
@@ -90,7 +93,7 @@ export default function NewPurchaseLog() {
                         /> : 
                         <></>
                     }
-                </LinearGradient>
+                    </LinearGradient>
                 </ScrollView>   
             </View>
         </ScreenPrimative>

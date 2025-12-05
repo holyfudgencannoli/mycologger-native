@@ -11,6 +11,10 @@ import { useSQLiteContext } from "expo-sqlite";
 import * as cnv from '@utils/unitConversion'
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { NavigationProps, RootDrawerParamsList } from "@navigation";
+import * as Form from '@custom/react-native-forms/src'
+import { INV_UNITS } from "@constants/units";
+import { LinearGradient } from "expo-linear-gradient";
+import { ScrollView } from "react-native-gesture-handler";
 
 
 type ingredientProps = {
@@ -111,124 +115,104 @@ export default function CreateRecipe({ setUnsaved }: { setUnsaved: (value: boole
 
 
     return(
-        <Surface style={styles.surfaceMetaContainer}>                        
-            <Surface style={styles.surfaceContainer}>
-                    <Text style={theme.formTitle}>New Recipe</Text>        
-            </Surface>
-            <Surface style={styles.surfaceContainer}>
-                <Surface style={styles.surface}>
-                    <TextInput
-                        label="Recipe Name"
-                        value={name}
-                        onChangeText={setName}
-                        mode="outlined"
-                        
-                    />
-                </Surface>
-                <Surface style={styles.surface}>
-                    <TextInput
-                        label="Recipe Type"
-                        value={type}
-                        onChangeText={setType}
-                        mode="outlined"
-                    />
-                </Surface>
-                <Surface style={styles.surfaceContainer}>
-                    <Surface style={styles.surface}>
-                        <Text style={styles.subtitle}>
-                            Yield
-                        </Text>
-                    </Surface>
-                    <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }}>
-                        <TextInput
-                            label="Amount"
-                            value={yieldAmount}
-                            onChangeText={setYieldAmount}
-                            mode="outlined"
-                            style={{ flex: 1 }}
-                        />
-                        <TextInput
-                            label="Unit"
-                            value={yieldUnit}
-                            onChangeText={setYieldUnit}
-                            mode="outlined"
-                            style={{ flex: 1 }}
-                        />
-                    </View>
-                </Surface>
-                <Surface style={styles.surface}>
-                    <PaperSelect
-                        label="Select Ingredient"
-                        value={ingredientName}
-                        onSelection={(value: any) => {
-                            const selected = value.selectedList[0];
-                            if (selected) {
-                                setIngredientName(selected.value);
-                                setIngredientId(selected.id);
-                            }
+        <>
+            <Form.Control name="name" label="Recipe Name" labelStyle={styles.label}>
+                <Form.Input style={styles.input} />
+            </Form.Control>
+            <Form.Control name="recipeType" label="Recipe Type" labelStyle={styles.label}>
+                <Form.Input style={styles.input} />
+            </Form.Control>
+            <Form.Control labelStyle={styles.label} label="Recipe Yield" name="recipeYield" >
+                <Form.Input
+                    value={yieldAmount}
+                    onChangeText={setYieldAmount} 
+                    style={{ width: '50%', backgroundColor: 'transparent', color: 'white' }}
+                />
+                <Form.Select
+                    style={{ width: '50%', backgroundColor: 'transparent' }} 
+                    options={[...INV_UNITS]}
+                    onValueChange={(value: any) => {
+                        setYieldUnit(value.value)
+                        console.log(value.value)
+                    }}
+                />
+            </Form.Control>
+            <LinearGradient
+                start={{ x: 0, y: 0 }}
+                end={{ x: 0.3, y: 0.9 }}
+                colors={['#880', '#088', '#808']}
+                style={{ flex: 1, padding: 16, borderRadius: 4}}
+            >
+                <Form.Control label="Select Ingredient" name="" labelStyle={styles.label}>
+                    <Form.Select 
+                        style={styles.input}
+                        options={rawMaterialNames}
+                        onValueChange={(value: any) => {
+                            setIngredientId(value.id)
+                            setIngredientName(value.value)
+                            console.log(value.value)
                         }}
-
-                        arrayList={rawMaterialNames}
-                        selectedArrayList={[]}
-                        multiEnable={false}
-                        hideSearchBox={false}
-                        textInputMode="outlined"
                     />
-                    <Surface style={styles.surfaceContainer}>
-                        <Surface style={styles.surface}>
-                            <Text style={styles.subtitle}>
-                                Yield
-                            </Text>
-                        </Surface>
-                        <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }}>
-                            <TextInput
-                                label="Amount"
-                                value={amount}
-                                onChangeText={setAmount}
-                                mode="outlined"
-                                style={{ flex: 1 }}
-                            />
-                            <TextInput
-                                label="Unit"
-                                value={unit}
-                                onChangeText={setUnit}
-                                mode="outlined"
-                                style={{ flex: 1 }}
-                            />
-                        </View>
-                    </Surface>
-                    <Button  color={'#000000'} title="Add Recipe Item" onPress={() => addIngredient(ingredientName, ingredientId, amount, unit)} />
-
-                </Surface>
-                <View>
-                    {ingredients.map((ingredient, index) => {
-                        return(
-                            <Text key={index} style={styles.subtitle}>
-                                {ingredient.ingredientName} — {
-                                    cnv.convertFromBase({
-                                        value: ingredient.amount,
-                                        to: ingredient.unit.toLowerCase()
-                                    })
-                                } {ingredient.unit}
-                            </Text>
-                        )
-                        
-                    })}
+                </Form.Control>
+                <Form.Control labelStyle={styles.label} label="Ingredient Usage" name="ingredientUsage" >
+                    <Form.Input
+                        value={amount}
+                        onChangeText={setUnit} 
+                        style={{ width: '50%', backgroundColor: 'transparent', color: 'white' }}
+                    />
+                    <Form.Select
+                        style={{ width: '50%', backgroundColor: 'transparent' }} 
+                        options={[...INV_UNITS]}
+                        onValueChange={(value: any) => {
+                            setYieldUnit(value.value)
+                            console.log(value.value)
+                        }}
+                    />
+                </Form.Control>
+                <View style={{ margin: 36 }}>
+                    <Button  color={'#f74a63cc'} title="Add Recipe Item" onPress={() => addIngredient(ingredientName, ingredientId, amount, unit)} />
                 </View>
-                <Text>
-                    
-                </Text>
-                <Button  color={'#000000'} title="Submit" onPress={() => handleSubmit()} />
 
-            </Surface>    
-        </Surface>
+                <ScrollView style={{ backgroundColor: '#fff5', height: 100, padding: 16 }}>
+                    <Form.Control name='ingredients' label="Ingredients" labelStyle={styles.label}>
+                        {ingredients.map((ingredient, index) => {
+                            return(
+                                <Text key={index} style={styles.subtitle}>
+                                    {ingredient.ingredientName} — {
+                                        cnv.convertFromBase({
+                                            value: ingredient.amount,
+                                            to: ingredient.unit.toLowerCase()
+                                        })
+                                    } {ingredient.unit}
+                                </Text>
+                            )
+                            
+                        })}    
+                    </Form.Control>
+
+                </ScrollView>
+
+
+            </LinearGradient>
+            <View style={{ marginTop: 16 }}>
+                <Button  color={'#f74a63cc'} title="Submit" onPress={() => handleSubmit()} />
+            </View>
+        </>
     )
 }
 
 
     
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: "center", alignItems: "center", },
+  container: { flex: 1 },
+  label: {
+    fontSize: 18,
+    textAlign:  'center',
+    fontWeight: 'bold',
+    color: 'red',
+    textShadowColor: 'blue',
+    textShadowRadius: 16,
+  },
   text: { fontSize: 20, marginBottom: 20 },
   form: {
     backgroundColor: 'rgba(0, 17, 255, 0.3)',
@@ -241,7 +225,8 @@ const styles = StyleSheet.create({
     // margin: 8,
     // padding: 8,
     // gap: 16,
-    fontSize: 16
+    // fontSize: 16
+    width: '100%'
   },
   surface: {
     padding: 16,

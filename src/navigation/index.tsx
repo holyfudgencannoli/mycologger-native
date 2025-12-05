@@ -1,5 +1,5 @@
 import { NavigationContainer } from "@react-navigation/native";
-// import { createNativeStackNavigator } from '@react-navigation/native-stack'
+import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
 import { createDrawerNavigator, DrawerNavigationProp } from "@react-navigation/drawer";
 // import ExecuteBatch from "../AgarCultures/ExecuteBatch";
@@ -11,6 +11,7 @@ import * as ConItem from '@features/consumables'
 import * as HW from '@features/hardware'
 import * as Rec from '@features/recipes'
 import * as Batches from '@features/recipe-batches'
+import * as Agar from '@features/agar-cultures'
 
 
 // import Login from "../Authentication/Login";
@@ -21,6 +22,8 @@ import RecipeList from "@features/recipes/recipe-list";
 import RecipeBatchList from "@features/recipe-batches/recipe-batch-list";
 import Header from "@components/header";
 import { black } from "react-native-paper/lib/typescript/styles/themes/v2/colors";
+import TaskListScreen from "@features/tasks/task-list";
+import NewTaskForm from "@features/tasks/new-task-form";
 
 // import RawMaterialList from '../RawMaterials/RawMaterialListScreen';
 // import NewRMFormScreen from '../RawMaterials/NewRMFormScreen';
@@ -31,7 +34,6 @@ import { black } from "react-native-paper/lib/typescript/styles/themes/v2/colors
 // import NewRecipeForm from "../Recipes/NewRecipeForm";
 // import RecipeListScreen from "../Recipes/RecipeList";
 // import ExcecuteAgarBatch from "../AgarCultures/ExecuteBatch";
-// import * as Agar from '../AgarCultures'
 // import * as Liquid from '../LiquidCultures'
 // import * as Spawn from '../SpawnCultures'
 // import NewTaskForm from "../Tasks/NewTaskForm";
@@ -68,7 +70,9 @@ export type RootDrawerParamsList = {
     'Bio Materials': {params: any[]},
     'Consumable Items': undefined,
     'Hardware': undefined,
-    'Recipes': undefined
+    'Recipes': undefined, 
+    'Cultures': undefined,
+    'Tasks': undefined
 }
 
 export type InventoryItemParamList = {
@@ -82,6 +86,19 @@ export type RecipeParamList = {
   "Batches": undefined;
 };
 
+
+export type CultureParamList = {
+  "Agar": undefined;
+  "Liquid": undefined;
+  "Spawn": undefined;
+};
+
+
+export type TaskParamList = {
+  "New Task": undefined;
+  "New Maintenance Task": undefined;
+  "Task List": undefined;
+};
 export type NavigationProps = DrawerNavigationProp<RootDrawerParamsList>
 
 
@@ -143,12 +160,13 @@ function DrawerNavigator() {
             <Drawer.Screen component={ConsumablesNavigator} name='Consumable Items'/>
             <Drawer.Screen component={HardwareNavigator} name='Hardware'/>
             <Drawer.Screen component={ReceipesNavigator} name='Recipes'/>
+            <Drawer.Screen component={CulturesNavigator} name='Cultures'/>
             {/* <Drawer.Screen component={CulturesNavigator} name='Cultures'/> */}
             {/* <Drawer.Screen component={InventoryNavigator} name='Inventory' options={{ unmountOnBlur: true }}/> */}
             {/* <Drawer.Screen component={ProductsNavGroup} name='Products'/>
             <Drawer.Screen component={TasksNavGroup} name='Tasks'/>
             <Drawer.Screen component={SterilizationRecordsNavGroup} name='Sterilizations'/> */}
-            {/* <Drawer.Screen component={TasksNavigator} name='Tasks'/> */}
+            <Drawer.Screen component={TasksNavigator} name='Tasks'/>
             {/* <Drawer.Screen component={ImportExportNavigator} name='Import/Export'/> */}
             {/* <Drawer.Screen component={InventoryNavGroup} name='Inventory'/>
             <Drawer.Screen component={UtilitiesNavGroup} name='Utilities'/>
@@ -256,17 +274,23 @@ function ReceipesNavigator() {
     )
 }
 
-// const Cultures = createMaterialTopTabNavigator();
+const Cultures = createMaterialTopTabNavigator<CultureParamList, any>();
 
-// function CulturesNavigator() {
-//     return(
-//         <Cultures.Navigator>
-//             <Cultures.Screen component={Agar.CultureList.default} name="Agar" />
-//             <Cultures.Screen component={Liquid.CultureList.default} name="Liquid" />
-//             <Cultures.Screen component={Spawn.CultureList.default} name="Spawn" />
-//         </Cultures.Navigator>
-//     )
-// }
+function CulturesNavigator() {
+    return(
+        <Cultures.Navigator
+            screenOptions={{
+                tabBarLabelStyle: { fontSize: 16, color: 'white' },
+                // tabBarItemStyle: { borderColor: 'white', borderWidth: 1 },
+                tabBarStyle: { backgroundColor: '#94f8' },
+            }}
+        >
+            <Cultures.Screen component={Agar.CultureList.default} name="Agar" />
+            {/* <Cultures.Screen component={Liquid.CultureList.default} name="Liquid" /> */}
+            {/* <Cultures.Screen component={Spawn.CultureList.default} name="Spawn" /> */}
+        </Cultures.Navigator>
+    )
+}
 
 // const Inventory = createMaterialTopTabNavigator();
 
@@ -281,22 +305,22 @@ function ReceipesNavigator() {
 //     )
 // }
 
-// const Tasks = createNativeStackNavigator(); 
+const Tasks = createNativeStackNavigator<TaskParamList, any>(); 
 
-// function TasksNavigator() {
-//     return(
-//         <Tasks.Navigator initialRouteName="Task List">
-//             <Tasks.Screen component={TaskListScreen} name='Task List' options={{ headerShown: false }}/>
-//             <Tasks.Screen component={NewTaskForm} name='New Task' options={{ headerShown: false }}/>
-//             <Tasks.Screen component={Agar.Batch.default} name="New Agar Culture" options={{ headerShown: false }}/>
-//             <Tasks.Screen component={ExecuteRecipeBatch} name="New Batch From Recipe" options={{ headerShown: false }}/>
-//             <Tasks.Screen component={Spawn.Batch.default} name="New Spawn Culture" options={{ headerShown: false }}/>
-//             <Tasks.Screen component={Liquid.Batch.default} name="New Liquid Culture" options={{ headerShown: false }}/>
-//             <Tasks.Screen component={CreateMaintenanceTask} name='New Maintenance Task' options={{ headerShown: false }}/>
+function TasksNavigator() {
+    return(
+        <Tasks.Navigator initialRouteName="Task List">
+            <Tasks.Screen component={TaskListScreen} name='Task List' options={{ headerShown: false }}/>
+            <Tasks.Screen component={NewTaskForm} name='New Task' options={{ headerShown: false }}/>
+            {/* <Tasks.Screen component={Agar.Batch.default} name="New Agar Culture" options={{ headerShown: false }}/>
+            <Tasks.Screen component={ExecuteRecipeBatch} name="New Batch From Recipe" options={{ headerShown: false }}/>
+            <Tasks.Screen component={Spawn.Batch.default} name="New Spawn Culture" options={{ headerShown: false }}/>
+            <Tasks.Screen component={Liquid.Batch.default} name="New Liquid Culture" options={{ headerShown: false }}/>
+            <Tasks.Screen component={CreateMaintenanceTask} name='New Maintenance Task' options={{ headerShown: false }}/> */}
 
-//         </Tasks.Navigator>
-//     )
-// }
+        </Tasks.Navigator>
+    )
+}
 
 // const ImportExport = createMaterialTopTabNavigator();
 

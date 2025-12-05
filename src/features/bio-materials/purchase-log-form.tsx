@@ -162,21 +162,16 @@ export default function PurchaseLogForm({
 
 
     return (
-        <Surface style={styles.surfaceMetaContainer}>                        
-            <Surface style={styles.surfaceContainer}>
-                    <Text style={styles.title}>New Purchase Log</Text>        
-                    <Text style={styles.subtitle}>(Bio Materials)</Text>        
-            </Surface>
-            
-            <Surface style={styles.surfaceContainer}>
+            <>
                 <Form.Control labelStyle={styles.label} label='Item Category' name='category'>
-                    <Form.Input style={{ backgroundColor:'white', width: '100%' }} value={category} onChangeText={setCategory}  />
+                    <Form.Input style={{ backgroundColor:'transparent', width: '100%' }} value={category} onChangeText={setCategory}  />
                 </Form.Control>
                 <Form.Control label='Species Name (Latin)' labelStyle={styles.label} name='speciesLatin'>
-                    <Form.Input style={{ backgroundColor:'white', width: '100%' }} value={speciesLatin} onChangeText={setSpeciesLatin}  />
+                    <Form.Input style={{ backgroundColor:'transparent', width: '100%' }} value={speciesLatin} onChangeText={setSpeciesLatin}  />
                 </Form.Control>
-                <Surface style={styles.surface}>
+                <Form.Control labelStyle={styles.label} label="Brand" name="brand" >
                     <Form.Select 
+                        style={{ backgroundColor:'transparent', width: '100%' }}
                         onValueChange={(value: any)=> {
                             if (value.id === 999999) {
                                 setBrand(null)
@@ -188,79 +183,69 @@ export default function PurchaseLogForm({
                         }}
                         options={brands}
                     />
-                </Surface>  
+                </Form.Control>
                     
-                <Surface style={styles.surface}>
-                    <Form.Control labelStyle={styles.label} label="Purchase Quantity" name="purchase_quantity" >
-                        <Form.Input
-                            value={purchaseQuantity}
-                            onChangeText={setPurchaseQuantity} 
-                            style={{ width: '50%', backgroundColor: 'white' }}
-                            placeholder="Amount" 
-                        />
-                        <Form.Select
-                            style={{ width: '50%', backgroundColor: 'white' }} 
-                            options={[...PUR_UNITS]}
-                            onValueChange={(value: any) => {
-                                setPurchaseUnit(value.value)
-                                console.log(value.value)
-                            }}
-                        />
-                    </Form.Control>
-                </Surface>
-                <Surface style={styles.surface}>
-                    <Form.Control labelStyle={styles.label} label="Inventory Quantity" name="inventory_quantity" >
-                        <Form.Input
-                            value={inventoryQuantity}
-                            onChangeText={setInventoryQuantity} 
-                            style={{ width: '50%', backgroundColor: 'white' }}
-                            placeholder="Amount" 
-                        />
-                        <Form.Select
-                            style={{ width: '50%', backgroundColor: 'white' }} 
-                            options={[...INV_UNITS]}
-                            onValueChange={(value: any) => {
-                                setInventoryUnit(value.value)
-                                console.log(value.value)
-                            }}
-                        />
-                    </Form.Control>
-                </Surface>  
-                <Surface style={styles.surface}>
+                <Form.Control labelStyle={styles.label} label="Purchase Quantity" name="purchase_quantity" >
+                    <Form.Input
+                        value={purchaseQuantity}
+                        onChangeText={setPurchaseQuantity} 
+                        style={{ width: '50%', backgroundColor: 'transparent' }}
+                    />
+                    <Form.Select
+                        style={{ width: '50%', backgroundColor: 'transparent' }} 
+                        options={[...PUR_UNITS]}
+                        onValueChange={(value: any) => {
+                            setPurchaseUnit(value.value)
+                            console.log(value.value)
+                        }}
+                    />
+                </Form.Control>
+                <Form.Control labelStyle={styles.label} label="Inventory Quantity" name="inventory_quantity" >
+                    <Form.Input
+                        value={inventoryQuantity}
+                        onChangeText={setInventoryQuantity} 
+                        style={{ width: '50%', backgroundColor: 'transparent' }}
+                    />
+                    <Form.Select
+                        style={{ width: '50%', backgroundColor: 'transparent' }} 
+                        options={[...INV_UNITS]}
+                        onValueChange={(value: any) => {
+                            setInventoryUnit(value.value)
+                            console.log(value.value)
+                        }}
+                    />
+                </Form.Control>
+                <Form.Control name="cost" label="Cost" labelStyle={styles.label}>
                     <Form.Input 
                         value={cost}
                         onChangeText={setCost}
-                        placeholder="Cost"
-                        style={{ backgroundColor: 'white' }} 
+                        style={{ backgroundColor: 'transparent', width: '100%' }} 
                     />
-                </Surface>
-                <Surface style={styles.surface}>
-                    <Form.Control name="vendor">
-                        <Form.Select 
-                            onValueChange={(value: any)=> {
-                                if (value.id === 999999) {
-                                    setVendor(null)
-                                    setNewVendor(true)
-                                } else{
-                                    setVendor(value)
-                                    setNewVendor(false)
-                                }
-                            }}    
-                            options={vendors}
-                        />
-                    </Form.Control>
-                </Surface>
-                <Surface style={styles.surface}>
+                </Form.Control>
+                <Form.Control name="vendor" label="Vendor" labelStyle={styles.label}>
+                    <Form.Select 
+                        style={{ width: '100%' }}
+                        onValueChange={(value: any)=> {
+                            if (value.id === 999999) {
+                                setVendor(null)
+                                setNewVendor(true)
+                            } else{
+                                setVendor(value)
+                                setNewVendor(false)
+                            }
+                        }}    
+                        options={vendors}
+                    />
+                </Form.Control>
+                <Form.Control name="notes" label="Notes" labelStyle={styles.label}>
                     <Form.Input 
                         value={notes}
                         onChangeText={setNotes}
-                        style={{ backgroundColor: 'white' }} 
-                        placeholder="Notes"
+                        style={{ backgroundColor: 'transparent', width: '100%' }} 
                     />
-                </Surface>
-            </Surface>            
+                </Form.Control>
             <Button color={'#000000'} title="Submit" onPress={() => handleSubmit()} />
-        </Surface>
+        </>
     )
 }
 
