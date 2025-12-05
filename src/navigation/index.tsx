@@ -12,6 +12,8 @@ import * as HW from '@features/hardware'
 import * as Rec from '@features/recipes'
 import * as Batches from '@features/recipe-batches'
 import * as Agar from '@features/agar-cultures'
+import * as Liquid from '@features/liquid-cultues'
+import * as Spawn from '@features/spawn-cultures'
 
 
 // import Login from "../Authentication/Login";
@@ -37,8 +39,6 @@ import CreateMaintenanceTask from "@features/tasks/new-maintenance-task";
 // import NewRecipeForm from "../Recipes/NewRecipeForm";
 // import RecipeListScreen from "../Recipes/RecipeList";
 // import ExcecuteAgarBatch from "../AgarCultures/ExecuteBatch";
-// import * as Liquid from '../LiquidCultures'
-// import * as Spawn from '../SpawnCultures'
 // import NewTaskForm from "../Tasks/NewTaskForm";
 // import ExecuteRecipeBatch from "../RecipeBatches/ExecuteRecipeBatch";
 // import RecipeBatchListScreen from "../RecipeBatches/RecipeBatchList";
@@ -285,8 +285,8 @@ function CulturesNavigator() {
             }}
         >
             <Cultures.Screen component={Agar.CultureList.default} name="Agar" />
-            {/* <Cultures.Screen component={Liquid.CultureList.default} name="Liquid" /> */}
-            {/* <Cultures.Screen component={Spawn.CultureList.default} name="Spawn" /> */}
+            <Cultures.Screen component={Liquid.CultureList.default} name="Liquid" />
+            <Cultures.Screen component={Spawn.CultureList.default} name="Spawn" />
         </Cultures.Navigator>
     )
 }

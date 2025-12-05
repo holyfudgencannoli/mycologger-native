@@ -8,26 +8,26 @@ import { ImageBG } from "@components/image-bg";
 import { ScreenPrimative } from "@components/screen-primative";
 import { CultureDetailModal } from "./detail-model";
 import * as Culture from '@db/culture-media'
-import * as Liquid from '@db/liquid-cultures'
+import * as Spawn from '@db/spawn-cultures'
 import { useSQLiteContext } from "expo-sqlite";
 import { ScrollView } from "react-native-gesture-handler";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Form from '@custom/react-native-forms/src'
-import { LiquidCulture } from "./types";
+import { SpawnCulture } from "./types";
 
 
-export default function LiquidCulturesListScreen() {
+export default function SpawnCulturesListScreen() {
     const db = useSQLiteContext();    
     const [recipes, setRecipes] = useState([])
     const [modalOpen, setModalOpen] = useState(false)
-    const [currentItem, setCurrentItem] = useState<LiquidCulture>()
+    const [currentItem, setCurrentItem] = useState<SpawnCulture>()
     const { theme, toggleTheme } = useTheme()
-    const [liquids, setLiquids] = useState<LiquidCulture[]>([])
+    const [spawns, setSpawns] = useState<SpawnCulture[]>([])
 
     const getData = async() => {
-        const Liquids: LiquidCulture[] = await Liquid.readAll(db)
-        console.log(Liquids)  
-        setLiquids(Liquids)
+        const Spawns: SpawnCulture[] = await Spawn.readAll(db)
+        console.log(Spawns)  
+        setSpawns(Spawns)
     }
 
     useFocusEffect(
@@ -58,10 +58,10 @@ export default function LiquidCulturesListScreen() {
               >
                 <View style={{ backgroundColor: '#fff8', height: '100%' }}>
                   <Form.Control name="table" label="Cultures" labelStyle={styles.label}>  
-                    {liquids && liquids.length > 0 ? (
+                    {spawns && spawns.length > 0 ? (
                         <>
                         <ScrollableDataTable 
-                            data={liquids? liquids : []}
+                            data={spawns? spawns : []}
                             columns={columns}
                             headerTextStyle={{ textAlign: 'center', color: 'rgba(255,255,255,0.7)', textShadowColor:'blue', textShadowRadius: 4 }}
                             cellTextStyle={{ textAlign: 'center', color: 'white', textShadowColor: 'black', textShadowRadius:4 }}
