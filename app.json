@@ -20,7 +20,16 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "permissions": [
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE",
+        "MANAGE_EXTERNAL_STORAGE",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE",
+        "MANAGE_EXTERNAL_STORAGE"
+      ],
+      "edgeToEdgeEnabled": true,
+      "package": "com.holycannoli.mycologger"
     },
     "web": {
       "favicon": "./assets/favicon.png"

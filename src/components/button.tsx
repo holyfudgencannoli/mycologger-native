@@ -19,6 +19,7 @@ export default function Button({
             <ButtonBase 
                 color={color}
                 title={title}
+                onPress={onPress}
             />
         </View>
     )

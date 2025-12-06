@@ -11,7 +11,8 @@ import NewItem from '@features/raw-materials/new-item';
 import { SQLiteProvider } from 'expo-sqlite';
 import PurchaseLogForm from '@features/raw-materials/purchase-log-form';
 import Navigation from '@navigation';
-
+import * as MediaLibrary from 'expo-media-library';
+import { Platform } from 'react-native';
 
 export default function App() {
 

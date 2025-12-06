@@ -4,7 +4,7 @@ import * as FileSystem from 'expo-file-system/legacy';
 import { checkpointAndCloseForBackup, useSQLiteContext } from '@db';
 import * as SQLite from 'expo-sqlite';
 import { Workbook } from 'exceljs';
-import { Buffer as NodeBuffer } from 'node:buffer'; 
+import { Buffer as NodeBuffer } from 'buffer'; 
 import* as RNFS from 'react-native-fs'
 
 const docDir = FileSystem.documentDirectory!;

@@ -1,6 +1,7 @@
 
 import { SQLiteDatabase } from "expo-sqlite";
 import { safeExec, safeRun, safeSelect, safeSelectOne, safeSelectAll } from "../utils";
+import { BaseType as RawMaterial } from "@features/raw-materials";
 
 export async function create(
   db: SQLiteDatabase,
@@ -18,33 +19,21 @@ export async function create(
 }
 
 export async function readAll(db: SQLiteDatabase) {
-  return await safeSelectAll(db, "SELECT * FROM raw_materials ORDER BY id ASC");
+  return await safeSelectAll<RawMaterial>(db, "SELECT * FROM raw_materials ORDER BY id ASC");
 }
 
 export async function getById(
   db: SQLiteDatabase,
   id: number
 ) {
-  return await safeSelectOne<{
-    id: number;
-    item_id: number;
-    name: string;
-    category: string;
-    subcategory: string;
-  }>(db, "SELECT * FROM raw_materials WHERE id = ?", [id]);
+  return await safeSelectOne<RawMaterial>(db, "SELECT * FROM raw_materials WHERE id = ?", [id]);
 }
 
 export async function getByName(
   db: SQLiteDatabase,
   name: string
 ) {
-  return await safeSelectOne<{
-    id: number;
-    item_id: number;
-    name: string;
-    category: string;
-    subcategory: string;
-  }>(db, "SELECT * FROM raw_materials WHERE name = ?", [name]);
+  return await safeSelectOne<RawMaterial>(db, "SELECT * FROM raw_materials WHERE name = ?", [name]);
 }
 
 export async function update(

@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 import { Surface } from "react-native-paper";
 import { LinearGradient } from "expo-linear-gradient";
 import Button from '@components/button'
+import * as XLSQL from '@utils/database-utils'
 
 export default function DBManagement() {
     const backup = useDatabaseBackup();
@@ -76,7 +77,7 @@ export default function DBManagement() {
                     title="export" 
                     onPress={async () => {
                         try {
-                            const backupUri = await backup.exportDb();  // Ensure this is an async call
+                            const backupUri = await XLSQL.exportToExcel();  // Ensure this is an async call
                             console.log("Backup URI:", backupUri);
                             console.log('Pressed')
                             setLastBackupUri(backupUri)

@@ -29,6 +29,7 @@ import NewTaskForm from "@features/tasks/new-task-form";
 import DBManagement from "@features/db-management";
 import ExecuteRecipeBatch from "@features/recipe-batches/execute-recipe-batch";
 import CreateMaintenanceTask from "@features/tasks/new-maintenance-task";
+import RawMaterialInventory from "@features/inventory/raw-materials";
 
 // import RawMaterialList from '../RawMaterials/RawMaterialListScreen';
 // import NewRMFormScreen from '../RawMaterials/NewRMFormScreen';
@@ -76,6 +77,7 @@ export type RootDrawerParamsList = {
     'Recipes': undefined, 
     'Cultures': undefined,
     'Tasks': {params: [{ startTime: any, endTime: any }]},
+    'Inventory': undefined,
     'DB Management': undefined
 }
 
@@ -160,8 +162,8 @@ function DrawerNavigator() {
             <Drawer.Screen component={HardwareNavigator} name='Hardware'/>
             <Drawer.Screen component={ReceipesNavigator} name='Recipes'/>
             <Drawer.Screen component={CulturesNavigator} name='Cultures'/>
-            {/* <Drawer.Screen component={DBManagement} name='DB Management'/> */}
-            {/* <Drawer.Screen component={InventoryNavigator} name='Inventory' options={{ unmountOnBlur: true }}/> */}
+            <Drawer.Screen component={DBManagement} name='DB Management'/>
+            <Drawer.Screen component={InventoryNavigator} name='Inventory'/>
             {/* <Drawer.Screen component={ProductsNavGroup} name='Products'/>
             <Drawer.Screen component={TasksNavGroup} name='Tasks'/>
             <Drawer.Screen component={SterilizationRecordsNavGroup} name='Sterilizations'/> */}
@@ -291,18 +293,29 @@ function CulturesNavigator() {
     )
 }
 
-// const Inventory = createMaterialTopTabNavigator();
 
-// function InventoryNavigator() {
-//     return(
-//         <Inventory.Navigator>
-//             <Inventory.Screen component={RawMaterialInventory} name="Raw Materials" options={{ unmountOnBlur: true }} />
-//             <Inventory.Screen component={NewTaskForm} name="Bio Materials" />
-//             <Inventory.Screen component={NewTaskForm} name="Supplies" />
-//             <Inventory.Screen component={NewTaskForm} name="Hardware" />
-//         </Inventory.Navigator>
-//     )
-// }
+export type InventoryParamList = {
+  "Raw Materials": undefined;
+};
+
+const Inventory = createMaterialTopTabNavigator<InventoryParamList, any>();
+
+function InventoryNavigator() {
+    return(
+        <Inventory.Navigator
+            screenOptions={{
+                tabBarLabelStyle: { fontSize: 16, color: 'white' },
+                // tabBarItemStyle: { borderColor: 'white', borderWidth: 1 },
+                tabBarStyle: { backgroundColor: '#94f8' },
+            }}
+        >
+            <Inventory.Screen component={RawMaterialInventory} name="Raw Materials" />
+            {/* <Inventory.Screen component={NewTaskForm} name="Bio Materials" /> */}
+            {/* <Inventory.Screen component={NewTaskForm} name="Supplies" /> */}
+            {/* <Inventory.Screen component={NewTaskForm} name="Hardware" /> */}
+        </Inventory.Navigator>
+    )
+}
 
 
 export type TaskParamList = {
