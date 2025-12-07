@@ -3,7 +3,7 @@ import { TextStyle } from "react-native";
 export type Size = 'sm' | 'md' | 'lg';
 export type Variant = 'default' | 'primary' | 'secondary';
 
-export interface FormControlProps {
+export type FormControlProps = {
   id?: string;
   name: string;
   label?: string;

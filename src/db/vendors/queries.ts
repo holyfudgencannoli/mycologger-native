@@ -31,7 +31,7 @@ export async function create(
   return result.lastInsertRowId;
 }
 
-export async function readAll<VendorType>(db: SQLiteDatabase) {
+export async function readAll(db: SQLiteDatabase) {
   return await safeSelectAll<VendorType>(db, "SELECT * FROM vendors ORDER BY id ASC");
 }
 

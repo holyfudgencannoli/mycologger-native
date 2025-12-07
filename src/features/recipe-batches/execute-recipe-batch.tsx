@@ -38,11 +38,9 @@ export default function ExecuteRecipeBatch() {
 
 
     return(
-        <ImageBG image={require('@assets/bg.jpg')}>
             <ScreenPrimative scroll contentContainerStyle={styles.container} edges={[]}>
                 <CreateRecipeBatch setUnsaved={setUnsaved} />
             </ScreenPrimative>
-        </ImageBG>
     )
 }
 

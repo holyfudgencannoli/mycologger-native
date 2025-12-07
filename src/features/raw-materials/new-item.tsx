@@ -1,4 +1,4 @@
-import { Button, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import * as Form from 'custom_modules/react-native-forms/src';
 import { useCallback, useEffect, useState } from 'react';
 import { Surface } from 'react-native-paper';
@@ -13,13 +13,13 @@ import { RootDrawerParamsList } from '@navigation';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ScreenPrimative } from '@components/screen-primative';
+import Button from '@components/button';
 // import { useFocusEffect } from '@react-navigation/native';
 
 type NavigationProps = DrawerNavigationProp<RootDrawerParamsList>
 
 export default function NewItem() {
 	const [items, setItems] = useState([])
-	const [selectedItem, setSelectedItem] = useState(null)
 	const [name, setName] = useState('');
 	const [category, setCategory] = useState('');
 	const [subcategory, setSubcategory] = useState('');
@@ -50,7 +50,9 @@ export default function NewItem() {
 		const nowMs = new Date().getTime()
 		const TYPE = 'raw_material'
 		const invItemId = await InvItem.create(db, TYPE, nowMs)
-		const rawMatId = await RawMat.create(db, invItemId, selectedItem.name, category, subcategory)
+		console.log("Inv ITem", invItemId)
+		const rawMatId = await RawMat.create(db, invItemId, name, category, subcategory)
+		console.log("RawMaterial", rawMatId)
 		InvLog.create(db, TYPE, rawMatId, 0, 'Unit', nowMs)
 		navigation.navigate("Dashboard")
 	};
@@ -73,9 +75,7 @@ export default function NewItem() {
 						<Form.Control label='Item Subcategory' labelStyle={{ color: 'white' }} name='subcategory'>
 							<Form.Input size='lg' value={subcategory} style={{ color: 'white', flex: 1 }} onChangeText={setSubcategory}  />
 						</Form.Control>
-						<View style={{ marginTop: 36 }}>
-							<Button color={'#f74a63cc'} title='Submit' onPress={() => handleSubmit(onSubmit)} />
-						</View>
+						<Button viewStyle={{ marginTop: 36 }} color={'#f74a63cc'} title='Submit' onPress={() => onSubmit()} />
 				</LinearGradient>	
 			</View>
 		</ScreenPrimative>

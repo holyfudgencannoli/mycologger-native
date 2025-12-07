@@ -31,7 +31,7 @@ export default function NewPurchaseLog() {
 
     const getItemNames = async() => {
         const items = await HW.readAll(db)
-        setItems([...items, { id: 999999, name: 'New Item' }])
+        setItems([{ id: 999999, name: 'New Item' }, ...items])
     }
 
     useFocusEffect(
@@ -43,7 +43,6 @@ export default function NewPurchaseLog() {
     return(
         <ScreenPrimative edges={[]}>
             <View style={styles.container}>
-                <ScrollView>
                     <LinearGradient
                         start={{ x: 0, y: 0 }}
                         end={{ x: 0.3, y: 0.9 }}
@@ -86,7 +85,6 @@ export default function NewPurchaseLog() {
                         <></>
                     }
                     </LinearGradient>
-                </ScrollView>
             </View>                    
         </ScreenPrimative>
     )

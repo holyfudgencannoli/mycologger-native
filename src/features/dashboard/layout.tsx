@@ -2,21 +2,21 @@ import { StyleSheet, Text, View } from "react-native";
 import { ScreenPrimative } from "@components/screen-primative";
 import { LinearGradient } from 'expo-linear-gradient'
 import { Surface } from "react-native-paper";
-import * as MediaLibrary from 'expo-media-library'
+// import * as MediaLibrary from 'expo-media-library'
 import { Platform } from "react-native";
 
 
 export default function Dashboard() {
   
 
-  async function requestFilePermissions() {
-    if (Platform.OS === 'android') {
-      const { status } = await MediaLibrary.requestPermissionsAsync();
-      if (status !== 'granted') {
-        throw new Error('Permission to access storage is required.');
-      }
-    }
-  }
+  // async function requestFilePermissions() {
+  //   if (Platform.OS === 'android') {
+  //     const { status } = await MediaLibrary.requestPermissionsAsync();
+  //     if (status !== 'granted') {
+  //       throw new Error('Permission to access storage is required.');
+  //     }
+  //   }
+  // }
 
 
 	return(

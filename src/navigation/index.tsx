@@ -162,7 +162,7 @@ function DrawerNavigator() {
             <Drawer.Screen component={HardwareNavigator} name='Hardware'/>
             <Drawer.Screen component={ReceipesNavigator} name='Recipes'/>
             <Drawer.Screen component={CulturesNavigator} name='Cultures'/>
-            <Drawer.Screen component={DBManagement} name='DB Management'/>
+            {/* <Drawer.Screen component={DBManagement} name='DB Management'/> */}
             <Drawer.Screen component={InventoryNavigator} name='Inventory'/>
             {/* <Drawer.Screen component={ProductsNavGroup} name='Products'/>
             <Drawer.Screen component={TasksNavGroup} name='Tasks'/>

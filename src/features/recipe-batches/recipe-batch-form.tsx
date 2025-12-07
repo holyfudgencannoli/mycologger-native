@@ -104,7 +104,7 @@ export default function RecipeBatchForm({ setUnsaved }: { setUnsaved: (value: bo
 
     useEffect(() => {
         const loss_ans = recipe ? ((parseFloat(quantity) * recipe.yield_amount) - parseFloat(realAmount)).toString() : '0'
-        let parsed = parseFloat(loss_ans)
+        const parsed = parseFloat(loss_ans)
         console.log(loss)
         if (parsed < 0) {
             setLoss('0')
@@ -209,7 +209,7 @@ export default function RecipeBatchForm({ setUnsaved }: { setUnsaved: (value: bo
                 >
                     {recipes.map((recipe) => {
                         return(
-                            <Picker.Item label={`${recipe.name}, ${recipe.yield_amount} ${recipe.yield_unit}`} value={recipe.id} />
+                            <Picker.Item key={recipe.id} label={`${recipe.name}, ${recipe.yield_amount} ${recipe.yield_unit}`} value={recipe.id} />
                             // <Picker.Item label={recipe.name} value={recipe.id}/>
                         )
                     })}

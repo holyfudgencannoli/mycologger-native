@@ -43,9 +43,6 @@ export default function RecipeBatchList() {
 
 
     return(
-        <ImageBG
-            image={require('@assets/bg.jpg')}
-        >
             <ScreenPrimative>
                 <Surface style={styles.surfaceMetaContainer}>                        
                     <Surface style={styles.surfaceContainer}>
@@ -74,7 +71,6 @@ export default function RecipeBatchList() {
                     </Surface>
                 </Surface>
             </ScreenPrimative>
-        </ImageBG>
     )
 
 }

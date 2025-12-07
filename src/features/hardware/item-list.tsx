@@ -46,9 +46,6 @@ export default function ItemList() {
 
 
     return(
-        <ImageBG
-            image={require('@assets/bg.jpg')}
-        >
             <ScreenPrimative>
                 <Surface style={styles.surfaceMetaContainer}>                        
                     <Surface style={styles.surfaceContainer}>
@@ -77,7 +74,6 @@ export default function ItemList() {
                     </Surface>
                 </Surface>
             </ScreenPrimative>
-        </ImageBG>
     )
 
 }

@@ -44,9 +44,6 @@ export default function RecipeList() {
 
 
     return(
-        <ImageBG
-            image={require('@assets/bg.jpg')}
-        >
             <ScreenPrimative>
                 <Surface style={styles.surfaceMetaContainer}>                        
                     <Surface style={styles.surfaceContainer}>
@@ -75,7 +72,6 @@ export default function RecipeList() {
                     </Surface>
                 </Surface>
             </ScreenPrimative>
-        </ImageBG>
     )
 
 }

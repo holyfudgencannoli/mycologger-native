@@ -1,5 +1,6 @@
 import { SQLiteDatabase } from "expo-sqlite";
-import { safeExec, safeRun, safeSelectOne } from "../utils";
+import { safeExec, safeRun, safeSelectAll, safeSelectOne } from "../utils";
+import InventoryLogType from "@features/inventory/types/inventory-log";
 
 const VALID_TYPES = new Set([
   "inventory_item",
@@ -41,8 +42,7 @@ export async function create(
 }
 
 export async function readAll(db: SQLiteDatabase, type: string) {
-  return await safeExec(db, `SELECT * FROM ${inventoryLogTable
-(type)} ORDER BY id DESC`);
+  return await safeSelectAll<InventoryLogType>(db, `SELECT * FROM ${inventoryLogTable(type)} ORDER BY id DESC`);
 }
 
 export async function getByItemId(
@@ -88,9 +88,8 @@ export async function update(
 export async function destroy(db: SQLiteDatabase, type: string, id: number) {
   const result = await safeRun(
     db,
-    `DELETE FROM ${inventoryLogTable
-(type)} WHERE id = ?`,
-    [id]
+    `DELETE FROM ${inventoryLogTable(type)} WHERE id = ?`, 
+      [id]
   );
 
   return result.changes; // rows deleted
@@ -105,8 +104,7 @@ export async function exists(
 ) {
   const row = await safeSelectOne<{ count: number }>(
     db,
-    `SELECT COUNT(*) AS count FROM ${inventoryLogTable
-(type)} WHERE id = ?`,
+    `SELECT COUNT(*) AS count FROM ${inventoryLogTable(type)} WHERE id = ?`,
     [id]
   );
 

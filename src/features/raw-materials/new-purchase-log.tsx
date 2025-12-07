@@ -38,7 +38,7 @@ export default function NewPurchaseLog() {
     
     const getData = async() => {
         const data = await RawMat.readAll(db)
-        setItems([data, { id: 999999, name: 'New Item' }])
+        setItems([{ id: 999999, name: 'New Item' }, ...data])
     }
 
     useFocusEffect(
@@ -53,7 +53,6 @@ export default function NewPurchaseLog() {
     return(
         <ScreenPrimative edges={[]}>
             <View style={styles.container}>	
-                <ScrollView style={{ flex: 1 }}>
                     <LinearGradient
                         start={{ x: 0, y: 0 }}
                         end={{ x: 0.3, y: 0.9 }}
@@ -94,7 +93,6 @@ export default function NewPurchaseLog() {
                         <></>
                     }
                     </LinearGradient>
-                </ScrollView>   
             </View>
         </ScreenPrimative>
     )

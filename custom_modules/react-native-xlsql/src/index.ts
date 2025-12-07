@@ -87,11 +87,17 @@ export async function importDb(db: SQLiteDatabase): Promise<void> {
   await sleep(100);
 
   // Delete existing DB files
-  await Promise.all([
-    FileSystem.deleteAsync(`${SQLITE_DIR}mycologger.db`, { idempotent: true }),
-    FileSystem.deleteAsync(`${SQLITE_DIR}mycologger.db-wal`, { idempotent: true }),
-    FileSystem.deleteAsync(`${SQLITE_DIR}mycologger.db-shm`, { idempotent: true }),
-  ]);
+  
+	try{
+    const [res1, res2, res3] = await Promise.all([				  
+      FileSystem.deleteAsync(`${SQLITE_DIR}mycologger.db`, { idempotent: true }),
+      FileSystem.deleteAsync(`${SQLITE_DIR}mycologger.db-wal`, { idempotent: true }),
+      FileSystem.deleteAsync(`${SQLITE_DIR}mycologger.db-shm`, { idempotent: true }),
+    ]);
+    console.log(res1, res2, res3)
+  } catch (err) {
+		console.error("Promise.all Error: ", err)
+	}
 
   const copyOrFail = async (from: string, to: string) => {
     const info = await FileSystem.getInfoAsync(from);

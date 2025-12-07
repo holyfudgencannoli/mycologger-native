@@ -44,7 +44,7 @@ export default function NewPurchaseLog() {
         
     const getItems = async() => {
         const data = await BioMat.readAll(db)
-        setItems([...data, { id: 10000, name: 'Test', category: 'Test', speciesLatin: 'Test' }, { id: 999999, name: 'New Item' }])
+        setItems([{ id: 999999, name: 'New Item' }, { id: 10000, name: 'Test', category: 'Test', speciesLatin: 'Test' }, ...data])
     }
 
     const getPurchaseLogs = async() => {
@@ -63,14 +63,13 @@ export default function NewPurchaseLog() {
             getItems()
             getPurchaseLogs()   
                  
-        }, [isNewItem])
+        }, [])
     )
 
 
     return(
             <ScreenPrimative edges={[]}>
                 <View style={styles.container}>
-                    <ScrollView>
                         <LinearGradient
                             start={{ x: 0, y: 0 }}
                             end={{ x: 0.3, y: 0.9 }}
@@ -113,7 +112,6 @@ export default function NewPurchaseLog() {
                         <></>
                     }
                     </LinearGradient>
-                </ScrollView>
             </View>                    
         </ScreenPrimative>
     )
