@@ -7,14 +7,16 @@ import { ScrollableDataTable } from "@components/scrollable-data-table";
 import { ScreenPrimative } from "@components/screen-primative";
 import { PurchaseLogsModal } from "./detail-modal";
 import { useSQLiteContext } from "expo-sqlite";
-import * as RawMat from '@db/raw-materials';
+import * as Supply from '@db/consumable-items';
 import * as InvLog from '@db/inventory-logs';
 import { LinearGradient } from "expo-linear-gradient";
+import ConsumableItem from "@features/consumables/types";
+import InventoryLogType from "./types/inventory-log";
 
-export default function RawMaterialInventory() {
+export default function ConsumableItemInventory() {
   const db = useSQLiteContext();
-  const [rawMaterials, setRawMaterials] = useState([]);
-  const [inventoryLogs, setInventoryLogs] = useState([]);
+  const [consumableItems, setConsumableItems] = useState<ConsumableItem[]>([]);
+  const [inventoryLogs, setInventoryLogs] = useState<InventoryLogType[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [currentItem, setCurrentItem] = useState(null);
 
@@ -33,18 +35,18 @@ export default function RawMaterialInventory() {
     return safeRow;
   };
 
-  const getRMData = async () => {
+  const getItemData = async () => {
     try {
-      const rmData = await RawMat.readAll(db);
-      setRawMaterials(rmData);
+      const itemData: ConsumableItem[] = await Supply.readAll(db);
+      setConsumableItems(itemData);
 
-      const itemIds = rmData.map((d) => d.item_id);
+      const itemIds = itemData.map((d) => d.id);
 
       const cleanedLogs = [];
 
       for (let i = 0; i < itemIds.length; i++) {
         const id = itemIds[i];
-        const rawRow = await InvLog.getByItemId(db, "raw_material", id);
+        const rawRow = await InvLog.getByItemId(db, "consumable_item", id);
 
         if (!rawRow) continue;
 
@@ -52,13 +54,14 @@ export default function RawMaterialInventory() {
         const cleaned = cleanRow(rawRow);
         cleanedLogs.push({
           ...cleaned,
-          name: rmData[i].name,
-          category: rmData[i].category,
-          subcategory: rmData[i].subcategory
+          name: itemData[i].name,
+          category: itemData[i].category,
+          subcategory: itemData[i].subcategory
         });
       }
 
       setInventoryLogs(cleanedLogs);
+      console.log(cleanedLogs)
     } catch (err) {
       console.error("Inventory loading error:", err);
     }
@@ -66,7 +69,7 @@ export default function RawMaterialInventory() {
 
   useFocusEffect(
     useCallback(() => {
-      getRMData();
+      getItemData();
     }, [])
   );
 
@@ -95,7 +98,7 @@ export default function RawMaterialInventory() {
               {inventoryLogs.length > 0 && (
                 <>
                   <ScrollableDataTable
-                    data={inventoryLogs}
+                    data={consumableItems}
                     columns={columns}
                     headerTextStyle={{
                       textAlign: "center",

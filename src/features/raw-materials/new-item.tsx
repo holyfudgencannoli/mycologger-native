@@ -50,7 +50,7 @@ export default function NewItem() {
 		const nowMs = new Date().getTime()
 		const TYPE = 'raw_material'
 		const invItemId = await InvItem.create(db, TYPE, nowMs)
-		console.log("Inv ITem", invItemId)
+		console.log("Inv Item", invItemId)
 		const rawMatId = await RawMat.create(db, invItemId, name, category, subcategory)
 		console.log("RawMaterial", rawMatId)
 		InvLog.create(db, TYPE, rawMatId, 0, 'Unit', nowMs)

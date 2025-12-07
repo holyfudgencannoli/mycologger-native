@@ -53,9 +53,9 @@ export default function NewItem() {
 
   const onSubmit = async() => {
     const nowMs = new Date().getTime()
-    const TYPE = 'raw_material'
+    const TYPE = 'hardware_item'
     const invItemId = await InvItem.create(db, TYPE, nowMs)
-    const HWItemId = await HW.create(db, invItemId, selectedItem.name, category, subcategory)
+    const HWItemId = await HW.create(db, invItemId, name, category, subcategory)
     InvLog.create(db, TYPE, HWItemId, 0, 'Unit', nowMs)
     navigation.navigate("Dashboard")
   };
@@ -79,7 +79,7 @@ export default function NewItem() {
               <Form.Input size='lg' value={subcategory} style={{ color: 'white', flex: 1 }} onChangeText={setSubcategory}  />
             </Form.Control>
             <View style={{ marginTop: 36 }}>
-              <Button color={'#f74a63cc'} title='Submit' onPress={() => handleSubmit(onSubmit)} />
+              <Button color={'#f74a63cc'} title='Submit' onPress={handleSubmit(onSubmit)} />
             </View>
         </LinearGradient>	
       </View>

@@ -70,6 +70,10 @@ import RawMaterialInventory from "@features/inventory/raw-materials";
 // shattering
 import { useFocusEffect } from "@react-navigation/native";
 import { useCallback, useEffect } from "react";
+import { LinearGradient } from "expo-linear-gradient";
+import BioMaterialInventory from "@features/inventory/bio-materials";
+import ConsumableItemInventory from "@features/inventory/consumable-items";
+import HardwareItemInventory from "@features/inventory/hardware-items";
 
 type ResetWrapperProps<ParamList extends Record<string, object | undefined>> = {
   navigator: React.ComponentType<any>;
@@ -161,22 +165,31 @@ function DrawerNavigator() {
                 header: ({ navigation, route, options }) => {
                     const title = getHeaderTitle(options, route.name);
 
-                    return <Header navigation={navigation} title={title} style={options.headerStyle} textStyle={options.headerTitleStyle} />;
+                    return (
+                        <LinearGradient
+                            start={{ x: 0, y: 0 }}
+                            end={{ x: 1, y: 0 }}
+                            colors={['#00f', '#94F8', '#f00']}
+                            locations={[0, 0.5, 1]}
+                        >
+                            <Header navigation={navigation} title={title} style={options.headerStyle} textStyle={options.headerTitleStyle} />
+                        </LinearGradient>
+                    ) 
                 },
                 headerStyle: {
                     height: 50,         // ← Change header height
                     backgroundColor: '#6600ff55',
-                    width: '100%',
-                    borderColor: 'white',
-                    borderWidth: 2,
-                
+                    width: '100%'
                 },
                 headerTitleStyle: {
                     fontSize: 24,
                     padding: 8,
                     paddingLeft: 16,
+                    textAlign: 'center',    
+                    width: '100%',
                     color: 'white',
-                    // lineHeight: 24,
+                    textShadowColor: 'black',
+                    textShadowRadius: 8,
                     fontWeight: 'bold',
                 },
                 headerTintColor: 'white',
@@ -327,6 +340,9 @@ function CulturesNavigator() {
 
 export type InventoryParamList = {
   "Raw Materials": undefined;
+  "Bio Materials": undefined;
+  "Supplies": undefined;
+  "Hardware": undefined;
 };
 
 const Inventory = createMaterialTopTabNavigator<InventoryParamList, any>();
@@ -335,15 +351,15 @@ function InventoryNavigator() {
     return(
         <Inventory.Navigator
             screenOptions={{
-                tabBarLabelStyle: { fontSize: 16, color: 'white' },
+                tabBarLabelStyle: { fontSize: 14, color: 'white' },
                 // tabBarItemStyle: { borderColor: 'white', borderWidth: 1 },
                 tabBarStyle: { backgroundColor: '#94f8' },
             }}
         >
             <Inventory.Screen component={RawMaterialInventory} name="Raw Materials" />
-            {/* <Inventory.Screen component={NewTaskForm} name="Bio Materials" /> */}
-            {/* <Inventory.Screen component={NewTaskForm} name="Supplies" /> */}
-            {/* <Inventory.Screen component={NewTaskForm} name="Hardware" /> */}
+            <Inventory.Screen component={BioMaterialInventory} name="Bio Materials" />
+            <Inventory.Screen component={ConsumableItemInventory} name="Supplies" />
+            <Inventory.Screen component={HardwareItemInventory} name="Hardware" />
         </Inventory.Navigator>
     )
 }

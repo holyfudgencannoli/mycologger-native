@@ -7,13 +7,14 @@ import { ScrollableDataTable } from "@components/scrollable-data-table";
 import { ScreenPrimative } from "@components/screen-primative";
 import { PurchaseLogsModal } from "./detail-modal";
 import { useSQLiteContext } from "expo-sqlite";
-import * as RawMat from '@db/raw-materials';
+import * as HW from '@db/hardware-items';
 import * as InvLog from '@db/inventory-logs';
 import { LinearGradient } from "expo-linear-gradient";
+import HardwareItem from "@features/hardware/types";
 
-export default function RawMaterialInventory() {
+export default function HardwareItemInventory() {
   const db = useSQLiteContext();
-  const [rawMaterials, setRawMaterials] = useState([]);
+  const [hardwareItems, setHardwareItems] = useState([]);
   const [inventoryLogs, setInventoryLogs] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [currentItem, setCurrentItem] = useState(null);
@@ -33,18 +34,18 @@ export default function RawMaterialInventory() {
     return safeRow;
   };
 
-  const getRMData = async () => {
+  const getItemData = async () => {
     try {
-      const rmData = await RawMat.readAll(db);
-      setRawMaterials(rmData);
+      const itemData: HardwareItem[] = await HW.readAll(db);
+      setHardwareItems(itemData);
 
-      const itemIds = rmData.map((d) => d.item_id);
+      const itemIds = itemData.map((d) => d.id);
 
       const cleanedLogs = [];
 
       for (let i = 0; i < itemIds.length; i++) {
         const id = itemIds[i];
-        const rawRow = await InvLog.getByItemId(db, "raw_material", id);
+        const rawRow = await InvLog.getByItemId(db, "hardware_item", id);
 
         if (!rawRow) continue;
 
@@ -52,9 +53,9 @@ export default function RawMaterialInventory() {
         const cleaned = cleanRow(rawRow);
         cleanedLogs.push({
           ...cleaned,
-          name: rmData[i].name,
-          category: rmData[i].category,
-          subcategory: rmData[i].subcategory
+          name: itemData[i].name,
+          category: itemData[i].category,
+          subcategory: itemData[i].subcategory
         });
       }
 
@@ -66,7 +67,7 @@ export default function RawMaterialInventory() {
 
   useFocusEffect(
     useCallback(() => {
-      getRMData();
+      getItemData();
     }, [])
   );
 

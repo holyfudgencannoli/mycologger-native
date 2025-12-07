@@ -17,8 +17,8 @@ export async function create(
   return result.lastInsertRowId;
 }
 
-export async function readAll(db: SQLiteDatabase) {
-  return await safeSelectAll(db, "SELECT * FROM bio_materials ORDER BY id ASC");
+export async function readAll<BioMaterial>(db: SQLiteDatabase) {
+  return await safeSelectAll<BioMaterial>(db, "SELECT * FROM bio_materials ORDER BY id ASC");
 }
 
 export async function getById(

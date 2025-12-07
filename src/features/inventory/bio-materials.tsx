@@ -7,14 +7,17 @@ import { ScrollableDataTable } from "@components/scrollable-data-table";
 import { ScreenPrimative } from "@components/screen-primative";
 import { PurchaseLogsModal } from "./detail-modal";
 import { useSQLiteContext } from "expo-sqlite";
-import * as RawMat from '@db/raw-materials';
+import * as BioMat from '@db/bio-materials';
 import * as InvLog from '@db/inventory-logs';
 import { LinearGradient } from "expo-linear-gradient";
+import BioMaterial from "@features/bio-materials/types";
+import { PurchaseLogProp } from "./types";
+import InventoryLogType from "./types/inventory-log";
 
-export default function RawMaterialInventory() {
+export default function BioMaterialInventory() {
   const db = useSQLiteContext();
-  const [rawMaterials, setRawMaterials] = useState([]);
-  const [inventoryLogs, setInventoryLogs] = useState([]);
+  const [bioMaterials, setBioMaterials] = useState<BioMaterial[]>([]);
+  const [inventoryLogs, setInventoryLogs] = useState<InventoryLogType[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [currentItem, setCurrentItem] = useState(null);
 
@@ -33,28 +36,28 @@ export default function RawMaterialInventory() {
     return safeRow;
   };
 
-  const getRMData = async () => {
+  const getBioMatData = async () => {
     try {
-      const rmData = await RawMat.readAll(db);
-      setRawMaterials(rmData);
+      const bioMatData: BioMaterial[] = await BioMat.readAll(db);
+      setBioMaterials(bioMatData);
 
-      const itemIds = rmData.map((d) => d.item_id);
+      const itemIds = bioMatData.map((d) => d.id);
 
       const cleanedLogs = [];
 
       for (let i = 0; i < itemIds.length; i++) {
         const id = itemIds[i];
-        const rawRow = await InvLog.getByItemId(db, "raw_material", id);
+        const bioRow = await InvLog.getByItemId(db, "bio_material", id);
 
-        if (!rawRow) continue;
+        if (!bioRow) continue;
 
         // Flatten & sanitize DB row
-        const cleaned = cleanRow(rawRow);
+        const cleaned = cleanRow(bioRow);
         cleanedLogs.push({
           ...cleaned,
-          name: rmData[i].name,
-          category: rmData[i].category,
-          subcategory: rmData[i].subcategory
+          name: bioMatData[i].name,
+          category: bioMatData[i].category,
+          species_latin: bioMatData[i].species_latin
         });
       }
 
@@ -66,7 +69,7 @@ export default function RawMaterialInventory() {
 
   useFocusEffect(
     useCallback(() => {
-      getRMData();
+      getBioMatData();
     }, [])
   );
 

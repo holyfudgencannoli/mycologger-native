@@ -10,7 +10,13 @@ import * as InvLog from '@db/inventory-logs'
 import { useSQLiteContext } from 'expo-sqlite';
 import { LinearGradient } from 'expo-linear-gradient';
 import Button from '@components/button';
+import { useNavigation } from '@react-navigation/native';
+import { DrawerNavigationProp } from '@react-navigation/drawer';
+import { RootDrawerParamsList } from '@navigation';
 // import { useFocusEffect } from '@react-navigation/native';
+
+type NavigationProps = DrawerNavigationProp<RootDrawerParamsList>
+
 
 export default function NewItem() {
 	const [items, setItems] = useState([])
@@ -18,6 +24,7 @@ export default function NewItem() {
 	const [name, setName] = useState('');
 	const [category, setCategory] = useState('');
 	const [speciesLatin, setSpeciesLatin] = useState('');
+	const navigation = useNavigation<NavigationProps>();
 
 
 
@@ -44,8 +51,9 @@ export default function NewItem() {
 		const nowMs = new Date().getTime()
 		const TYPE = 'bio_material'
 		const invItemId = await InvItem.create(db, TYPE, nowMs)
-		const bioMatId = await BioMat.create(db, invItemId, selectedItem.name, category, speciesLatin)
+		const bioMatId = await BioMat.create(db, invItemId, name, category, speciesLatin)
 		InvLog.create(db, TYPE, bioMatId, 0, 'Unit', nowMs)
+		navigation.navigate("Dashboard")
 	};
 
 	return(
@@ -67,7 +75,7 @@ export default function NewItem() {
 				<Form.Control label='Species Name (Latin)' name='speciesLatin' labelStyle={{ color: 'white' }}>
 					<Form.Input value={speciesLatin} style={{ color: 'white', flex: 1 }} onChangeText={setSpeciesLatin}  />
 				</Form.Control>
-				<Button viewStyle={{marginTop: 36}} color={'#f74a63cc'} title='Submit' onPress={() => handleSubmit(onSubmit)} />
+				<Button viewStyle={{marginTop: 36}} color={'#f74a63cc'} title='Submit' onPress={handleSubmit(onSubmit)} />
 			</LinearGradient>
 		</View>
 	)

@@ -12,7 +12,7 @@ import { PurchaseLogProp } from '../types/purchase-log';
 import Button from '@components/button';
 
 
-export const RawMaterialsPurchaseLogModal = ({ visible, setModalOpen, item}: {visible: boolean, setModalOpen: (arg0: boolean) => void, item: RawMaterial}) => {
+export const PurchaseLogsModal = ({ visible, setModalOpen, item}: {visible: boolean, setModalOpen: (arg0: boolean) => void, item: RawMaterial}) => {
     const [purchaseLogs, setPurchaseLogs] = useState<{ log: PurchaseLogProp, vendor: Vendor.VendorType  }[]>([]);
     const [rawMaterial, setRawMaterial] = useState<RawMaterial>();
     const [vendors, setVendors] = useState([]);
@@ -58,12 +58,6 @@ export const RawMaterialsPurchaseLogModal = ({ visible, setModalOpen, item}: {vi
                     onPress: async() => {
                         await RawMat.destroy(db, id)
                         await InvItems.destroy
-                        // Remove the item from state
-                        setTimes((prev) => prev.filter((t) => t.id !== id));
-            
-                        /* OPTIONAL: If you want to persist immediately (instead of waiting for the effect),
-                        uncomment the line below.  The effect will still run, but it’s harmless. */
-                        persistTimes(times.filter(t => t.id !== id));
                     },
                     },
                 ],
@@ -106,7 +100,7 @@ export const RawMaterialsPurchaseLogModal = ({ visible, setModalOpen, item}: {vi
                                         {/* Navigation button */}
                                         <Button
                                             title="Execute"
-                                            onPress={() => goToScreen(item)}
+                                            onPress={() => {}}
                                             color="#4CAF50"
                                         />
                                     </View>
@@ -164,5 +158,5 @@ const styles = StyleSheet.create({
     },
 });
 
-export default RawMaterialsPurchaseLogModal;
+export default PurchaseLogsModal;
         

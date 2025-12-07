@@ -18,6 +18,7 @@ import { useForm } from "react-hook-form";
 import * as Supply from '@db/consumable-items'
 import * as InvItem from '@db/inventory-items'
 import * as InvLog from '@db/inventory-logs'
+import ConsumableItem from "./types";
 
 
 type NavigationProps = DrawerNavigationProp<RootDrawerParamsList>
@@ -45,20 +46,11 @@ export default function NewItem() {
       },
     });
   
-    const getData = async() => {
-      const data = await Supply.readAll(db)
-      setItems(data)
-    }
-  
-    useEffect(() => {
-      getData()
-    }, [])
-  
     const onSubmit = async() => {
       const nowMs = new Date().getTime()
       const TYPE = 'consumable_item'
       const invItemId = await InvItem.create(db, TYPE, nowMs)
-      const SupplyId = await Supply.create(db, invItemId, selectedItem.name, category, subcategory)
+      const SupplyId = await Supply.create(db, invItemId, name, category, subcategory)
       InvLog.create(db, TYPE, SupplyId, 0, 'Unit', nowMs)
       navigation.navigate("Dashboard")
     };
@@ -83,7 +75,7 @@ export default function NewItem() {
               <Form.Input size='lg' value={subcategory} style={{ color: 'white', flex: 1 }} onChangeText={setSubcategory}  />
             </Form.Control>
             <View style={{ marginTop: 36 }}>
-              <Button color={'#f74a63cc'} title='Submit' onPress={() => handleSubmit(onSubmit)} />
+              <Button color={'#f74a63cc'} title='Submit' onPress={handleSubmit(onSubmit)} />
             </View>
         </LinearGradient>	
       </View>

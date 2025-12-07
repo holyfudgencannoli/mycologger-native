@@ -509,7 +509,7 @@ export async function migrateDbIfNeeded(db: SQLiteDatabase) {
 
     await safeExec(db, `PRAGMA user_version = ${DATABASE_VERSION}`);
 
-    const tables = await db.getAllAsync(
+    const tables: any = await db.getAllAsync(
       `SELECT name FROM sqlite_master WHERE type='table';`
     );
 
