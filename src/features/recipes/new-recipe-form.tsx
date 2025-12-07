@@ -70,7 +70,7 @@ export default function CreateRecipe({ setUnsaved }: { setUnsaved: (value: boole
         const formatted = items.map((item, index) => ({
             _id: String(index),
             id: item.id,
-            value: item.name,
+            name: item.name,
         }));
         console.log("Formatted: ", formatted)
         setRawMaterialNames(formatted);
@@ -81,6 +81,7 @@ export default function CreateRecipe({ setUnsaved }: { setUnsaved: (value: boole
         useCallback(() => {
             getRMData()
             console.log(rawMaterialNames)
+            console.log(rawMaterialNames.map(name => name.value))
             return () => {
                 setName('');
                 setType('');

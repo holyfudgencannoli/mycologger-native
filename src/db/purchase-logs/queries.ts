@@ -1,6 +1,7 @@
 
 import { SQLiteDatabase } from "expo-sqlite";
 import { safeExec, safeRun, safeSelectOne } from "../utils";
+import { PurchaseLogProp } from "@features/inventory/types/purchase-log";
 
 const VALID_TYPES = new Set([
   "inventory_item",
@@ -74,6 +75,15 @@ export async function getById(
 		brand: string;
 		cost: number;
   }>(db, `SELECT * FROM ${purchaseLogTable(type)} WHERE id = ?`, [id]);
+}
+
+
+export async function getByItemId(
+	db: SQLiteDatabase,
+	type: string,
+	item_id: number
+) {
+	return await safeSelectOne<PurchaseLogProp[]>(db, `SELECT * FROM ${purchaseLogTable(type)} WHERE item_id = ?`, [item_id]);
 }
 
 export async function update(

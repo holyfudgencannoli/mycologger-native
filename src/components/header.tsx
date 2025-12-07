@@ -1,6 +1,6 @@
-import { LinearGradient } from "expo-linear-gradient";
-import { Button, View } from "react-native";
-import { Surface, Text, TouchableRipple } from "react-native-paper";
+import React from "react";
+import { View } from "react-native";
+import { Text, TouchableRipple } from "react-native-paper";
 
 export default function Header({ title, style, textStyle, navigation }) {
     return(

@@ -1,9 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { View, Text, Button, StyleSheet } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-// import { uaseAuth } from "../features/Authentication/utils/AuthContext";
-// import { TextInput } from "react-native-paper";
-// import { ThemedView } from "./ThemedView";
 
 export default function TimeLogger({
   startTime,
