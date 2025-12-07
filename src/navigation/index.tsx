@@ -1,4 +1,4 @@
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer, NavigationProp, useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
 import { createDrawerNavigator, DrawerNavigationProp } from "@react-navigation/drawer";
@@ -68,6 +68,33 @@ import RawMaterialInventory from "@features/inventory/raw-materials";
 // // import CreateBioMaterial from '../BioMaterial/CreateBioMaterial';
 // // import BioMaterialList from '../BioMaterial/BioMaterialList';
 // shattering
+import { useFocusEffect } from "@react-navigation/native";
+import { useCallback, useEffect } from "react";
+
+type ResetWrapperProps<ParamList extends Record<string, object | undefined>> = {
+  navigator: React.ComponentType<any>;
+  initialRoute: Extract<keyof ParamList, string>; // Only string route names
+};
+
+function ResetOnFocusWrapper<ParamList extends Record<string, object | undefined>>({
+  navigator: Navigator,
+  initialRoute,
+}: ResetWrapperProps<ParamList>) {
+  const navigation = useNavigation<NavigationProp<ParamList>>();
+
+  useFocusEffect(
+    useCallback(() => {
+      navigation.reset({
+        index: 0,
+        routes: [{ name: initialRoute as Extract<keyof ParamList, string> }],
+      });
+    }, [initialRoute])
+  );
+
+  return <Navigator />;
+}
+
+
 export type RootDrawerParamsList = {
     'Dashboard': undefined,
     'Raw Materials': undefined,
@@ -156,7 +183,7 @@ function DrawerNavigator() {
             }}
         >
             <Drawer.Screen component={Dashboard} name="Dashboard"  />
-            <Drawer.Screen component={RawMaterialNavigator} name='Raw Materials' />
+            <Drawer.Screen component={RawMaterialNavigator} name='Raw Materials'  />
             <Drawer.Screen component={BioMaterialNavigator} name='Bio Materials'/>
             <Drawer.Screen component={ConsumablesNavigator} name='Consumable Items'/>
             <Drawer.Screen component={HardwareNavigator} name='Hardware'/>
@@ -181,10 +208,12 @@ const RawMaterial = createMaterialTopTabNavigator<InventoryItemParamList, any>()
 function RawMaterialNavigator() {
     return(
         <RawMaterial.Navigator 
+            initialRouteName="New Item"
             screenOptions={{
                 tabBarLabelStyle: { fontSize: 16, color: 'white' },
                 // tabBarItemStyle: { borderColor: 'white', borderWidth: 1 },
                 tabBarStyle: { backgroundColor: '#94f8' },
+
             }}
         >
             <RawMaterial.Screen component={RawMat.NewItem} name="New Item" />
@@ -262,10 +291,12 @@ const Recipes = createMaterialTopTabNavigator<RecipeParamList, any>();
 function ReceipesNavigator() {
     return(
         <Recipes.Navigator
+            initialRouteName="New Recipe"
             screenOptions={{
                 tabBarLabelStyle: { fontSize: 16, color: 'white' },
                 // tabBarItemStyle: { borderColor: 'white', borderWidth: 1 },
                 tabBarStyle: { backgroundColor: '#94f8' },
+                lazy: false
             }}
         >
             <Recipes.Screen component={NewRecipe} name="New Recipe"/>

@@ -150,7 +150,7 @@ export default function CreateRecipe({ setUnsaved }: { setUnsaved: (value: boole
                         options={rawMaterialNames}
                         onValueChange={(value: any) => {
                             setIngredientId(value.id)
-                            setIngredientName(value.value)
+                            setIngredientName(value.name)
                             console.log(value.value)
                         }}
                     />
@@ -177,6 +177,7 @@ export default function CreateRecipe({ setUnsaved }: { setUnsaved: (value: boole
                 <ScrollView style={{ backgroundColor: '#fff5', height: 100, padding: 16 }}>
                     <Form.Control name='ingredients' label="Ingredients" labelStyle={styles.label}>
                         {ingredients.map((ingredient, index) => {
+                            console.log(ingredient, index)
                             return(
                                 <Text key={index} style={styles.subtitle}>
                                     {ingredient.ingredientName} — {

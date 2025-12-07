@@ -1,4 +1,4 @@
-import { Button, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import * as Form from 'custom_modules/react-native-forms/src';
 import { useCallback, useEffect, useState } from 'react';
 import { Surface } from 'react-native-paper';
@@ -9,11 +9,13 @@ import * as InvLog from '@db/inventory-logs'
 
 import { useSQLiteContext } from 'expo-sqlite';
 import { LinearGradient } from 'expo-linear-gradient';
+import Button from '@components/button';
 // import { useFocusEffect } from '@react-navigation/native';
 
 export default function NewItem() {
 	const [items, setItems] = useState([])
 	const [selectedItem, setSelectedItem] = useState(null)
+	const [name, setName] = useState('');
 	const [category, setCategory] = useState('');
 	const [speciesLatin, setSpeciesLatin] = useState('');
 
@@ -55,15 +57,9 @@ export default function NewItem() {
                 style={{ flex: 1, padding: 24}}
 				
 			>
-				<Form.Control name='name' labelStyle={{ color: 'white' }}>
-					<Form.Select 
-						style={{ backgroundColor: 'transparent', flex: 1  }}
-						options={items}
-						selectedValue={selectedItem}
-						onValueChange={setSelectedItem}
-						placeholder='Select Item'
-						size='lg'
-					/>
+				
+				<Form.Control label='Item Name' labelStyle={{ color: 'white' }} name='name'>
+					<Form.Input size='lg' style={{ color: 'white', flex: 1 }} value={name} onChangeText={setName}  />
 				</Form.Control>
 				<Form.Control label='Item Category' labelStyle={{ color: 'white' }} name='category'>
 					<Form.Input size='lg' style={{ color: 'white', flex: 1 }} value={category} onChangeText={setCategory}  />
@@ -71,7 +67,7 @@ export default function NewItem() {
 				<Form.Control label='Species Name (Latin)' name='speciesLatin' labelStyle={{ color: 'white' }}>
 					<Form.Input value={speciesLatin} style={{ color: 'white', flex: 1 }} onChangeText={setSpeciesLatin}  />
 				</Form.Control>
-				<Button title='Submit' onPress={() => handleSubmit(onSubmit)} />
+				<Button viewStyle={{marginTop: 36}} color={'#f74a63cc'} title='Submit' onPress={() => handleSubmit(onSubmit)} />
 			</LinearGradient>
 		</View>
 	)

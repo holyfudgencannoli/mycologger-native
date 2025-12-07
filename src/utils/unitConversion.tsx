@@ -16,7 +16,7 @@ export type VolumeUnit =
   | 'milliliter'
   | 'cup'
   | 'teaspoon'   // teaspoon
-  | 'tbsp'; // tablespoon
+  | 'tablespoon'; // tablespoon
 
 // A union that covers every supported unit – handy for the generic API.
 export type Unit = WeightUnit | VolumeUnit;
@@ -37,7 +37,7 @@ export const volumeToBase: Record<VolumeUnit, number> = {
   milliliter:   0.001,
   cup:  0.24,          // US cup
   teaspoon:  0.00492892,    // US teaspoon
-  tbsp: 0.0147868,     // US tablespoon
+  tablespoon: 0.0147868,     // US tablespoon
 };
 
 // Export the raw unit lists – useful for consumers that need to iterate.

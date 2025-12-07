@@ -13,6 +13,9 @@ import { useSQLiteContext } from "expo-sqlite";
 import * as Form from '@custom/react-native-forms/src'
 import { INV_UNITS, PUR_UNITS } from "@constants/units";
 import { useForm } from "react-hook-form";
+import NewBrandForm from "@features/brands/new-brand-form";
+import { LinearGradient } from "expo-linear-gradient";
+import NewVendorForm from "@features/vendors/new-vendor-form";
 
 
 
@@ -200,6 +203,10 @@ export default function PurchaseLogForm({
                     options={brands}
                 />
             </Form.Control>
+            {newBrand ? 
+                <NewBrandForm />:
+                <></>
+            }
             <Form.Control labelStyle={styles.label} label="Purchase Quantity" name="purchase_quantity" >
                 <Form.Input
                     value={purchaseQuantity}
@@ -252,6 +259,10 @@ export default function PurchaseLogForm({
                     options={vendors}
                 />
             </Form.Control>
+            {newVendor ? 
+                <NewVendorForm />:
+                <></>
+            }
             <Form.Control name="notes" label="Notes" labelStyle={styles.label}>
                 <Form.Input 
                     multiline
@@ -260,7 +271,7 @@ export default function PurchaseLogForm({
                     style={{ backgroundColor: 'transparent', width: '100%' }} 
                 />
             </Form.Control>
-            <View style={{ marginTop: 36 }}>
+            <View style={{ marginTop: 72 }}>
                 <Button color={'#f74a63cc'} title='Submit' onPress={() => handleSubmit(onSubmit)} />
             </View>
         </>

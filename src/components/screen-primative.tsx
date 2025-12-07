@@ -28,8 +28,8 @@ export const ScreenPrimative: React.FC<ScreenProps> = ({
   return (
     <SafeAreaView style={[styles.safeArea]} edges={edges}>
       <KeyboardAvoidingView
-        style={styles.flex}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={{...styles.flex}}
+        behavior={Platform.OS === "ios" ? "padding" : 'height'}
         keyboardVerticalOffset={keyboardOffset}
       >
         <Container
@@ -52,7 +52,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   contentContainer: {
-    flexGrow: 1,
-    padding: 16,
+    flex: 1,
   },
 });

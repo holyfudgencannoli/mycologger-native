@@ -51,14 +51,14 @@ export default function NewPurchaseLog() {
 
 
     return(
-        <ScreenPrimative edges={[]}>
+        <ScreenPrimative edges={[]} scroll>
             <View style={styles.container}>	
-                    <LinearGradient
-                        start={{ x: 0, y: 0 }}
-                        end={{ x: 0.3, y: 0.9 }}
-                        colors={['#94F8', '#00f', '#057']}
-                        style={{ flex: 1, padding: 16}}
-                    >
+                        <LinearGradient
+                            start={{ x: 0, y: 0 }}
+                            end={{ x: 0.3, y: 0.9 }}
+                            colors={['#94F8', '#00f', '#057']}
+                            style={{ flex: 1, padding: 16}}
+                        >
                         <Form.Control name='name'>
                             <Form.Select  
                                 type='embed'
@@ -74,8 +74,8 @@ export default function NewPurchaseLog() {
                                     } else {
                                         setNewItem(false)
                                         setName(value.name)
-                                        setCategory(value.email)
-                                        setSubcategory(value.phone)
+                                        setCategory(value.category)
+                                        setSubcategory(value.subcategory)
                                         setFormVisible(true)
                                     }
                                 }}  
@@ -101,5 +101,14 @@ export default function NewPurchaseLog() {
 
 
 const styles = StyleSheet.create({
-    container: { flex: 1 }
+    container: { flex: 1 },
+    label: {
+        fontSize: 18,
+        textAlign:  'center',
+        fontWeight: 'bold',
+        color: 'red',
+        textShadowColor: 'blue',
+        textShadowRadius: 16,
+    },
+
 });
