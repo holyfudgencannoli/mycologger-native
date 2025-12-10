@@ -1,59 +1,75 @@
 import { StyleSheet, View } from 'react-native';
 import * as Form from 'custom_modules/react-native-forms/src';
-import { useCallback, useEffect, useState } from 'react';
-import { Surface } from 'react-native-paper';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import * as InvItem from '@db/inventory-items'
-import * as RawMat from '@db/raw-materials'
-import * as InvLog from '@db/inventory-logs'
-
+import * as Item from '@db/items'
 import { useSQLiteContext } from 'expo-sqlite';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { RootDrawerParamsList } from '@navigation';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ScreenPrimative } from '@components/screen-primative';
 import Button from '@components/button';
+import { FormStateContext } from 'src/context/FormContext';
 // import { useFocusEffect } from '@react-navigation/native';
 
 type NavigationProps = DrawerNavigationProp<RootDrawerParamsList>
 
 export default function NewItem() {
 	const [items, setItems] = useState([])
-	const [name, setName] = useState('');
-	const [category, setCategory] = useState('');
-	const [subcategory, setSubcategory] = useState('');
+	const { name, setName } = useContext(FormStateContext);
+	const { category, setCategory } = useContext(FormStateContext);
+	const { subcategory, setSubcategory } = useContext(FormStateContext);
 	const navigation = useNavigation<NavigationProps>()
 
 
 
 	const db = useSQLiteContext();
 
-	const { control, handleSubmit, formState: { errors }, } = useForm({
-		defaultValues: {
-			name: '',
-			category: '',
-			subcategory: ''
-		},
-	});
+	// const { control, handleSubmit, formState: { errors }, } = useForm({
+	// 	defaultValues: {
+	// 		name: '',
+	// 		category: '',
+	// 		subcategory: ''
+	// 	},
+	// });
 
 	const getData = async() => {
-		const data = await RawMat.readAll(db)
+		const data = await Item.readAll(db)
 		setItems(data)
 	}
 
-	useEffect(() => {
-		getData()
-	}, [])
+	useFocusEffect(
+		useCallback(() => {
+				
+			return() => {
+				setName('')
+				setCategory('')
+				setSubcategory('')
+			}
+		}, [])
+	)
 
 	const onSubmit = async() => {
 		const nowMs = new Date().getTime()
 		const TYPE = 'raw_material'
-		const invItemId = await InvItem.create(db, TYPE, nowMs)
-		console.log("Inv Item", invItemId)
-		const rawMatId = await RawMat.create(db, invItemId, name, category, subcategory)
-		console.log("RawMaterial", rawMatId)
-		InvLog.create(db, TYPE, rawMatId, 0, 'Unit', nowMs)
+		const itemId = await Item
+		.create(
+			db, 
+			name, 
+			category, 
+			subcategory, 
+			TYPE, 
+			nowMs, 
+			null, 
+			null, 
+			null, 
+			nowMs, 
+			null, 
+			null 
+		)
+		console.log("Raw Material Created. ID:", itemId)
+		// setName('')
 		navigation.navigate("Dashboard")
 	};
 

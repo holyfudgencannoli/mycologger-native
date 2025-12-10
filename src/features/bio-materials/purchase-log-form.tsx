@@ -1,42 +1,46 @@
-import { useState } from "react"
+import { useContext, useState } from "react"
 import { Surface } from "react-native-paper";
-import { StyleSheet, Text, Button, Alert } from 'react-native';
+import { StyleSheet, Text, Alert } from 'react-native';
 import { useEffect } from "react";
-import * as InvItem from '@db/inventory-items'
-import * as BioMat from '@db/bio-materials'
 import * as PurchLog from '@db/purchase-logs'
-import * as InvLog from '@db/inventory-logs'
+import * as Item from '@db/items'
 import * as Vendor from '@db/vendors'
 import * as Brand from '@db/brands'
 import * as cnv from '@utils/unitConversion'
 import { useSQLiteContext } from "expo-sqlite";
 import * as Form from '@custom/react-native-forms/src'
 import { INV_UNITS, PUR_UNITS } from "@constants/units";
+import { CaseHelper } from "@utils/case-helper";
+import Button from "@components/button";
+import { FormStateContext } from "src/context/FormContext";
 
 
 
 
 export default function PurchaseLogForm({
+    id,
     name,
     category,
-    speciesLatin,
+    subcategory,
     setName,
     setCategory,
-    setSpeciesLatin
+    setSubcategory,
+    isNew
 } : {
+    id?: number,
     name?: string,
     category?: string,
-    speciesLatin?: string,
+    subcategory?: string,
     setName?: (name: string) => void,
     setCategory?: (category: string) => void,
-    setSpeciesLatin?: (speciesLatin: string) => void
+    setSubcategory?: (speciesLatin: string) => void,
+    isNew: boolean
 }) {
     // const{ user, token } = useAuth();
     const db = useSQLiteContext();
 
     // const navigation = useNavigation();    
     const [items, setItems] = useState([])
-    const [formVisible, setFormVisible] = useState(false)
     const [pickedImageUri, setPickedImageUri] = useState("")
     const [brand, setBrand] = useState("")
     const [newBrand, setNewBrand] = useState(false)
@@ -63,12 +67,11 @@ export default function PurchaseLogForm({
     const [receiptMemo, setReceiptMemo] = useState("")
     
     const [purchaseDatetime, setPurchaseDatetime] = useState(new Date())
+
+    const { vendorId, setVendorId } = useContext(FormStateContext)
+    const { brandId, setBrandId } = useContext(FormStateContext)
   
     
-    const getData = async() => {
-        const data = await BioMat.readAll(db)
-        setItems(data)
-    }
 
 
     async function getVendors() {
@@ -92,72 +95,99 @@ export default function PurchaseLogForm({
 
     
     const handleSubmit = async () => {
-        if (!image) {
-            Alert.alert("Error", "Please select a receipt image");
-            return;
-        }
-        // const { fileKey, publicUrl } = await uploadReceiptToCloudflare({
-        //     image,
-        //     token,
-        //     contentType
-        // })
+        try {
+            if (!image) {
+                Alert.alert("Error", "Please select a receipt image");
+                return;
+            }
+            // const { fileKey, publicUrl } = await uploadReceiptToCloudflare({
+            //     image,
+            //     token,
+            //     contentType
+            // })
 
-        // const payload = {
-        //     name: name,
-        //     category: category,
-        //     speciesLatin: speciesLatin,
-        //     brand: brand,
-        //     purchaseDate: purchaseDatetime,
-        //     purchaseQuantity: parseInt(purchaseQuantity),
-        //     purchaseUnit: purchaseUnit,
-        //     inventoryQuantity: parseInt(inventoryQuantity),
-        //     inventoryUnit: inventoryUnit,
-        //     cost: parseInt(cost),
-        //     vendor: vendor,
-        //     user: user,
-        //     filename: fileKey,
-        //     imageUrl: publicUrl,
-        //     receiptMemo: receiptMemo,
-        //     notes : notes,
-        //     vendorPhone: vendorPhone,
-        //     vendorEmail: vendorEmail,
-        //     vendorWebsite: vendorWebsite,
-        // }
-        
-        const created_at = new Date().getTime();
-        const invItemId = await InvItem.create(db, 'bio_materials', created_at)
-        const bioMatId = await BioMat.create(db, invItemId, name, category, speciesLatin)
-        await PurchLog.create(
-            db,
-            'bio_materials',
-            bioMatId,
-            created_at,
-            purchaseDatetime.getTime(),
-            purchaseUnit,
-            cnv.convertFromBase({
-                value: parseFloat(purchaseQuantity),
-                to: purchaseUnit
-            }), inventoryUnit,
-            cnv.convertFromBase({
-                value: parseFloat(inventoryQuantity),
-                to: inventoryUnit
-            }),
-            vendor,
-            brand,
-            parseFloat(cost)
-        )
-        await InvLog.create(
-            db,
-            'bio_materials',
-            bioMatId,
-            cnv.convertToBase({
-                value: parseFloat(purchaseQuantity) * parseFloat(inventoryQuantity),
-                from: inventoryUnit
-            }),
-            inventoryUnit,
-            created_at
-        )
-        return {invItemId, bioMatId}
+            // const payload = {
+            //     name: name,
+            //     category: category,
+            //     speciesLatin: speciesLatin,
+            //     brand: brand,
+            //     purchaseDate: purchaseDatetime,
+            //     purchaseQuantity: parseInt(purchaseQuantity),
+            //     purchaseUnit: purchaseUnit,
+            //     inventoryQuantity: parseInt(inventoryQuantity),
+            //     inventoryUnit: inventoryUnit,
+            //     cost: parseInt(cost),
+            //     vendor: vendor,
+            //     user: user,
+            //     filename: fileKey,
+            //     imageUrl: publicUrl,
+            //     receiptMemo: receiptMemo,
+            //     notes : notes,
+            //     vendorPhone: vendorPhone,
+            //     vendorEmail: vendorEmail,
+            //     vendorWebsite: vendorWebsite,
+            // }
+            
+            const created_at = new Date().getTime();
+            const item = await Item.getById(db, id)
+            const TYPE = 'bio_material'
+
+
+            if (isNew) {
+                const itemId = await Item
+                .create(
+                    db,
+                    name,
+                    category,
+                    subcategory,
+                    TYPE,
+                    created_at,
+                    parseFloat(purchaseQuantity),
+                    purchaseUnit,
+                    null,
+                    created_at,
+                    null,
+                    null
+                )
+            } else {
+                const itemId = await Item
+                .update(
+                    db,                
+                    {
+                        id, 
+                        amount_on_hand: 
+                            cnv.convertFromBase({
+                                value: 
+                                    cnv.convertToBase({ value: item.amount_on_hand, from: item.inventory_unit }) 
+                                    + (cnv.convertToBase({ value: parseFloat(purchaseQuantity), from: purchaseUnit })),
+                                to: 
+                                    item.inventory_unit
+                            }),
+                        last_updated:
+                            created_at
+                    }
+
+                )
+            }
+            await PurchLog.create(
+                db,
+                TYPE,
+                item.id,
+                created_at,
+                purchaseDatetime.getTime(),
+                purchaseUnit,
+                parseFloat(purchaseQuantity),
+                inventoryUnit,
+                parseFloat(inventoryQuantity),
+                vendorId,
+                brandId,
+                parseFloat(cost)
+            )
+            return `Success! ${purchaseQuantity} ${purchaseUnit} of ${CaseHelper.toCleanCase(TYPE)} ${name} added to your inventory. Great Work!` 
+
+        } catch(error) {
+            console.error(error)
+        }
     }
 
 
@@ -167,7 +197,7 @@ export default function PurchaseLogForm({
                     <Form.Input style={{ backgroundColor:'transparent', width: '100%' }} value={category} onChangeText={setCategory}  />
                 </Form.Control>
                 <Form.Control label='Species Name (Latin)' labelStyle={styles.label} name='speciesLatin'>
-                    <Form.Input style={{ backgroundColor:'transparent', width: '100%' }} value={speciesLatin} onChangeText={setSpeciesLatin}  />
+                    <Form.Input style={{ backgroundColor:'transparent', width: '100%' }} value={subcategory} onChangeText={setSubcategory}  />
                 </Form.Control>
                 <Form.Control labelStyle={styles.label} label="Brand" name="brand" >
                     <Form.Select 
@@ -239,12 +269,13 @@ export default function PurchaseLogForm({
                 </Form.Control>
                 <Form.Control name="notes" label="Notes" labelStyle={styles.label}>
                     <Form.Input 
+                        multiline
                         value={notes}
                         onChangeText={setNotes}
                         style={{ backgroundColor: 'transparent', width: '100%' }} 
                     />
                 </Form.Control>
-            <Button color={'#000000'} title="Submit" onPress={() => handleSubmit()} />
+            <Button viewStyle={{ marginTop: 84 }} color={'#f74a63cc'} title="Submit" onPress={() => handleSubmit()} />
         </>
     )
 }

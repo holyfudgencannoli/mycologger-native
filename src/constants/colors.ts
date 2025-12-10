@@ -45,4 +45,7 @@ export const Colors = {
     primary4: 'rgba(122, 16, 255, 1)',
     secondary4: 'rgba(16,160,255,S)'
   },
+  button: {
+    primary: '#f74a63cc'
+  }
 };

@@ -24,6 +24,7 @@ export default function TimeLogger({
       setEndTime(end);
 
       if (onTimesSet) onTimesSet({ startTime, endTime: end });
+      
     }
   };
 

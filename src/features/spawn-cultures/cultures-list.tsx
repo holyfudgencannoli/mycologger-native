@@ -7,8 +7,7 @@ import { ScrollableDataTable } from "@components/scrollable-data-table";
 import { ImageBG } from "@components/image-bg";
 import { ScreenPrimative } from "@components/screen-primative";
 import { CultureDetailModal } from "./detail-model";
-import * as Culture from '@db/culture-media'
-import * as Spawn from '@db/spawn-cultures'
+import * as Culture from '@db/cultures'
 import { useSQLiteContext } from "expo-sqlite";
 import { ScrollView } from "react-native-gesture-handler";
 import { LinearGradient } from "expo-linear-gradient";
@@ -25,9 +24,9 @@ export default function SpawnCulturesListScreen() {
     const [spawns, setSpawns] = useState<SpawnCulture[]>([])
 
     const getData = async() => {
-        const Spawns: SpawnCulture[] = await Spawn.readAll(db)
-        console.log(Spawns)  
-        setSpawns(Spawns)
+        // const Spawns: SpawnCulture[] = await Spawn.readAll(db)
+        // console.log(Spawns)  
+        // setSpawns(Spawns)
     }
 
     useFocusEffect(

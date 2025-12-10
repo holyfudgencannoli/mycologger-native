@@ -1,7 +1,8 @@
 
 import { SQLiteDatabase } from "expo-sqlite";
-import { safeExec, safeRun, safeSelectOne } from "../utils";
+import { safeExec, safeRun, safeSelectAll, safeSelectOne } from "../utils";
 import { PurchaseLogProp } from "@features/inventory/types/purchase-log";
+import { PurchaseLogData, PurchaseLogType } from "./types";
 
 const VALID_TYPES = new Set([
   "inventory_item",
@@ -22,7 +23,7 @@ export function purchaseLogTable(type: string) {
 
 export async function create(
   db: SQLiteDatabase,
-  type: string,
+  type: PurchaseLogType,
   item_id: number,
 	created_at: number,
 	purchase_date: number,
@@ -30,12 +31,12 @@ export async function create(
 	purchase_amount: number,
 	inventory_unit: string,
 	inventory_amount: number,
-	vendor: string,
-	brand: string,
+	vendor_id: number,
+	brand_id: number,
 	cost: number
 ) {
   const result = await safeRun(db,
-    `INSERT INTO ${purchaseLogTable(type)} (item_id, created_at, purchase_date, purchase_unit, purchase_amount, inventory_unit, inventory_amount, vendor, brand, cost) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    `INSERT INTO purchase_logs (item_id, created_at, purchase_date, purchase_unit, purchase_amount, inventory_unit, inventory_amount, vendor_id, brand_id, cost) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     [
 			item_id, 
 			created_at,
@@ -44,8 +45,8 @@ export async function create(
 			purchase_amount,
 			inventory_unit,
 			inventory_amount,
-			vendor,
-			brand,
+			vendor_id,
+			brand_id,
 			cost
 		]
   );
@@ -54,7 +55,12 @@ export async function create(
 }
 
 export async function readAll(db: SQLiteDatabase, type: string) {
-  return await safeExec(db, `SELECT * FROM ${purchaseLogTable(type)} ORDER BY id DESC`);
+  return await safeExec(db, `SELECT * FROM purchase_logs ORDER BY id DESC`);
+}
+
+
+export async function getAllByType<PurchaseLogData>(db: SQLiteDatabase, type: string) {
+  return await safeSelectAll<PurchaseLogData>(db, `SELECT * FROM purchase_logs WHERE type = ?`, [type]);
 }
 
 export async function getById(
@@ -71,19 +77,19 @@ export async function getById(
 		purchase_amount: number;
 		inventory_unit: string;
 		inventory_amount: number;
-		vendor: string;
-		brand: string;
+		vendor_id: number;
+		brand_id: number;
 		cost: number;
-  }>(db, `SELECT * FROM ${purchaseLogTable(type)} WHERE id = ?`, [id]);
+  }>(db, `SELECT * FROM purchase_logs WHERE id = ?`, [id]);
 }
 
 
 export async function getByItemId(
 	db: SQLiteDatabase,
-	type: string,
+	type: PurchaseLogType,
 	item_id: number
 ) {
-	return await safeSelectOne<PurchaseLogProp[]>(db, `SELECT * FROM ${purchaseLogTable(type)} WHERE item_id = ?`, [item_id]);
+	return await safeSelectAll<PurchaseLogData>(db, `SELECT * FROM purchase_logs WHERE item_id = ?`, [item_id]);
 }
 
 export async function update(
@@ -97,14 +103,14 @@ export async function update(
 	purchase_amount: number,
 	inventory_unit: string,
 	inventory_amount: number,
-	vendor: string,
-	brand: string,
+	vendor_id: number,
+	brand_id: number,
 	cost: number
 ) {
   const result = await safeRun(
     db,
-    `UPDATE ${purchaseLogTable(type)}
-       SET item_id = ?, created_at = ?, purchase_date = ?, purchase_unit = ?, purchase_amount = ?, inventory_unit = ?, inventory_amount = ?, vendor = ?, brand = ?, cost = ?
+    `UPDATE purchase_logs
+       SET item_id = ?, created_at = ?, purchase_date = ?, purchase_unit = ?, purchase_amount = ?, inventory_unit = ?, inventory_amount = ?, vendor_id = ?, brand_id = ?, cost = ?
        WHERE id = ?`,
      [
 			item_id, 
@@ -114,8 +120,8 @@ export async function update(
 			purchase_amount,
 			inventory_unit,
 			inventory_amount,
-			vendor,
-			brand,
+			vendor_id,
+			brand_id,
 			cost,
 			id
 		]
@@ -127,7 +133,7 @@ export async function update(
 export async function destroy(db: SQLiteDatabase, type: string, id: number) {
   const result = await safeRun(
     db,
-    `DELETE FROM ${purchaseLogTable(type)} WHERE id = ?`,
+    `DELETE FROM purchase_logs WHERE id = ?`,
     [id]
   );
 
@@ -143,7 +149,7 @@ export async function exists(
 ) {
   const row = await safeSelectOne<{ count: number }>(
     db,
-    `SELECT COUNT(*) AS count FROM ${purchaseLogTable(type)} WHERE id = ?`,
+    `SELECT COUNT(*) AS count FROM purchase_logs WHERE id = ?`,
     [id]
   );
 

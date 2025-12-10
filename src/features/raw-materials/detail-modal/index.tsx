@@ -1,28 +1,17 @@
 import { useFocusEffect } from '@react-navigation/native';
 import React, { useCallback, useState } from 'react';
 import { View, Modal, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
+import * as PurchLog from '@db/purchase-logs'
+import { useSQLiteContext } from 'expo-sqlite';
+import { PurchaseLogData } from '@db/purchase-logs/types';
 
-interface PurchaseLogData {
-    id: number;
-    brand: string;
-    log_date: string;
-    purchase_date: string;
-    purchase_amount: number;
-    purchase_unit: string;
-    cost: number;
-    notes: string;
-    receipt_entry_id: number;
-    inventory_log_id: number;
-    item_id: number;
-    vendor_id: number;
-    user_id: number;
-}
 
 
 
 
 const DetailModal = ({ visible, setModalOpen, item}) => {
     const [purchaseLogs, setPurchaseLogs] = useState<PurchaseLogData[]>([]);
+    const db = useSQLiteContext()
 
     const closeModal = () => {
         // Close the modal (e.g., using a parent component's state)
@@ -30,9 +19,15 @@ const DetailModal = ({ visible, setModalOpen, item}) => {
         console.log('Modal closed'); // Replace with your actual close logic
     };
 
+    async function getData() {
+        const logs: PurchaseLogData[] = await PurchLog.getAllByType(db, 'raw_material')
+        console.log(logs)
+        setPurchaseLogs(logs)
+    }
+
     useFocusEffect(
         useCallback(() => {
-            setPurchaseLogs(item? item.purchase_logs : [])
+            getData()
         }, [])
     )
 
@@ -47,15 +42,15 @@ const DetailModal = ({ visible, setModalOpen, item}) => {
                 <View style={styles.modalContent}>
                     <Text style={styles.headerText}>Purchase Logs</Text>
                     <FlatList
-                        data={item? item.purchase_logs : []}
-                        keyExtractor={(item) => item.id} // Use a unique key for each item
+                        data={purchaseLogs ? purchaseLogs : []}
+                        keyExtractor={(item) => item.id.toString()} // Use a unique key for each item
                         renderItem={({ item }) => (
                             <View style={styles.logItem}>
-                                <Text>{item.date}</Text>
-                                <Text>{item.supplier}</Text>
-                                <Text>{item.material}</Text>
-                                <Text>${item.price.toFixed(2)}</Text>
-                                {item.notes && <Text>{item.notes}</Text>}
+                                <Text>{item.purchase_date}</Text>
+                                {/* <Text>{item.supplier}</Text> */}
+                                <Text>{item.item_id}</Text>
+                                <Text>${item.cost.toFixed(2)}</Text>
+                                {/* {item.notes && <Text>{item.notes}</Text>} */}
                             </View>
                         )}
                     />

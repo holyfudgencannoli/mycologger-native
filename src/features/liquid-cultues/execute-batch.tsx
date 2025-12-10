@@ -8,7 +8,7 @@ import { useCallback, useState } from "react";
 import { useTheme } from "../../hooks/useTheme";
 import { PaperSelect } from "react-native-paper-select";
 import * as Batches from '@db/recipe-batches'
-import * as Culture from '@db/culture-media'
+import * as Culture from '@db/cultures'
 import * as Agar from '@db/agar-cultures'
 import * as Usage from '@db/usage_logs'
 import * as Task from '@db/tasks'

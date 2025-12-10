@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import {
   View,
   Button,
@@ -8,33 +8,22 @@ import {
   FlatList,
   Text,
 } from 'react-native';
+import ImageSelector from '@components/image-selector';
 import * as ImagePicker from 'expo-image-picker';
 import { saveReceiptLocally, loadAllReceipts, ReceiptMeta } from '@services/local-receipt';
+import * as Form from '@custom/react-native-forms/src'
+import { FormStateContext } from 'src/context/FormContext';
 
 export const ReceiptUploader: React.FC = () => {
   const [receipts, setReceipts] = useState<ReceiptMeta[]>([]);
   const [previewUri, setPreviewUri] = useState<string | null>(null);
-
+  const { image, setImage } = useContext(FormStateContext)
+  const { contentType, setContentType } = useContext(FormStateContext)
+  
   // Load existing receipts on mount
   React.useEffect(() => {
     loadAllReceipts().then(setReceipts);
   }, []);
-
-  const pickImage = async () => {
-    try {
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ['images'],
-        quality: 0.8, // optional
-      });
-
-      if (!result.canceled) {
-        setPreviewUri(result.assets[0].uri);
-      }
-    } catch (e) {
-      console.error(e);
-      Alert.alert('Error', 'Could not open image library.');
-    }
-  };
 
   const handleSave = async () => {
     if (!previewUri) return;
@@ -61,14 +50,17 @@ export const ReceiptUploader: React.FC = () => {
   return (
     <View style={styles.container}>
       {/* Pick & preview */}
-      <Button title="Pick a receipt" onPress={pickImage} />
-      {previewUri && (
-        <>
-          <Image source={{ uri: previewUri }} style={styles.preview} />
-          <Button title="Save locally" onPress={handleSave} />
-        </>
-      )}
-
+      <Form.Control
+        label='Select Image'
+        name='imageContainer'
+      >
+        <ImageSelector
+          image={image}
+          setImage={setImage}
+          contentType={contentType}
+          setContentType={setContentType}
+        />
+      </Form.Control>
       {/* List of saved receipts */}
       <FlatList
         data={receipts}

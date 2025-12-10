@@ -1,12 +1,12 @@
 import { Button, Platform, StyleSheet, Text, View } from "react-native";
 import { Surface, TextInput } from "react-native-paper";
 import { useTheme } from "@hooks/useTheme";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { useFocusEffect, useNavigation, usePreventRemove } from "@react-navigation/native";
 import { PaperSelect } from "react-native-paper-select";
 import { Alert } from "react-native";
 import * as Recipe from '@db/recipes'
-import * as RawMat from '@db/raw-materials'
+import * as RawMat from '@db/items'
 import { useSQLiteContext } from "expo-sqlite";
 import * as cnv from '@utils/unitConversion'
 import { DrawerNavigationProp } from "@react-navigation/drawer";
@@ -15,6 +15,7 @@ import * as Form from '@custom/react-native-forms/src'
 import { INV_UNITS } from "@constants/units";
 import { LinearGradient } from "expo-linear-gradient";
 import { ScrollView } from "react-native-gesture-handler";
+import { FormStateContext } from "src/context/FormContext";
 
 
 type ingredientProps = {
@@ -31,6 +32,7 @@ export default function CreateRecipe({ setUnsaved }: { setUnsaved: (value: boole
  
     const [name, setName] = useState("")
     const [type, setType] = useState("")
+    const { nuteConcentration, setNuteConcentration } = useContext(FormStateContext)
     const [yieldAmount, setYieldAmount] = useState("")
     const [yieldUnit, setYieldUnit] = useState('')
     const [ingredientName, setIngredientName] = useState("")
@@ -49,7 +51,7 @@ export default function CreateRecipe({ setUnsaved }: { setUnsaved: (value: boole
                     value: (parseFloat(amount)),
                     from: unit.toLowerCase(),
                 }),
-            'unit': unit
+            'unit': unit 
         }
         console.log(ingredient)
         setIngredients((prev) => [...prev, ingredient])
@@ -58,10 +60,10 @@ export default function CreateRecipe({ setUnsaved }: { setUnsaved: (value: boole
         setUnit('')
     }
 
-    useEffect(() => {
-        const hasChanges = name.trim() !== "" || type.trim() !== "" || ingredients.length > 0;
-        setUnsaved(hasChanges);
-    }, [name, type, ingredientName, amount, unit, ingredients]);
+    // useEffect(() => {
+    //     const hasChanges = name.trim() !== "" || type.trim() !== "" || ingredients.length > 0;
+    //     setUnsaved(hasChanges);
+    // }, [name, type, ingredientName, amount, unit, ingredients]);
 
 
 
@@ -96,12 +98,28 @@ export default function CreateRecipe({ setUnsaved }: { setUnsaved: (value: boole
 
     
     const handleSubmit = async () => {
+        console.log('ingredients.length: ', ingredients.length)
+        console.log('name: ', name)
+        console.log('type: ', type)
+        console.log('yieldAmount: ', yieldAmount)
+        console.log('yieldUnit: ', yieldUnit)
+                     
+        const con = parseFloat(nuteConcentration)
         if (ingredients.length === 0 || name === '' || type === '' || yieldAmount === '' || yieldUnit === '') {
             Alert.alert('Make sure you fill out all fields')
         } else {
             try {
                 const created_at = new Date().getTime()
-                const recipeId = await Recipe.create(db, name, type, ingredients, parseInt(yieldAmount), yieldUnit.toLowerCase(), 0.02, created_at) 
+                const recipeId = await Recipe.create(
+                    db, 
+                    name, 
+                    type, 
+                    ingredients, 
+                    parseInt(yieldAmount), 
+                    yieldUnit.toLowerCase(), 
+                    parseFloat(nuteConcentration), 
+                    created_at
+                ) 
                 console.log(ingredients)
                 navigation.navigate("Dashboard")
                 return recipeId        
@@ -118,10 +136,19 @@ export default function CreateRecipe({ setUnsaved }: { setUnsaved: (value: boole
     return(
         <>
             <Form.Control name="name" label="Recipe Name" labelStyle={styles.label}>
-                <Form.Input style={styles.input} />
+                <Form.Input 
+                    style={styles.input} 
+                    value={name}
+                    onChangeText={setName}
+                />
             </Form.Control>
             <Form.Control name="recipeType" label="Recipe Type" labelStyle={styles.label}>
-                <Form.Input style={styles.input} />
+                <Form.Input 
+                    style={styles.input} 
+                    value={type}
+                    onChangeText={setType}
+
+                />
             </Form.Control>
             <Form.Control labelStyle={styles.label} label="Recipe Yield" name="recipeYield" >
                 <Form.Input
@@ -136,6 +163,14 @@ export default function CreateRecipe({ setUnsaved }: { setUnsaved: (value: boole
                         setYieldUnit(value.value)
                         console.log(value.value)
                     }}
+                />
+            </Form.Control>
+            <Form.Control name="nute_concentration" label="Nutrient Concentration" labelStyle={styles.label}>
+                <Form.Input 
+                    style={styles.input} 
+                    value={nuteConcentration}
+                    onChangeText={setNuteConcentration}
+
                 />
             </Form.Control>
             <LinearGradient
@@ -174,8 +209,11 @@ export default function CreateRecipe({ setUnsaved }: { setUnsaved: (value: boole
                     <Button  color={'#f74a63cc'} title="Add Recipe Item" onPress={() => addIngredient(ingredientName, ingredientId, amount, unit)} />
                 </View>
 
-                <ScrollView style={{ backgroundColor: '#fff5', height: 100, padding: 16 }}>
-                    <Form.Control name='ingredients' label="Ingredients" labelStyle={styles.label}>
+                <ScrollView style={{ display: 'flex', flexDirection: 'column', backgroundColor: '#fff5', height: 'auto', padding: 16 }}>
+                        <Text style={styles.label}>
+                            Ingredients
+                        </Text>
+
                         {ingredients.map((ingredient, index) => {
                             console.log(ingredient, index)
                             return(
@@ -190,7 +228,6 @@ export default function CreateRecipe({ setUnsaved }: { setUnsaved: (value: boole
                             )
                             
                         })}    
-                    </Form.Control>
 
                 </ScrollView>
 

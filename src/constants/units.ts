@@ -21,3 +21,20 @@ export const PUR_UNITS = [
     {name:"Units", value:'unit'}
 ]
                             
+export const VOLUME_UNITS = [
+    {name:"Tablespoons", value: 'tablespoon'},
+    {name:"Milliliters", value:'milliliter'},
+    {name:"Liters", value:'liter'},
+    {name:"Ounces", value:'ounce'},
+    {name:"Cups", value:'cup'},
+    {name:"Teaspoons", value:'teaspoon'}
+
+]
+
+export const WEIGHT_UNITS = [
+    {name:"Grams", value:'gram'},
+    {name:"Kilograms", value:'kilogram'},
+    {name:"Pounds", value:'pound'},
+    {name:"Ounces", value:'ounce'},
+
+]

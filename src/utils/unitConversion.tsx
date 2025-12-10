@@ -91,8 +91,7 @@ export const fromBaseVolume = (valueInLiters: number, to: VolumeUnit): number =>
  * volume and delegates to the appropriate helper.
  *
  * @param value   The numeric amount you want to convert.
- * @param from    Source unit (e.g. 'lb', 'cup').
- * @param to      Target unit (must be of the same type as `from`).
+ * @param to      Target unit
  * @returns       Converted number rounded to 6 decimal places.
  */
 export const convertFromBase = ({
@@ -112,16 +111,6 @@ export const convertFromBase = ({
     throw new Error(`Unsupported result unit: ${to}`);
   }
 
-  // If the target unit belongs to a different family, throw.
-  // const sameFamily = isWeight
-  //   ? (Object.keys(weightToBase) as WeightUnit[]).includes(to as WeightUnit)
-  //   : (Object.keys(volumeToBase) as VolumeUnit[]).includes(to as VolumeUnit);
-
-  // if (!sameFamily) {
-  //   throw new Error(
-  //     `Cannot convert between different families: ${from} → ${to}`
-  //   );
-  // }
 
   // Perform the conversion.
   let result: number;

@@ -35,8 +35,8 @@ const STORAGE_KEY = "times";
 
 export default function NewTaskForm() {
   /* ---------- State ------------------------------------------------- */
-  const [startTime, setStartTime] = useState<Date | null>(null);
-  const [endTime, setEndTime] = useState<Date | null>(null);
+  const [startTime, setStartTime] = useState<Date | number | string | null>(null);
+  const [endTime, setEndTime] = useState<Date | number | string | null>(null);
   const [times, setTimes] = useState<TimePair[]>([]);
 
   const navigation = useNavigation<NavigationProp<any>>();
@@ -48,6 +48,7 @@ export default function NewTaskForm() {
     const loadTimes = async () => {
       try {
         const json = await AsyncStorage.getItem(STORAGE_KEY);
+        console.log("Effect JSON: ", json)
         if (json) {
           const parsed: TimePair[] = JSON.parse(json).map((t: any) => ({
             ...t,
@@ -100,7 +101,6 @@ export default function NewTaskForm() {
           endTime: t.endTime.toISOString(),
         })))
       );
-      await AsyncStorage.removeItem("start_time");
     } catch (e) {
       console.warn("Failed to persist times:", e);
     }
@@ -125,7 +125,7 @@ export default function NewTaskForm() {
 
 
   /* ---------- Callback from TimeLogger ---------------------------- */
-  const onTimesSet = ({ startTime, endTime, category }: { startTime: Date; endTime: Date, category: string }) => {
+  const onTimesSet = async({ startTime, endTime, category }: { startTime: Date; endTime: Date, category: string }) => {
     setTimes((prev) => [
       ...prev,
       {
@@ -137,6 +137,8 @@ export default function NewTaskForm() {
     ]);
     setStartTime(null);
     setEndTime(null);
+    await AsyncStorage.removeItem("start_time");
+
   };
 
   const handleDelete = (id: string) => {

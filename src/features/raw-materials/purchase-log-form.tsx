@@ -1,12 +1,10 @@
-import { useState } from "react"
+import { useCallback, useContext, useState } from "react"
 import { Surface } from "react-native-paper";
 import { StyleSheet, Text, Button, Alert, View } from 'react-native';
 import { useEffect } from "react";
-import * as InvItem from '@db/inventory-items'
-import * as RawMat from '@db/bio-materials'
 import * as PurchLog from '@db/purchase-logs'
-import * as InvLog from '@db/inventory-logs'
 import * as Vendor from '@db/vendors'
+import * as Item from '@db/items'
 import * as Brand from '@db/brands'
 import * as cnv from '@utils/unitConversion'
 import { useSQLiteContext } from "expo-sqlite";
@@ -16,25 +14,22 @@ import { useForm } from "react-hook-form";
 import NewBrandForm from "@features/brands/new-brand-form";
 import { LinearGradient } from "expo-linear-gradient";
 import NewVendorForm from "@features/vendors/new-vendor-form";
+import { CaseHelper } from "@utils/case-helper";
+import { DrawerNavigationProp } from "@react-navigation/drawer";
+import { RootDrawerParamsList } from "@navigation";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { FormStateContext } from "src/context/FormContext";
+import { ReceiptUploader } from "@components/upload-receipt";
+import * as FileSystem from 'expo-file-system/legacy'
 
 
+type NavigationProps = DrawerNavigationProp<RootDrawerParamsList>
 
 
-export default function PurchaseLogForm({
-    name,
-    category,
-    subcategory,
-    setCategory,
-    setSubcategory
-} : {
-    name?: string,
-    category?: string,
-    subcategory?: string,
-    setCategory?: (category: string) => void,
-    setSubcategory?: (subcategory: string) => void
-}) {
+export default function PurchaseLogForm() {
     // const{ user, token } = useAuth();
     const db = useSQLiteContext();
+    const navigation = useNavigation<NavigationProps>()
 
     // const navigation = useNavigation();    
     const [items, setItems] = useState([])
@@ -50,7 +45,8 @@ export default function PurchaseLogForm({
     const [receiptPath, setReceiptPath] = useState("")
     const [notes, setNotes] = useState("")
 
-    const [vendor, setVendor] = useState("")
+    const [vendorId, setVendorId] = useState<number>()
+    const [brandId, setBrandId] = useState<number>()
 
     const [vendors, setVendors] = useState([])
     const [brands, setBrands] = useState([])
@@ -65,10 +61,18 @@ export default function PurchaseLogForm({
     const [receiptMemo, setReceiptMemo] = useState("")
     
     const [purchaseDatetime, setPurchaseDatetime] = useState(new Date())
+
+    const { id } = useContext(FormStateContext)
+    const { isNew } = useContext(FormStateContext)
+    const { name, setName } = useContext(FormStateContext)
+    const { category, setCategory } = useContext(FormStateContext)
+    const { subcategory, setSubcategory } = useContext(FormStateContext)
+
+
   
     
     const getData = async() => {
-        const data = await RawMat.readAll(db)
+        const data = await Item.readAll(db)
         setItems(data)
     }
 
@@ -85,29 +89,121 @@ export default function PurchaseLogForm({
         return brand_rows
     }
 
-    useEffect(() => {
-        getVendors()
-        getBrands()
+    useFocusEffect(
+		useCallback(() => {
+            getBrands()
+            getVendors()
+			return() => {
+				setName('')
+				setCategory('')
+				setSubcategory('')
+			}
+		}, [])
+	)
 
-    }, [])
 
-    const { control, handleSubmit, formState: { errors }, } = useForm({
-        defaultValues: {
-            name: '',
-            category: '',
-            subcategory: ''
-        },
-    });
+    
 
-    const onSubmit = async() => {
-        console.log('Pressed!')
-        // const nowMs = new Date().getTime()
-        // const TYPE = 'raw_material'
-        // const invItemId = await InvItem.create(db, TYPE, nowMs)
-        // const rawMatId = await RawMat.create(db, invItemId, selectedItem.name, category, subcategory)
-        // InvLog.create(db, TYPE, rawMatId, 0, 'Unit', nowMs)
-        // navigation.navigate("Dashboard")
-    };
+    const handleSubmit = async () => {
+        try {
+            // if (!image) {
+            //     Alert.alert("Error", "Please select a receipt image");
+            //     return;
+            // }
+            // const { fileKey, publicUrl } = await uploadReceiptToCloudflare({
+            //     image,
+            //     token,
+            //     contentType
+            // })
+
+            // const payload = {
+            //     name: name,
+            //     category: category,
+            //     speciesLatin: speciesLatin,
+            //     brand: brand,
+            //     purchaseDate: purchaseDatetime,
+            //     purchaseQuantity: parseInt(purchaseQuantity),
+            //     purchaseUnit: purchaseUnit,
+            //     inventoryQuantity: parseInt(inventoryQuantity),
+            //     inventoryUnit: inventoryUnit,
+            //     cost: parseInt(cost),
+            //     vendor: vendor,
+            //     user: user,
+            //     filename: fileKey,
+            //     imageUrl: publicUrl,
+            //     receiptMemo: receiptMemo,
+            //     notes : notes,
+            //     vendorPhone: vendorPhone,
+            //     vendorEmail: vendorEmail,
+            //     vendorWebsite: vendorWebsite,
+            // }
+            console.log("Purchase Unit: ", purchaseUnit)
+            const created_at = new Date().getTime();
+            const item = await Item.getById(db, id)
+            console.log("Inventory Unit: ", item.inventory_unit)
+
+            const TYPE = 'raw_material'
+
+            if (isNew) {
+                const itemId = await Item
+                .create(
+                    db,
+                    name,
+                    category,
+                    subcategory,
+                    TYPE,
+                    created_at,
+                    parseFloat(purchaseQuantity),
+                    purchaseUnit,
+                    null,
+                    created_at,
+                    null,
+                    null
+                )
+            } else {
+                const itemId = await Item
+                .update(
+                    db,                
+                    {
+                        id, 
+                        amount_on_hand: 
+                            cnv.convertFromBase({
+                                value: 
+                                    (cnv.convertToBase({ value: item.amount_on_hand, from: item.inventory_unit === null ? 'gram' : item.inventory_unit }) || 0 )
+                                    + (cnv.convertToBase({ value: parseFloat(purchaseQuantity) * parseFloat(inventoryQuantity), from: inventoryUnit })),
+                                to: 
+                                    inventoryUnit
+                            }),
+                        last_updated:
+                            created_at
+                    }
+
+                )
+            }
+            // if (newVendor) {
+            //     // await Vendor.create(db, Vendor, vendorEmail, vendorPhone, vendorAd)
+            // }
+            await PurchLog.create(
+                db,
+                TYPE,
+                item.id,
+                created_at,
+                purchaseDatetime.getTime(),
+                purchaseUnit,
+                parseFloat(purchaseQuantity),
+                inventoryUnit,
+                parseFloat(inventoryQuantity),
+                vendorId,
+                brandId,
+                parseFloat(cost)
+            )
+            console.log(`Success! ${purchaseQuantity} ${purchaseUnit} of ${CaseHelper.toCleanCase(TYPE)} ${name} added to your inventory. Great Work!` )
+    		navigation.navigate("Dashboard")
+
+        } catch(error) {
+            console.error(error)
+        }
+    }
     
     // const handleSubmit = async () => {
     //     if (!image) {
@@ -179,8 +275,34 @@ export default function PurchaseLogForm({
     // }
 
 
+    const IMAGES_DIR = FileSystem.documentDirectory + "images/";
+
+    async function saveImage(localUri: string, filename: string) {
+    // Ensure images folder exists
+    const dirInfo = await FileSystem.getInfoAsync(IMAGES_DIR);
+    if (!dirInfo.exists) {
+        await FileSystem.makeDirectoryAsync(IMAGES_DIR, { intermediates: true });
+    }
+
+    const dest = IMAGES_DIR + filename;
+    await FileSystem.copyAsync({
+        from: localUri,
+        to: dest,
+    });
+
+    return dest; // <- this becomes item.filePath
+    }
+
+
+
     return (
         <>
+            {isNew === true ? 
+                <Form.Control labelStyle={styles.label} label="Item Name" name="name">
+                    <Form.Input value={name} onChangeText={setName}  style={{ backgroundColor:'transparent', width: '100%' }} />
+                </Form.Control> :
+                <></>
+            }
             <Form.Control labelStyle={styles.label} label='Item Category' name='category'>
                 <Form.Input style={{ backgroundColor:'transparent', width: '100%' }} value={category} onChangeText={setCategory}  />
             </Form.Control>
@@ -249,10 +371,10 @@ export default function PurchaseLogForm({
                     style={{ width: '100%', backgroundColor: 'transparent' }}
                     onValueChange={(value: any)=> {
                         if (value.id === 999999) {
-                            setVendor(null)
+                            setVendorId(null)
                             setNewVendor(true)
                         } else{
-                            setVendor(value)
+                            setVendorId(value.id)
                             setNewVendor(false)
                         }
                     }}    
@@ -271,8 +393,16 @@ export default function PurchaseLogForm({
                     style={{ backgroundColor: 'transparent', width: '100%' }} 
                 />
             </Form.Control>
-            <View style={{ marginTop: 72 }}>
-                <Button color={'#f74a63cc'} title='Submit' onPress={() => handleSubmit(onSubmit)} />
+            <LinearGradient
+                start={{ x: 0, y: 0 }}
+                end={{ x: 0.3, y: 0.9 }}
+                colors={['#94F8', '#00f', '#057']}
+                style={{ flex: 1, padding: 16}}
+            >
+                <ReceiptUploader />
+            </LinearGradient>
+            <View style={{ marginTop: 84 }}>
+                <Button color={'#f74a63cc'} title='Submit' onPress={() => handleSubmit()} />
             </View>
         </>
     )

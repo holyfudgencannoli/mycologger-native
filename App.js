@@ -12,11 +12,12 @@ import { SQLiteProvider } from 'expo-sqlite';
 import PurchaseLogForm from '@features/raw-materials/purchase-log-form';
 import Navigation from '@navigation';
 import { Platform } from 'react-native';
+import { FormStateProvider } from 'src/context/FormStateProvider';
 
 export default function App() {
 
 	const handleInit = async (db) => {
-        console.log("Initializes")
+        console.log("Initializing...")
 		try {
 			await migrateDbIfNeeded(db);
 			console.log("✅ Migration complete!");
@@ -26,16 +27,18 @@ export default function App() {
     }
 
 	return (
-		<SQLiteProvider databaseName='mycologger.db' onInit={handleInit}>
-			<PaperProvider>
-				<ThemeProvider>
-					<FormProvider>
-						<ScreenPrimative>
-                            <Navigation />
-						</ScreenPrimative>              
-					</FormProvider>	
-				</ThemeProvider>
-			</PaperProvider>
+		<SQLiteProvider databaseName='mycologger_v2_dev.db' onInit={handleInit}>
+			<FormStateProvider>
+				<PaperProvider>
+					<ThemeProvider>
+						<FormProvider>
+							<ScreenPrimative>
+								<Navigation />
+							</ScreenPrimative>              
+						</FormProvider>	
+					</ThemeProvider>
+				</PaperProvider>
+			</FormStateProvider>
 		</SQLiteProvider>
 	);
 }

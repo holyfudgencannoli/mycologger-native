@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react"
+import { useState, useCallback, useContext } from "react"
 import { Surface,TextInput } from "react-native-paper";
 import { StyleSheet, Text, View, ImageBackground, Button, Alert } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
@@ -11,12 +11,11 @@ import CreateHardwareItem from "./purchase-log-form";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Form from '@custom/react-native-forms/src'
 import { useForm } from "react-hook-form";
-import * as HW from '@db/hardware-items'
+import * as Item from '@db/items'
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { RootDrawerParamsList } from "@navigation";
 import { useSQLiteContext } from "expo-sqlite";
-import * as InvItem from '@db/inventory-items'
-import * as InvLog from '@db/inventory-logs'
+import { FormStateContext } from "src/context/FormContext";
 
 
 type NavigationProps = DrawerNavigationProp<RootDrawerParamsList>
@@ -25,9 +24,9 @@ type NavigationProps = DrawerNavigationProp<RootDrawerParamsList>
 export default function NewItem() {
   const [items, setItems] = useState([])
   const [selectedItem, setSelectedItem] = useState(null)
-  const [name, setName] = useState('');
-  const [category, setCategory] = useState('');
-  const [subcategory, setSubcategory] = useState('');
+  const { name, setName } = useContext(FormStateContext);
+  const { category, setCategory } = useContext(FormStateContext);
+  const { subcategory, setSubcategory } = useContext(FormStateContext);
   const navigation = useNavigation<NavigationProps>()
 
 
@@ -43,20 +42,41 @@ export default function NewItem() {
   });
 
   const getData = async() => {
-    const data = await HW.readAll(db)
+    const data = await Item.readAll(db)
     setItems(data)
   }
 
-  useEffect(() => {
-    getData()
-  }, [])
+  useFocusEffect(
+		useCallback(() => {
+				
+			return() => {
+				setName('')
+				setCategory('')
+				setSubcategory('')
+			}
+		}, [])
+	)
+
 
   const onSubmit = async() => {
     const nowMs = new Date().getTime()
     const TYPE = 'hardware_item'
-    const invItemId = await InvItem.create(db, TYPE, nowMs)
-    const HWItemId = await HW.create(db, invItemId, name, category, subcategory)
-    InvLog.create(db, TYPE, HWItemId, 0, 'Unit', nowMs)
+    const itemId = await Item
+    .create(
+      db, 
+      name, 
+      category, 
+      subcategory, 
+      TYPE, 
+      nowMs, 
+      null, 
+      null, 
+      null, 
+      nowMs, 
+      null, 
+      null 
+    )
+    console.log("Consumable Supply Item Created. ID:", itemId)
     navigation.navigate("Dashboard")
   };
 

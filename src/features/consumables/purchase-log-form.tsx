@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react"
+import { useState, useCallback, useContext } from "react"
 import { Surface,TextInput } from "react-native-paper";
 import { StyleSheet, Text, View, ImageBackground, Button, Alert } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
@@ -6,10 +6,7 @@ import { useEffect } from "react";
 import { uploadReceiptToCloudflare } from "../../services/UploadReceiptToCloudflare";
 // import UploadReceipt from "../UploadReceipt";
 // import CreateVendor from "./CreateVendor";
-import * as InvItem from '@db/inventory-items'
-import * as ConItem from '@db/consumable-items'
 import * as PurchLog from '@db/purchase-logs'
-import * as InvLog from '@db/inventory-logs'
 import * as Vendor from '@db/vendors'
 import * as Brand from '@db/brands'
 import * as cnv from '@utils/unitConversion'
@@ -18,22 +15,12 @@ import { Picker } from "@react-native-picker/picker";
 import * as Form from '@custom/react-native-forms/src'
 import { INV_UNITS, PUR_UNITS } from "@constants/units";
 import { useForm } from "react-hook-form";
-import * as Supply from '@db/consumable-items'
+import * as Item from '@db/items'
+import { CaseHelper } from "@utils/case-helper";
+import { FormStateContext } from "src/context/FormContext";
 
 
-export default function PurchaseLogForm({
-    name,
-    category,
-    subcategory,
-    setCategory,
-    setSubcategory
-} : {
-    name?: string,
-    category?: string,
-    subcategory?: string,
-    setCategory?: (category: string) => void,
-    setSubcategory?: (subcategory: string) => void
-}) {
+export default function PurchaseLogForm() {
     // const{ user, token } = useAuth();
     const db = useSQLiteContext();
 
@@ -66,10 +53,18 @@ export default function PurchaseLogForm({
     const [receiptMemo, setReceiptMemo] = useState("")
     
     const [purchaseDatetime, setPurchaseDatetime] = useState(new Date())
+
+    const { id } = useContext(FormStateContext)
+    const { isNew } = useContext(FormStateContext)
+    const { name, setName } = useContext(FormStateContext)
+    const { category, setCategory } = useContext(FormStateContext)
+    const { subcategory, setSubcategory } = useContext(FormStateContext)
+    const { vendorId, setVendorId } = useContext(FormStateContext);
+    const { brandId, setBrandId } = useContext(FormStateContext);
   
     
     const getData = async() => {
-        const data = await Supply.readAll(db)
+        const data = await Item.readAll(db)
         setItems(data)
     }
 
@@ -92,26 +87,111 @@ export default function PurchaseLogForm({
 
     }, [])
 
-    const { control, handleSubmit, formState: { errors }, } = useForm({
-        defaultValues: {
-            name: '',
-            category: '',
-            subcategory: ''
-        },
-    });
+    
+    const handleSubmit = async () => {
+        try {
+            if (!image) {
+                Alert.alert("Error", "Please select a receipt image");
+                return;
+            }
+            // const { fileKey, publicUrl } = await uploadReceiptToCloudflare({
+            //     image,
+            //     token,
+            //     contentType
+            // })
 
-    const onSubmit = async() => {
-        console.log('Pressed!')
-        // const nowMs = new Date().getTime()
-        // const TYPE = 'raw_material'
-        // const invItemId = await InvItem.create(db, TYPE, nowMs)
-        // const rawMatId = await RawMat.create(db, invItemId, selectedItem.name, category, subcategory)
-        // InvLog.create(db, TYPE, rawMatId, 0, 'Unit', nowMs)
-        // navigation.navigate("Dashboard")
-    };
+            // const payload = {
+            //     name: name,
+            //     category: category,
+            //     speciesLatin: speciesLatin,
+            //     brand: brand,
+            //     purchaseDate: purchaseDatetime,
+            //     purchaseQuantity: parseInt(purchaseQuantity),
+            //     purchaseUnit: purchaseUnit,
+            //     inventoryQuantity: parseInt(inventoryQuantity),
+            //     inventoryUnit: inventoryUnit,
+            //     cost: parseInt(cost),
+            //     vendor: vendor,
+            //     user: user,
+            //     filename: fileKey,
+            //     imageUrl: publicUrl,
+            //     receiptMemo: receiptMemo,
+            //     notes : notes,
+            //     vendorPhone: vendorPhone,
+            //     vendorEmail: vendorEmail,
+            //     vendorWebsite: vendorWebsite,
+            // }
+            
+            const created_at = new Date().getTime();
+            const item = await Item.getById(db, id)
+            const TYPE = 'consumable_item'
+
+            if (isNew) {
+                const itemId = await Item
+                .create(
+                    db,
+                    name,
+                    category,
+                    subcategory,
+                    TYPE,
+                    created_at,
+                    parseFloat(purchaseQuantity),
+                    purchaseUnit,
+                    null,
+                    created_at,
+                    null,
+                    null
+                )
+            } else {
+                const itemId = await Item
+                .update(
+                    db,                
+                    {
+                        id, 
+                        amount_on_hand: 
+                            cnv.convertFromBase({
+                                value: 
+                                    cnv.convertToBase({ value: item.amount_on_hand, from: item.inventory_unit }) 
+                                    + (cnv.convertToBase({ value: parseFloat(purchaseQuantity), from: purchaseUnit })),
+                                to: 
+                                    item.inventory_unit
+                            }),
+                        last_updated:
+                            created_at
+                    }
+
+                )
+            }
+            await PurchLog.create(
+                db,
+                TYPE,
+                item.id,
+                created_at,
+                purchaseDatetime.getTime(),
+                purchaseUnit,
+                parseFloat(purchaseQuantity),
+                inventoryUnit,
+                parseFloat(inventoryQuantity),
+                vendorId,
+                brandId,
+                parseFloat(cost)
+            )
+            return `Success! ${purchaseQuantity} ${purchaseUnit} of ${CaseHelper.toCleanCase(TYPE)} ${name} added to your inventory. Great Work!` 
+
+        } catch(error) {
+            console.error(error)
+        }
+    }
 
     return (
         <>
+            {
+                isNew ? 
+                    <Form.Control labelStyle={styles.label} label='Item Name' name='name'>
+                        <Form.Input style={{ backgroundColor:'transparent', width: '100%' }} value={name} onChangeText={setName}  />
+                    </Form.Control> :
+                    <></>
+            }
             <Form.Control labelStyle={styles.label} label='Item Category' name='category'>
                 <Form.Input style={{ backgroundColor:'transparent', width: '100%' }} value={category} onChangeText={setCategory}  />
             </Form.Control>
@@ -194,8 +274,8 @@ export default function PurchaseLogForm({
                     style={{ backgroundColor: 'transparent', width: '100%' }} 
                 />
             </Form.Control>
-            <View style={{ marginTop: 36 }}>
-                <Button color={'#f74a63cc'} title='Submit' onPress={() => handleSubmit(onSubmit)} />
+            <View style={{ marginTop: 84 }}>
+                <Button color={'#f74a63cc'} title='Submit' onPress={() => handleSubmit()} />
             </View>
         </>
     )

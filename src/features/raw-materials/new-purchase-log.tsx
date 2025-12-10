@@ -2,9 +2,9 @@ import { StyleSheet, View } from 'react-native';
 import { ScreenPrimative } from "@components/screen-primative";
 import { ImageBG } from "@components/image-bg";
 import { useFocusEffect } from "@react-navigation/native";
-import { useCallback, useState } from "react";
+import { useCallback, useContext, useState } from "react";
 import { Surface } from "react-native-paper";
-import * as RawMat from '@db/raw-materials'
+import * as Item from '@db/items'
 import { useSQLiteContext } from "expo-sqlite";
 
 import * as Form from '@custom/react-native-forms/src'
@@ -12,6 +12,7 @@ import { useForm } from 'react-hook-form';
 import PurchaseLogForm from './purchase-log-form';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ScrollView } from 'react-native-gesture-handler';
+import { FormStateContext } from 'src/context/FormContext';
 
 
 export default function NewPurchaseLog() {
@@ -28,24 +29,31 @@ export default function NewPurchaseLog() {
     const [item, setItem] = useState({})
     const [vendorsNames, setVendorsNames] = useState([])
     const [brandNames, setBrandNames] = useState([])
-    const [newItem, setNewItem] = useState(false)
 
-    const [name, setName] = useState("")
-    const [category, setCategory] = useState("")
-    const [subcategory, setSubcategory] = useState("")
-
+    
+    const { id, setId } = useContext(FormStateContext)
+    const { isNew, setIsNew } = useContext(FormStateContext)
+    const { name, setName } = useContext(FormStateContext)
+    const { category, setCategory } = useContext(FormStateContext)
+    const { subcategory, setSubcategory } = useContext(FormStateContext)
 
     
     const getData = async() => {
-        const data = await RawMat.readAll(db)
+        const data = await Item.getAllByType(db, 'raw_material')
         setItems([{ id: 999999, name: 'New Item' }, ...data])
     }
 
     useFocusEffect(
-        useCallback(() => {
-            getData()
-        }, [])
-    )
+		useCallback(() => {
+			getData()
+			return() => {
+				setName('')
+				setCategory('')
+				setSubcategory('')
+			}
+		}, [])
+	)
+
 
 
 
@@ -65,14 +73,15 @@ export default function NewPurchaseLog() {
                                 style={{ color: 'rgba(255, 0, 155, 1)', width: '100%' }}
                                 onValueChange={async(value: any) => {
                                     if (value.id === 999999) {
-                                        setNewItem(true)
+                                        setIsNew(true)
                                         setName('')
                                         setCategory('')
                                         setSubcategory('')
                                         setFormVisible(true)
 
                                     } else {
-                                        setNewItem(false)
+                                        setIsNew(false)
+                                        setId(value.id)
                                         setName(value.name)
                                         setCategory(value.category)
                                         setSubcategory(value.subcategory)
@@ -83,13 +92,7 @@ export default function NewPurchaseLog() {
                             />
                         </Form.Control>
                     {formVisible ? 
-                        <PurchaseLogForm 
-                            name={name}
-                            category={category}
-                            subcategory={subcategory}
-                            setCategory={setCategory}
-                            setSubcategory={setSubcategory}
-                        /> : 
+                        <PurchaseLogForm /> : 
                         <></>
                     }
                     </LinearGradient>

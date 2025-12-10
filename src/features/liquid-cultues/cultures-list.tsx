@@ -7,8 +7,8 @@ import { ScrollableDataTable } from "@components/scrollable-data-table";
 import { ImageBG } from "@components/image-bg";
 import { ScreenPrimative } from "@components/screen-primative";
 import { CultureDetailModal } from "./detail-model";
-import * as Culture from '@db/culture-media'
-import * as Liquid from '@db/liquid-cultures'
+import * as Culture from '@db/cultures'
+// import * as Liquid from '@db/liquid-cultures'
 import { useSQLiteContext } from "expo-sqlite";
 import { ScrollView } from "react-native-gesture-handler";
 import { LinearGradient } from "expo-linear-gradient";
@@ -25,9 +25,9 @@ export default function LiquidCulturesListScreen() {
     const [liquids, setLiquids] = useState<LiquidCulture[]>([])
 
     const getData = async() => {
-        const Liquids: LiquidCulture[] = await Liquid.readAll(db)
-        console.log(Liquids)  
-        setLiquids(Liquids)
+    //     const Liquids: LiquidCulture[] = await Liquid.readAll(db)
+    //     console.log(Liquids)  
+        // setLiquids(Liquids)
     }
 
     useFocusEffect(

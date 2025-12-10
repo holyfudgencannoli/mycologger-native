@@ -11,6 +11,7 @@ import { ScreenPrimative } from "@components/screen-primative";
 import RecipeModal from "./detail-modal";
 import * as Recipe from '@db/recipes'
 import { useSQLiteContext } from "expo-sqlite";
+import { LinearGradient } from "expo-linear-gradient";
 
 
 export default function RecipeList() {
@@ -44,7 +45,14 @@ export default function RecipeList() {
 
 
     return(
-            <ScreenPrimative>
+      <ScreenPrimative edges={[]}>
+        <View style={styles.container}>
+          <LinearGradient
+            start={{ x: 0, y: 0 }}
+            end={{ x: 0.3, y: 0.9 }}
+            colors={["#94F8", "#00f", "#057"]}
+            style={{ flex: 1, padding: 16 }}
+          >
                 <Surface style={styles.surfaceMetaContainer}>                        
                     <Surface style={styles.surfaceContainer}>
                     {recipes && recipes.length > 0 ? (
@@ -71,7 +79,9 @@ export default function RecipeList() {
                         )}
                     </Surface>
                 </Surface>
-            </ScreenPrimative>
+              </LinearGradient>
+            </View>
+      </ScreenPrimative>
     )
 
 }

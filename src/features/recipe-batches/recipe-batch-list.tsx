@@ -1,16 +1,14 @@
-import { useState, useCallback, useEffect } from "react"
-import { Modal, Surface,TextInput } from "react-native-paper";
-import { StyleSheet, Text, View, ImageBackground, Button, Alert } from 'react-native';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useState, useCallback } from "react"
+import { Surface } from "react-native-paper";
+import { StyleSheet, View } from 'react-native';
 import { useTheme } from "../../hooks/useTheme";
 import { useFocusEffect } from "@react-navigation/native";
 import { ScrollableDataTable } from "@components/scrollable-data-table";
-import { ImageBG } from "@components/image-bg";
 import { ScreenPrimative } from "@components/screen-primative";
 import RecipeBatchModal from "./detail-modal";
 import * as RecipeBatch from '@db/recipe-batches'
 import { useSQLiteContext } from "expo-sqlite";
+import { LinearGradient } from "expo-linear-gradient";
 
 
 export default function RecipeBatchList() {
@@ -21,14 +19,15 @@ export default function RecipeBatchList() {
     const { theme, toggleTheme } = useTheme()
 
     const getRecipeBatchData = async() => {
-        const data = await RecipeBatch.readAll(db)
-        setRecipeBatches(data)
+      const data = await RecipeBatch.readAll(db)
+      console.log("Recipe Batches: ", data)
+      setRecipeBatches(data)
     }
 
     useFocusEffect(
-        useCallback(() => {
-            getRecipeBatchData()
-        }, [])
+      useCallback(() => {
+        getRecipeBatchData()
+      }, [])
     )
 
     const columns = [
@@ -43,7 +42,14 @@ export default function RecipeBatchList() {
 
 
     return(
-            <ScreenPrimative>
+        <ScreenPrimative edges={[]}>
+          <View style={styles.container}>
+            <LinearGradient
+              start={{ x: 0, y: 0 }}
+              end={{ x: 0.3, y: 0.9 }}
+              colors={["#94F8", "#00f", "#057"]}
+              style={{ flex: 1, padding: 16 }}
+            >
                 <Surface style={styles.surfaceMetaContainer}>                        
                     <Surface style={styles.surfaceContainer}>
                     {recipeBatches && recipeBatches.length > 0 ? (
@@ -70,7 +76,9 @@ export default function RecipeBatchList() {
                         )}
                     </Surface>
                 </Surface>
-            </ScreenPrimative>
+              </LinearGradient>
+            </View>
+        </ScreenPrimative>
     )
 
 }

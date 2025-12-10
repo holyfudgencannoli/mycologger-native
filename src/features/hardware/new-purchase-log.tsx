@@ -2,16 +2,16 @@ import { StyleSheet, Text, View, ImageBackground, Button, Alert, ScrollView } fr
 import { ScreenPrimative } from "@components/screen-primative";
 import { ImageBG } from "@components/image-bg";
 import { useFocusEffect } from "@react-navigation/native";
-import { useCallback, useState } from "react";
+import { useCallback, useContext, useState } from "react";
 import { Surface } from "react-native-paper";
 import { Picker } from "@react-native-picker/picker";
-import * as Consumable from '@db/consumable-items'
 import { useSQLiteContext } from "expo-sqlite";
 import CreateConsumableItemPurchase from "./purchase-log-form";
 import PurchaseLogForm from './purchase-log-form';
-import * as HW from '@db/hardware-items'
+import * as Item from '@db/items'
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Form from '@custom/react-native-forms/src'
+import { FormStateContext } from 'src/context/FormContext';
 
 
 export default function NewPurchaseLog() {
@@ -22,26 +22,33 @@ export default function NewPurchaseLog() {
     const [vendorsNames, setVendorsNames] = useState([])
     const [brandNames, setBrandNames] = useState([])
     const db = useSQLiteContext();
-    const [name, setName] = useState("")
-    const [category, setCategory] = useState("")
-    const [subcategory, setSubcategory] = useState("")
 
-    const [newItem, setNewItem] = useState(false)
+
+    const { id, setId } = useContext(FormStateContext)
+    const { isNew, setIsNew } = useContext(FormStateContext)
+    const { name, setName } = useContext(FormStateContext)
+    const { category, setCategory } = useContext(FormStateContext)
+    const { subcategory, setSubcategory } = useContext(FormStateContext)
 
 
     const getItemNames = async() => {
-        const items = await HW.readAll(db)
+        const data = await Item.getAllByType(db, 'hardware_item')
         setItems([{ id: 999999, name: 'New Item' }, ...items])
     }
 
     useFocusEffect(
         useCallback(() => {
             getItemNames()
+            return() => {
+				setName('')
+				setCategory('')
+				setSubcategory('')
+			}
         }, [])
     )
 
     return(
-        <ScreenPrimative edges={[]}>
+        <ScreenPrimative edges={[]} scroll>
             <View style={styles.container}>
                     <LinearGradient
                         start={{ x: 0, y: 0 }}
@@ -56,14 +63,15 @@ export default function NewPurchaseLog() {
                                 size='lg'
                                 onValueChange={async(value: any) => {
                                     if (value.id === 999999) {
-                                        setNewItem(true)
+                                        setIsNew(true)
                                         setName('')
                                         setCategory('')
                                         setSubcategory('')
                                         setFormVisible(true)
 
                                     } else {
-                                        setNewItem(false)
+                                        setIsNew(false)
+                                        setId(value.id)
                                         setName(value.name)
                                         setCategory(value.email)
                                         setSubcategory(value.phone)
@@ -75,13 +83,7 @@ export default function NewPurchaseLog() {
                             />
                         </Form.Control>
                     {formVisible ? 
-                        <PurchaseLogForm 
-                            name={name}
-                            category={category}
-                            subcategory={subcategory}
-                            setCategory={setCategory}
-                            setSubcategory={setSubcategory}
-                        /> : 
+                        <PurchaseLogForm /> : 
                         <></>
                     }
                     </LinearGradient>

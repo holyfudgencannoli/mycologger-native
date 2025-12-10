@@ -1,14 +1,14 @@
 import { Surface, TextInput } from "react-native-paper";
 import { ImageBG } from "@components/image-bg";
 import { ScreenPrimative } from "@components/screen-primative";
-import { Alert, Button, StyleSheet, Text, View } from "react-native";
+import { Alert, StyleSheet, Text, View } from "react-native";
 import { useSQLiteContext } from "expo-sqlite";
 import { useFocusEffect, useNavigation, useRoute } from "@react-navigation/native";
-import { useCallback, useState } from "react";
+import { useCallback, useContext, useState } from "react";
 import { useTheme } from "../../hooks/useTheme";
 import { PaperSelect } from "react-native-paper-select";
 import * as Batches from '@db/recipe-batches'
-import * as Culture from '@db/culture-media'
+import * as Culture from '@db/cultures'
 import * as Agar from '@db/agar-cultures'
 import * as Usage from '@db/usage_logs'
 import * as Task from '@db/tasks'
@@ -18,13 +18,16 @@ import { ScrollView } from "react-native-gesture-handler";
 import { LinearGradient } from "expo-linear-gradient";
 import { RouteProp } from "@react-navigation/native";
 import { NavigationProps, RootDrawerParamsList } from "@navigation";
-import { RecipeBatch } from "@features/recipe-batches/types";
+import { RecipeBatch } from "@db/recipe-batches/types";
 import { INV_UNITS } from "@constants/units";
+import Button from "@components/button";
+import { Colors } from "@constants/colors";
+import { FormStateContext } from "src/context/FormContext";
 
 type formattedRecipe ={
     _id: string,
     id: number, 
-    value: string
+    name: string
 }
 
 type TaskRouteProps = RouteProp<RootDrawerParamsList, any>
@@ -39,8 +42,8 @@ export default function ExecuteAgarBatch() {
     const [notes, setNotes] = useState("")
     const [quantity, setQuantity] = useState("")
     const [recipeBatches, setRecipeBatches] = useState<formattedRecipe[]>([])
-    const [selectedRecipeBatchId, setSelectedRecipeBatchId] = useState(0)
-    const [selectedRecipeBatchName, setSelectedRecipeBatchName] = useState('')
+    const { selectedRecipeBatchId, setSelectedRecipeBatchId } =useContext(FormStateContext)
+    const { selectedRecipeBatchName, setSelectedRecipeBatchName } =useContext(FormStateContext)
     const [loading, setLoading] = useState(true)
     const { theme } = useTheme()
 
@@ -49,61 +52,64 @@ export default function ExecuteAgarBatch() {
         const formatted = items.map((item, index) => ({
             _id: String(index),
             id: item.id,
-            value: item.name,
+            name: item.name,
         }));
         console.log("Formatted: ", formatted)
         setRecipeBatches(formatted);
     };
 
-    const units = ["Pound", "Ounce", "Kilogram", "Gram", "Milligram", "Gallon", "Quart", "Pint", "Fluid Ounce", 'Liter', 'Milliliter']
-
-    const formattedUnits = units.map((unit, index) => ({
-        _id: String(index),
-        value: unit
-    }));
     const handleExecute = async () => {
-        const qty = parseInt(quantity);
-        // const name = 
-        if (isNaN(qty) || qty <= 0) {
-            Alert.alert('Invalid Quantity', 'Please enter a valid positive number.');
-            return;
-        }
+        await Task.ExecuteAgar({ db }, {
+            db,
+            quantity,
+            type: 'agar_culture',
+            recipe_batch_id: selectedRecipeBatchId,
+            volume_amount: volume,
+            volume_unit: volumeUnit,
+            start_time: startTime,
+            end_time: endTime,
+            notes
+        })
+        // const qty = parseInt(quantity);
+        // // const name = 
+        // if (isNaN(qty) || qty <= 0) {
+        //     Alert.alert('Invalid Quantity', 'Please enter a valid positive number.');
+        //     return;
+        // }
 
-        setLoading(true); // Optional: add loading state
+        // setLoading(true); // Optional: add loading state
 
 
-        try {
-            for (let i=0; i<qty; i++) {
+        // try {
+        //     for (let i=0; i<qty; i++) {
 
-                const cultureId = await Culture.create(db, 'agar_cultures', new Date().getTime());
-                console.log('Using recipebatch ID:', selectedRecipeBatchId);
+        //         const cultureId = await Culture.create({
+        //             db, 
+        //             type: 'agar_culture', 
+        //             recipe_batch_id: selectedRecipeBatchId,
+        //             volume_amount: parseFloat(volume),
+        //             volume_unit: volumeUnit, 
+        //             last_updated: new Date().getTime(),
+        //             created_at:  new Date().getTime()
+        //         });
+        //         console.log('Using recipebatch ID:', selectedRecipeBatchId);
 
-                await Agar.create(
-                    db,
-                    cultureId,
-                    selectedRecipeBatchId,
-                    parseInt(volume),
-                    volumeUnit,
-                    new Date().getTime(),
-                    null, null, null, null, null, null
-                );
-
-            }                
-            const use = convertToBase({value: quantity ? parseInt(quantity) * parseFloat(volume) : parseFloat(volume), from: volumeUnit.toLowerCase()})
-            console.log(use)
+        //     }                
+        //     const use = convertToBase({value: quantity ? parseInt(quantity) * parseFloat(volume) : parseFloat(volume), from: volumeUnit.toLowerCase()})
+        //     console.log(use)
             
-            const taskId = await Task.create(db, selectedRecipeBatchName, startTime, endTime, notes)
-            console.log(taskId)
+        //     const taskId = await Task.create(db, selectedRecipeBatchName, startTime, endTime, notes)
+        //     console.log(taskId)
             
-            await Usage.create(db, 'recipe_batch', selectedRecipeBatchId, taskId, use, volumeUnit, notes, new Date().getTime() )
+        //     await Usage.create(db, 'recipe_batch', selectedRecipeBatchId, taskId, use, volumeUnit, notes, new Date().getTime() )
 
-            navigation.navigate('Dashboard');
-        } catch (error) {
-            console.error('Failed to create cultures:', error);
-            Alert.alert('Error', 'Failed to create one or more cultures. Please try again.');
-        } finally {
-            setLoading(false);
-        }
+        //     navigation.navigate('Dashboard');
+        // } catch (error) {
+        //     console.error('Failed to create cultures:', error);
+        //     Alert.alert('Error', 'Failed to create one or more cultures. Please try again.');
+        // } finally {
+        //     setLoading(false);
+        // }
     };
     
     useFocusEffect(
@@ -133,11 +139,12 @@ export default function ExecuteAgarBatch() {
                     </Surface>
                     <Form.Control labelStyle={styles.label} label="Select Batch to Use" name="batch">
                         <Form.Select 
+                            placeholder="Select Recipe Batch"
                             options={recipeBatches}
                             style={{ width: '100%' }}
                             onValueChange={(value: formattedRecipe) => {
                                 setSelectedRecipeBatchId(value.id)
-                                setSelectedRecipeBatchName(value.value)
+                                setSelectedRecipeBatchName(value.name)
                             }}
                         />
                     </Form.Control>
@@ -163,6 +170,7 @@ export default function ExecuteAgarBatch() {
                             style={{ width: '100%', textAlign: 'center', backgroundColor: 'transparent', color: 'white' }}
                         />
                     </Form.Control>
+                    <Button title="Submit" viewStyle={{ marginTop: 72, }} color={Colors.button.primary} onPress={handleExecute}/>
                 </LinearGradient>
             </View>
         </ScreenPrimative>

@@ -134,6 +134,7 @@ export type CultureParamList = {
 export type NavigationProps = DrawerNavigationProp<RootDrawerParamsList>
 
 
+
 export default function Navigation() {
     return(
         <NavigationContainer>
@@ -159,7 +160,7 @@ function DrawerNavigator() {
     console.log("Root navigator mounted");
 
     return(
-        <Drawer.Navigator 
+        <Drawer.Navigator
             initialRouteName="Dashboard" 
             screenOptions={{
                 header: ({ navigation, route, options }) => {
@@ -195,7 +196,7 @@ function DrawerNavigator() {
                 headerTintColor: 'white',
             }}
         >
-            <Drawer.Screen component={Dashboard} name="Dashboard"  />
+            <Drawer.Screen component={Dashboard} name="Dashboard" />
             <Drawer.Screen component={RawMaterialNavigator} name='Raw Materials'  />
             <Drawer.Screen component={BioMaterialNavigator} name='Bio Materials'/>
             <Drawer.Screen component={ConsumablesNavigator} name='Consumable Items'/>
@@ -219,10 +220,21 @@ function DrawerNavigator() {
 const RawMaterial = createMaterialTopTabNavigator<InventoryItemParamList, any>()
 
 function RawMaterialNavigator() {
+    // useFocusEffect(
+    //     useCallback(() => {
+    //         return () => {
+    //             // This runs when the screen loses focus (blur)
+    //             navigation.popToTop();
+    //         };
+    //     }, [navigation])
+    // );
+
     return(
         <RawMaterial.Navigator 
-            initialRouteName="New Item"
+        
+            initialRouteName="New Item" 
             screenOptions={{
+                swipeEnabled: false,
                 tabBarLabelStyle: { fontSize: 16, color: 'white' },
                 // tabBarItemStyle: { borderColor: 'white', borderWidth: 1 },
                 tabBarStyle: { backgroundColor: '#94f8' },
@@ -241,6 +253,7 @@ function BioMaterialNavigator() {
     return(
         <BioMaterial.Navigator
             screenOptions={{
+                swipeEnabled: false,
                 tabBarLabelStyle: { fontSize: 16, color: 'white' },
                 // tabBarItemStyle: { borderColor: 'white', borderWidth: 1 },
                 tabBarStyle: { backgroundColor: '#94f8' },
@@ -259,6 +272,7 @@ function ConsumablesNavigator () {
     return(
         <Consumables.Navigator
             screenOptions={{
+                swipeEnabled: false,
                 tabBarLabelStyle: { fontSize: 16, color: 'white' },
                 // tabBarItemStyle: { borderColor: 'white', borderWidth: 1 },
                 tabBarStyle: { backgroundColor: '#94f8' },
@@ -277,6 +291,7 @@ function HardwareNavigator () {
     return(
         <Hardware.Navigator
             screenOptions={{
+                swipeEnabled: false,
                 tabBarLabelStyle: { fontSize: 16, color: 'white' },
                 // tabBarItemStyle: { borderColor: 'white', borderWidth: 1 },
                 tabBarStyle: { backgroundColor: '#94f8' },
@@ -306,6 +321,7 @@ function ReceipesNavigator() {
         <Recipes.Navigator
             initialRouteName="New Recipe"
             screenOptions={{
+                swipeEnabled: false,
                 tabBarLabelStyle: { fontSize: 16, color: 'white' },
                 // tabBarItemStyle: { borderColor: 'white', borderWidth: 1 },
                 tabBarStyle: { backgroundColor: '#94f8' },

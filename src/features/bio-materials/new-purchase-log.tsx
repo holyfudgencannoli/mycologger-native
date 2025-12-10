@@ -6,7 +6,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { useCallback, useState } from "react";
 import { Surface } from "react-native-paper";
 import { useSQLiteContext } from "expo-sqlite";
-import * as BioMat from '@db/bio-materials'
+import * as Item from '@db/items'
 import * as PurchLog from '@db/purchase-logs'
 import { Picker } from "@react-native-picker/picker";
 import * as Vendor from '@db/vendors'
@@ -22,19 +22,20 @@ export default function NewPurchaseLog() {
     const [purchaseLogs, setPurchaseLogs] = useState<any>()
     const [formVisible, setFormVisible] = useState(false)
     const [items, setItems] = useState([])
+    const [id, setId] = useState<number>()
     const [vendor, setVendor] = useState({})
     const [brandNames, setBrandNames] = useState([])
 
     const [name, setName] = useState("")
     const [category, setCategory] = useState("")
-    const [speciesLatin, setSpeciesLatin] = useState("")
+    const [subcategory, setSubcategory] = useState("")
 
     const [isNewItem, setIsNewItem] = useState(true)
 
     async function itemLookup(name: string) {
-        const data = await BioMat.getByName(db, name)
+        const data = await Item.getByName(db, name)
         setCategory(data.category)
-        setSpeciesLatin(data.species_latin)
+        setSubcategory(data.subcategory)
         // const brandNames = (data.brand_names.map((name: string) => {name}))
         // setBrandNames(brandNames)
         // const vendorNames = (data.vendor_names.map((name: string) => name))
@@ -43,8 +44,8 @@ export default function NewPurchaseLog() {
     }
         
     const getItems = async() => {
-        const data = await BioMat.readAll(db)
-        setItems([{ id: 999999, name: 'New Item' }, { id: 10000, name: 'Test', category: 'Test', speciesLatin: 'Test' }, ...data])
+        const data = await Item.getAllByType(db, 'bio_material')
+        setItems([{ id: 999999, name: 'New Item' }, { id: 10000, name: 'Test', category: 'Test', subcategory: 'Test' }, ...data])
     }
 
     const getPurchaseLogs = async() => {
@@ -55,7 +56,7 @@ export default function NewPurchaseLog() {
     const newItem = () => {
         setFormVisible(true)
         setCategory('')
-        setSpeciesLatin('')
+        setSubcategory('')
     }
 
     useFocusEffect(
@@ -68,7 +69,7 @@ export default function NewPurchaseLog() {
 
 
     return(
-            <ScreenPrimative edges={[]}>
+            <ScreenPrimative edges={[]} scroll>
                 <View style={styles.container}>
                         <LinearGradient
                             start={{ x: 0, y: 0 }}
@@ -87,13 +88,14 @@ export default function NewPurchaseLog() {
                                             setIsNewItem(true)
                                             setName('')
                                             setCategory('')
-                                            setSpeciesLatin('')
+                                            setSubcategory('')
                                         } else {
                                             setFormVisible(true)
                                             setIsNewItem(false)
+                                            setId(value.id)
                                             setName(value.name)
                                             setCategory(value.category)
-                                            setSpeciesLatin(value.species_latin)
+                                            setSubcategory(value.subcategory)
                                         }
 
                                     }}    
@@ -102,12 +104,14 @@ export default function NewPurchaseLog() {
                             </Form.Control>
                     {formVisible ? 
                         <PurchaseLogForm
+                            id={id}
                             name={name}
                             category={category}
-                            speciesLatin={speciesLatin}
+                            subcategory={subcategory}
                             setName={setName}
                             setCategory={setCategory}
-                            setSpeciesLatin={setSpeciesLatin}
+                            setSubcategory={setSubcategory}
+                            isNew={isNewItem}
                         /> : 
                         <></>
                     }

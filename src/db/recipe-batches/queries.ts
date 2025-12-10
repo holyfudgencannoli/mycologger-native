@@ -1,37 +1,43 @@
 
 import { SQLiteDatabase } from "expo-sqlite";
 import { safeExec, safeRun, safeSelect, safeSelectOne, safeSelectAll } from "../utils";
-import { RecipeBatch } from "@features/recipe-batches/types";
+import { RecipeBatch } from "@db/recipe-batches/types";
+import { qunit } from "globals";
 
 export async function create(
-    db: SQLiteDatabase,
-    recipe_id: number,
+    db: SQLiteDatabase,  
     quantity: number,
-    real_amount: number,
-    real_unit: string,
+	  recipe_id: number,
+    real_volume: number,
+    real_volume_unit: string,
+    real_weight: number,
+    real_weight_unit: string,
     loss: number,
     name: string,
     notes: string,
     created_at: number
 ) {
   const result = await safeRun(db,
-    "INSERT INTO recipe_batches ( recipe_id, quantity, real_amount, real_unit, loss, name, notes, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+    "INSERT INTO recipe_batches (recipe_id, quantity, real_volume, real_volume_unit, real_weight, real_weight_unit, loss, name, notes, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
     [
-        recipe_id,
-        quantity,
-        real_amount,
-        real_unit,
-        loss,
-        name,
-        notes,
-        created_at
+                
+      recipe_id,
+      quantity,
+      real_volume,
+      real_volume_unit,
+      real_weight,
+      real_weight_unit,
+      loss,
+      name,
+      notes,
+      created_at,
     ]
   );
 
   return result.lastInsertRowId;
 }
 
-export async function readAll(db: SQLiteDatabase) {
+export async function readAll<RecipeBatch>(db: SQLiteDatabase) {
   return await safeSelectAll<RecipeBatch>(db, "SELECT * FROM recipe_batches ORDER BY id ASC");
 }
 
@@ -39,17 +45,7 @@ export async function getById(
   db: SQLiteDatabase,
   id: number
 ) {
-  return await safeSelectOne<{
-    id: number;
-    recipe_id: number,
-    quantity: number,
-    real_amount: number,
-    real_unit: string,
-    loss: number,
-    name: string,
-    notes: string,
-    created_at: number
-  }>(db, "SELECT * FROM recipe_batches WHERE id = ?", [id]);
+  return await safeSelectOne<RecipeBatch>(db, "SELECT * FROM recipe_batches WHERE id = ?", [id]);
 }
 
 export async function getByName(
@@ -57,24 +53,26 @@ export async function getByName(
   name: string
 ) {
   return await safeSelectOne<{
-		id: number;
-        recipe_id: number;
-        quantity: number;
-        real_amount: number;
-        real_unit: string;
-        loss: number;
-        name: string;
-        notes: string;
-        created_at: number;
+		id: number;        
+	  recipe_id: number,
+    real_volume: number,
+    real_volume_unit: string,
+    real_weight: number,
+    real_weight_unit: string,
+    loss: number,
+    name: string,
+    notes: string,
+    created_at: number
   }>(db, "SELECT * FROM recipe_batches WHERE name = ?", [name]);
 }
 
 export async function update(
     db: SQLiteDatabase,
 	  recipe_id: number,
-    quantity: number,
-    real_amount: number,
-    real_unit: string,
+    real_volume: number,
+    real_volume_unit: string,
+    real_weight: number,
+    real_weight_unit: string,
     loss: number,
     name: string,
     notes: string,
@@ -83,13 +81,14 @@ export async function update(
   const result = await safeRun(
     db,
     `UPDATE recipe_batches
-       SET name = ?, type = ?, ingredients = ?, yield_amount = ?, yield_unit = ?, nute_concentration = ?
+       SET name = ?, type = ?, ingredients = ?, real_volume = ?, real_volume_unit = ?,real_weight = ?, real_weight_unit = ?, nute_concentration = ?
        WHERE id = ?`,
         [
             recipe_id,
-            quantity,
-            real_amount,
-            real_unit,
+            real_volume,
+            real_volume_unit,
+            real_weight,
+            real_weight_unit,
             loss,
             name,
             notes,

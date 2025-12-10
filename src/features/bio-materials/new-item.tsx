@@ -1,18 +1,17 @@
 import { StyleSheet, View } from 'react-native';
 import * as Form from 'custom_modules/react-native-forms/src';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { Surface } from 'react-native-paper';
 import { useForm } from 'react-hook-form';
-import * as InvItem from '@db/inventory-items'
-import * as BioMat from '@db/bio-materials'
-import * as InvLog from '@db/inventory-logs'
+import * as Item from '@db/items'
 
 import { useSQLiteContext } from 'expo-sqlite';
 import { LinearGradient } from 'expo-linear-gradient';
 import Button from '@components/button';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { RootDrawerParamsList } from '@navigation';
+import { FormStateContext } from 'src/context/FormContext';
 // import { useFocusEffect } from '@react-navigation/native';
 
 type NavigationProps = DrawerNavigationProp<RootDrawerParamsList>
@@ -21,9 +20,9 @@ type NavigationProps = DrawerNavigationProp<RootDrawerParamsList>
 export default function NewItem() {
 	const [items, setItems] = useState([])
 	const [selectedItem, setSelectedItem] = useState(null)
-	const [name, setName] = useState('');
-	const [category, setCategory] = useState('');
-	const [speciesLatin, setSpeciesLatin] = useState('');
+	const { name, setName } = useContext(FormStateContext);
+	const { category, setCategory } = useContext(FormStateContext);
+	const { subcategory, setSubcategory } = useContext(FormStateContext);
 	const navigation = useNavigation<NavigationProps>();
 
 
@@ -34,25 +33,46 @@ export default function NewItem() {
 			defaultValues: {
 				name: '',
 				category: '',
-				speciesLatin: ''
+				subcategory: ''
 			},
 		});
 
 	const getData = async() => {
-		const data = await BioMat.readAll(db)
+		const data = await Item.readAll(db)
 		setItems(data)
 	}
 
-	useEffect(() => {
-		getData()
-	}, [])
+	useFocusEffect(
+			useCallback(() => {
+					
+				return() => {
+					setName('')
+					setCategory('')
+					setSubcategory('')
+				}
+			}, [])
+		)
+	
 
 	const onSubmit = async() => {
 		const nowMs = new Date().getTime()
 		const TYPE = 'bio_material'
-		const invItemId = await InvItem.create(db, TYPE, nowMs)
-		const bioMatId = await BioMat.create(db, invItemId, name, category, speciesLatin)
-		InvLog.create(db, TYPE, bioMatId, 0, 'Unit', nowMs)
+		const itemId = await Item
+		.create(
+			db, 
+			name, 
+			category, 
+			subcategory, 
+			TYPE, 
+			nowMs, 
+			null, 
+			null, 
+			null, 
+			nowMs, 
+			null, 
+			null 
+		)
+		console.log("Bio Material Created. ID:", itemId)
 		navigation.navigate("Dashboard")
 	};
 
@@ -73,7 +93,7 @@ export default function NewItem() {
 					<Form.Input size='lg' style={{ color: 'white', flex: 1 }} value={category} onChangeText={setCategory}  />
 				</Form.Control>
 				<Form.Control label='Species Name (Latin)' name='speciesLatin' labelStyle={{ color: 'white' }}>
-					<Form.Input value={speciesLatin} style={{ color: 'white', flex: 1 }} onChangeText={setSpeciesLatin}  />
+					<Form.Input value={subcategory} style={{ color: 'white', flex: 1 }} onChangeText={setSubcategory}  />
 				</Form.Control>
 				<Button viewStyle={{marginTop: 36}} color={'#f74a63cc'} title='Submit' onPress={handleSubmit(onSubmit)} />
 			</LinearGradient>

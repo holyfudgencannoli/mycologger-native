@@ -33,15 +33,15 @@ export async function create(
     last_updated: number,
 ) {
   const result = await safeRun(db,
-    `INSERT INTO ${usageLogTable(type)} (item_id, task_id, usage_amout, usage_unit, notes, last_updated) VALUES (?, ?, ?, ?, ?, ?)`,
-    [item_id, task_id, usage_amout, usage_unit, notes, last_updated]
+    `INSERT INTO usage_logs (item_id, type, task_id, usage_amout, usage_unit, notes, last_updated) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+    [item_id, type, task_id, usage_amout, usage_unit, notes, last_updated]
   );
 
   return result.lastInsertRowId;
 }
 
 export async function readAll(db: SQLiteDatabase, type: string) {
-  return await safeSelectAll(db, `SELECT * FROM ${usageLogTable(type)} ORDER BY id ASC`);
+  return await safeSelectAll(db, `SELECT * FROM usage_logs ORDER BY id ASC`);
 }
 
 export async function getById(
@@ -52,13 +52,14 @@ export async function getById(
 ) {
   return await safeSelectOne<{
     id: number;
+    type: string;
     item_id: number,
     task_id: number,
     usage_amout: number,
     usage_unit: string,
     notes: string,
     last_updated: number,
-  }>(db, `SELECT * FROM ${usageLogTable(type)} WHERE id = ?`, [id]);
+  }>(db, `SELECT * FROM usage_logs WHERE id = ?`, [id]);
 }
 
 export async function update(
@@ -73,29 +74,29 @@ export async function update(
 ) {
   const result = await safeRun(
     db,
-    `UPDATE ${usageLogTable(type)}
-       SET item_id = ?, task_id = ?, usage_amout = ?, usage_unit = ?, notes = ?, last_updated = ?
+    `UPDATE usage_logs
+       SET item_id = ?, type = ?, task_id = ?, usage_amout = ?, usage_unit = ?, notes = ?, last_updated = ?
        WHERE id = ?`,
-    [item_id, task_id, usage_amout, usage_unit, notes, last_updated]
+    [item_id, type, task_id, usage_amout, usage_unit, notes, last_updated]
   );
 
   return result.changes; // number of rows updated
 }
 
-export async function destroy(db: SQLiteDatabase, id: number, type: string) {
+export async function destroy(db: SQLiteDatabase, id: number) {
   const result = await safeRun(
     db,
-    `DELETE FROM ${usageLogTable(type)} WHERE id = ?`,
+    `DELETE FROM usage_logs WHERE id = ?`,
     [id]
   );
 
   return result.changes; // rows deleted
 }
 
-export async function exists(db: SQLiteDatabase, id: number, type: string) {
+export async function exists(db: SQLiteDatabase, id: number) {
   const row = await safeSelectOne<{ count: number }>(
     db,
-    `SELECT COUNT(*) as count FROM ${usageLogTable(type)} WHERE id = ?`,
+    `SELECT COUNT(*) as count FROM usage_logs WHERE id = ?`,
     [id]
   );
 

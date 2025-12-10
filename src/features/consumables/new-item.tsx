@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react"
+import { useState, useCallback, useContext } from "react"
 import { Surface,TextInput } from "react-native-paper";
 import { StyleSheet, Text, View, ImageBackground, Button, Alert } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
@@ -15,10 +15,9 @@ import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { RootDrawerParamsList } from "@navigation";
 import { useSQLiteContext } from "expo-sqlite";
 import { useForm } from "react-hook-form";
-import * as Supply from '@db/consumable-items'
-import * as InvItem from '@db/inventory-items'
-import * as InvLog from '@db/inventory-logs'
+import * as Item from '@db/items'
 import ConsumableItem from "./types";
+import { FormStateContext } from "src/context/FormContext";
 
 
 type NavigationProps = DrawerNavigationProp<RootDrawerParamsList>
@@ -29,9 +28,9 @@ export default function NewItem() {
   
     const [items, setItems] = useState([])
     const [selectedItem, setSelectedItem] = useState(null)
-    const [name, setName] = useState('');
-    const [category, setCategory] = useState('');
-    const [subcategory, setSubcategory] = useState('');
+    const { name, setName } = useContext(FormStateContext);
+    const { category, setCategory } = useContext(FormStateContext);
+    const { subcategory, setSubcategory } = useContext(FormStateContext);
     const navigation = useNavigation<NavigationProps>()
   
   
@@ -49,11 +48,36 @@ export default function NewItem() {
     const onSubmit = async() => {
       const nowMs = new Date().getTime()
       const TYPE = 'consumable_item'
-      const invItemId = await InvItem.create(db, TYPE, nowMs)
-      const SupplyId = await Supply.create(db, invItemId, name, category, subcategory)
-      InvLog.create(db, TYPE, SupplyId, 0, 'Unit', nowMs)
+      const itemId = await Item
+      .create(
+        db, 
+        name, 
+        category, 
+        subcategory, 
+        TYPE, 
+        nowMs, 
+        null, 
+        null, 
+        null, 
+        nowMs, 
+        null, 
+        null 
+      )
+      console.log("Consumable Supply Item Created. ID:", itemId)
       navigation.navigate("Dashboard")
     };
+
+    useFocusEffect(
+      useCallback(() => {
+          
+        return() => {
+          setName('')
+          setCategory('')
+          setSubcategory('')
+        }
+      }, [])
+    )
+
   
 
   return(
