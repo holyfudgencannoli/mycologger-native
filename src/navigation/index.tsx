@@ -204,27 +204,18 @@ function DrawerNavigator() {
             }}
         >
             <Drawer.Screen component={Dashboard} name="Dashboard" />
-            <Drawer.Screen component={RawMatStackNav} name='Raw Materials' options={{ popToTopOnBlur: true }}
-                // listeners={({ navigation }) => ({
-                //     drawerItemPress: () => {
-                //         navigation.dispatch({
-                //             type: "POP_TO_TOP",
-                //             target: "RawMaterialStack",
-                //         });
-                //     }
-                // })}
-            />
-            <Drawer.Screen component={BioMaterialNavigator} name='Bio Materials'/>
-            <Drawer.Screen component={ConsumablesNavigator} name='Consumable Items'/>
-            <Drawer.Screen component={HardwareNavigator} name='Hardware'/>
-            <Drawer.Screen component={ReceipesNavigator} name='Recipes'/>
-            <Drawer.Screen component={CulturesNavigator} name='Cultures'/>
+            <Drawer.Screen component={RawMatStackNav} name='Raw Materials' options={{ popToTopOnBlur: true }} />
+            <Drawer.Screen component={BioMaterialNavigator} name='Bio Materials' options={{ popToTopOnBlur: true }} />
+            <Drawer.Screen component={ConsumablesNavigator} name='Consumable Items' options={{ popToTopOnBlur: true }} />
+            <Drawer.Screen component={HardwareNavigator} name='Hardware' options={{ popToTopOnBlur: true }} />
+            <Drawer.Screen component={ReceipesNavigator} name='Recipes' options={{ popToTopOnBlur: true }} />
+            <Drawer.Screen component={CulturesNavigator} name='Cultures' options={{ popToTopOnBlur: true }} />
             {/* <Drawer.Screen component={DBManagement} name='DB Management'/> */}
-            <Drawer.Screen component={InventoryNavigator} name='Inventory'/>
+            <Drawer.Screen component={InventoryNavigator} name='Inventory' options={{ popToTopOnBlur: true }} />
             {/* <Drawer.Screen component={ProductsNavGroup} name='Products'/>
             <Drawer.Screen component={TasksNavGroup} name='Tasks'/>
             <Drawer.Screen component={SterilizationRecordsNavGroup} name='Sterilizations'/> */}
-            <Drawer.Screen component={TasksNavigator} name='Tasks'/>
+            <Drawer.Screen component={TasksNavigator} name='Tasks' options={{ popToTopOnBlur: true }} />
             {/* <Drawer.Screen component={ImportExportNavigator} name='Import/Export'/> */}
             {/* <Drawer.Screen component={InventoryNavGroup} name='Inventory'/>
             <Drawer.Screen component={UtilitiesNavGroup} name='Utilities'/>
@@ -280,16 +271,14 @@ function RawMatStackNav() {
 //     )
 // }
 
-const BioMaterial = createMaterialTopTabNavigator<InventoryItemParamList, any>()
+const BioMaterial = createNativeStackNavigator<InventoryItemParamList, any>()
 
 function BioMaterialNavigator() {
     return(
         <BioMaterial.Navigator
+            id={'bio-mat-stack'}
             screenOptions={{
-                swipeEnabled: false,
-                tabBarLabelStyle: { fontSize: 16, color: 'white' },
-                // tabBarItemStyle: { borderColor: 'white', borderWidth: 1 },
-                tabBarStyle: { backgroundColor: '#94f8' },
+                headerShown: false
             }}
         >
             <BioMaterial.Screen component={BioMat.NewItem} name="New Item" />
@@ -299,16 +288,14 @@ function BioMaterialNavigator() {
     )
 }
 
-const Consumables = createMaterialTopTabNavigator<InventoryItemParamList, any>();
+const Consumables = createNativeStackNavigator<InventoryItemParamList, any>();
 
 function ConsumablesNavigator () {
     return(
         <Consumables.Navigator
+            id={'supply-stack'}
             screenOptions={{
-                swipeEnabled: false,
-                tabBarLabelStyle: { fontSize: 16, color: 'white' },
-                // tabBarItemStyle: { borderColor: 'white', borderWidth: 1 },
-                tabBarStyle: { backgroundColor: '#94f8' },
+                headerShown: false
             }}
         >
             <Consumables.Screen component={ConItem.NewItem} name="New Item"/>
@@ -318,16 +305,14 @@ function ConsumablesNavigator () {
 }
 
 
-const Hardware = createMaterialTopTabNavigator<InventoryItemParamList, any>();
+const Hardware = createNativeStackNavigator<InventoryItemParamList, any>();
 
 function HardwareNavigator () {
     return(
         <Hardware.Navigator
+            id={'hardware-stack'}
             screenOptions={{
-                swipeEnabled: false,
-                tabBarLabelStyle: { fontSize: 16, color: 'white' },
-                // tabBarItemStyle: { borderColor: 'white', borderWidth: 1 },
-                tabBarStyle: { backgroundColor: '#94f8' },
+                headerShown: false
             }}
         >
             <Hardware.Screen component={HW.NewItem} name="New Item"/>
@@ -347,37 +332,33 @@ function HardwareNavigator () {
 //     )
 // }
 
-const Recipes = createMaterialTopTabNavigator<RecipeParamList, any>();
+const Recipes = createNativeStackNavigator<RecipeParamList, any>();
 
 function ReceipesNavigator() {
     return(
         <Recipes.Navigator
-            initialRouteName="New Recipe"
+            initialRouteName="Recipes"
             screenOptions={{
-                swipeEnabled: false,
-                tabBarLabelStyle: { fontSize: 16, color: 'white' },
-                // tabBarItemStyle: { borderColor: 'white', borderWidth: 1 },
-                tabBarStyle: { backgroundColor: '#94f8' },
-                lazy: false
+                headerShown: false
             }}
+            id={'recipe-stack'}
         >
-            <Recipes.Screen component={NewRecipe} name="New Recipe"/>
             <Recipes.Screen component={RecipeList} name="Recipes"/>
+            <Recipes.Screen component={NewRecipe} name="New Recipe"/>
             <Recipes.Screen component={RecipeBatchList} name="Batches"/>
         </Recipes.Navigator>
     )
 }
 
-const Cultures = createMaterialTopTabNavigator<CultureParamList, any>();
+const Cultures = createNativeStackNavigator<CultureParamList, any>();
 
 function CulturesNavigator() {
     return(
         <Cultures.Navigator
             screenOptions={{
-                tabBarLabelStyle: { fontSize: 16, color: 'white' },
-                // tabBarItemStyle: { borderColor: 'white', borderWidth: 1 },
-                tabBarStyle: { backgroundColor: '#94f8' },
+                headerShown: false
             }}
+            id={'culture-stack'}
         >
             <Cultures.Screen component={Agar.CultureList.default} name="Agar" />
             <Cultures.Screen component={Liquid.CultureList.default} name="Liquid" />
@@ -394,15 +375,14 @@ export type InventoryParamList = {
   "Hardware": undefined;
 };
 
-const Inventory = createMaterialTopTabNavigator<InventoryParamList, any>();
+const Inventory = createNativeStackNavigator<InventoryParamList, any>();
 
 function InventoryNavigator() {
     return(
         <Inventory.Navigator
+            id={'inventory-stack'}    
             screenOptions={{
-                tabBarLabelStyle: { fontSize: 14, color: 'white' },
-                // tabBarItemStyle: { borderColor: 'white', borderWidth: 1 },
-                tabBarStyle: { backgroundColor: '#94f8' },
+                headerShown: false
             }}
         >
             <Inventory.Screen component={RawMaterialInventory} name="Raw Materials" />
@@ -428,7 +408,13 @@ const Tasks = createNativeStackNavigator<TaskParamList, any>();
 
 function TasksNavigator() {
     return(
-        <Tasks.Navigator initialRouteName="Task List">
+        <Tasks.Navigator
+            initialRouteName="Task List"
+            id={'task-stack'}
+            screenOptions={{
+                headerShown: false
+            }}
+        >
             <Tasks.Screen component={TaskListScreen} name='Task List' options={{ headerShown: false }}/>
             <Tasks.Screen component={NewTaskForm} name='New Task' options={{ headerShown: false }}/>
             <Tasks.Screen component={Agar.Batch} name="New Agar Culture" options={{ headerShown: false }}/>

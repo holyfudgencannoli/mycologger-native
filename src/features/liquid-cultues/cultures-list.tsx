@@ -14,9 +14,11 @@ import { ScrollView } from "react-native-gesture-handler";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Form from '@custom/react-native-forms/src'
 import { LiquidCulture } from "./types";
+import { MyTabBar } from "@components/bottom-tabs";
+import { tabs } from "@features/bio-materials/types";
 
 
-export default function LiquidCulturesListScreen() {
+export default function LiquidCulturesListScreen({ navigation, state }) {
     const db = useSQLiteContext();    
     const [recipes, setRecipes] = useState([])
     const [modalOpen, setModalOpen] = useState(false)
@@ -83,6 +85,8 @@ export default function LiquidCulturesListScreen() {
                   </Form.Control>
                 </View>
               </LinearGradient>
+            <MyTabBar navigation={navigation} state={navigation.getState()} tabs={tabs}/>
+              
           </View>
         </ScreenPrimative>
     )

@@ -19,13 +19,13 @@ const DEFAULT_EXCEL_PATH = `${docDir}mycologger_backup.xlsx`;
 // --------------------------------------------------
 // SAF Helpers
 // --------------------------------------------------
-async function requestAndroidFolder() {
+export async function requestAndroidFolder() {
   const perm = await StorageAccessFramework.requestDirectoryPermissionsAsync();
   if (!perm.granted) throw new Error("Folder permission denied.");
   return perm.directoryUri;
 }
 
-async function saveFileWithSAF(base64: string, filename: string) {
+export async function saveFileWithSAF(base64: string, filename: string) {
   // iOS fallback (saved in app docs folder)
   if (Platform.OS !== 'android') {
     const iosPath = `${FileSystem.documentDirectory}${filename}`;
@@ -46,6 +46,41 @@ async function saveFileWithSAF(base64: string, filename: string) {
   );
 
   // Write base64 data
+  await FileSystem.writeAsStringAsync(fileUri, base64, {
+    encoding: FileSystem.EncodingType.Base64,
+  });
+
+  console.log("Saved via SAF →", fileUri);
+  return fileUri;
+}
+
+
+export async function saveFileUriWithSAF(tempFileUri: string, filename: string) {
+  // Read file as binary (base64) from the temporary uri
+  const base64 = await FileSystem.readAsStringAsync(tempFileUri, {
+    encoding: FileSystem.EncodingType.Base64,
+  });
+
+  // iOS: just copy into the document folder
+  if (Platform.OS !== "android") {
+    const iosPath = `${FileSystem.documentDirectory}${filename}`;
+    await FileSystem.writeAsStringAsync(iosPath, base64, {
+      encoding: FileSystem.EncodingType.Base64,
+    });
+    return iosPath;
+  }
+
+  // ANDROID SAF
+  const dirUri = await requestAndroidFolder();
+
+  // Create file inside selected folder
+  const fileUri = await StorageAccessFramework.createFileAsync(
+    dirUri,
+    filename,
+    "application/octet-stream"
+  );
+
+  // Write the binary data
   await FileSystem.writeAsStringAsync(fileUri, base64, {
     encoding: FileSystem.EncodingType.Base64,
   });

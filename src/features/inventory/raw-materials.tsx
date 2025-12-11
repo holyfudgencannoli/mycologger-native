@@ -9,8 +9,10 @@ import { PurchaseLogsModal } from "./detail-modal";
 import { useSQLiteContext } from "expo-sqlite";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Item from '@db/items'
+import { MyTabBar } from "@components/bottom-tabs";
+import { tabs } from "./types";
 
-export default function ItemerialInventory() {
+export default function ItemerialInventory({ navigation, state }) {
   const db = useSQLiteContext();
   const [Items, setItems] = useState([]);
   const [inventoryLogs, setInventoryLogs] = useState([]);
@@ -108,6 +110,8 @@ export default function ItemerialInventory() {
           </Surface>
         </LinearGradient>
       </View>
+      <MyTabBar navigation={navigation} state={navigation.getState()} tabs={tabs}/>
+      
     </ScreenPrimative>
   );
 }

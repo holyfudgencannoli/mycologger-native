@@ -12,9 +12,11 @@ import RecipeModal from "./detail-modal";
 import * as Recipe from '@db/recipes'
 import { useSQLiteContext } from "expo-sqlite";
 import { LinearGradient } from "expo-linear-gradient";
+import { MyTabBar } from "@components/bottom-tabs";
+import { tabs } from "@features/recipes/types";
 
 
-export default function RecipeList() {
+export default function RecipeList({ navigation, state }) {
     const db = useSQLiteContext();    
     const [recipes, setRecipes] = useState([])
     const [modalOpen, setModalOpen] = useState(false)
@@ -81,6 +83,8 @@ export default function RecipeList() {
                 </Surface>
               </LinearGradient>
             </View>
+          <MyTabBar navigation={navigation} state={navigation.getState()} tabs={tabs}/>
+          
       </ScreenPrimative>
     )
 
@@ -88,7 +92,7 @@ export default function RecipeList() {
 
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: "center", alignItems: "center" },
+  container: { flex: 1 },
   text: { fontSize: 20, marginBottom: 20 },
   form: {
     backgroundColor: 'rgba(0, 17, 255, 0.3)',

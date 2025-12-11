@@ -18,6 +18,9 @@ import { useForm } from "react-hook-form";
 import * as Item from '@db/items'
 import { CaseHelper } from "@utils/case-helper";
 import { FormStateContext } from "src/context/FormContext";
+import saveImage from "@services/save-image";
+import { LinearGradient } from "expo-linear-gradient";
+import { ReceiptUploader } from "@components/upload-receipt";
 
 
 export default function PurchaseLogForm() {
@@ -162,6 +165,9 @@ export default function PurchaseLogForm() {
 
                 )
             }
+            
+            const savedPath = await saveImage(image, `receipt_image_${created_at}`)
+            console.log(savedPath)    
             await PurchLog.create(
                 db,
                 TYPE,
@@ -174,6 +180,7 @@ export default function PurchaseLogForm() {
                 parseFloat(inventoryQuantity),
                 vendorId,
                 brandId,
+                savedPath,
                 parseFloat(cost)
             )
             return `Success! ${purchaseQuantity} ${purchaseUnit} of ${CaseHelper.toCleanCase(TYPE)} ${name} added to your inventory. Great Work!` 
@@ -274,6 +281,14 @@ export default function PurchaseLogForm() {
                     style={{ backgroundColor: 'transparent', width: '100%' }} 
                 />
             </Form.Control>
+            <LinearGradient
+                start={{ x: 0, y: 0 }}
+                end={{ x: 0.3, y: 0.9 }}
+                colors={['#94F8', '#00f', '#057']}
+                style={{ flex: 1, padding: 16}}
+            >
+                <ReceiptUploader />
+            </LinearGradient>
             <View style={{ marginTop: 84 }}>
                 <Button color={'#f74a63cc'} title='Submit' onPress={() => handleSubmit()} />
             </View>

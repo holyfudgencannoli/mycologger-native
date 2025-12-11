@@ -10,11 +10,12 @@ import { useSQLiteContext } from "expo-sqlite";
 import * as BioMat from '@db/items';
 import { LinearGradient } from "expo-linear-gradient";
 import BioMaterial from "@features/bio-materials/types";
-import { PurchaseLogProp } from "./types";
+import { PurchaseLogProp, tabs } from "./types";
 import InventoryLogType from "./types/inventory-log";
 import { ItemProps } from "@db/items/types";
+import { MyTabBar } from "@components/bottom-tabs";
 
-export default function BioMaterialInventory() {
+export default function BioMaterialInventory({ navigation, state }) {
   const db = useSQLiteContext();
   const [bioMaterials, setBioMaterials] = useState<ItemProps[]>([]);
   const [inventoryLogs, setInventoryLogs] = useState<ItemProps[]>([]);
@@ -112,6 +113,8 @@ export default function BioMaterialInventory() {
           </Surface>
         </LinearGradient>
       </View>
+      <MyTabBar navigation={navigation} state={navigation.getState()} tabs={tabs} />
+      
     </ScreenPrimative>
   );
 }

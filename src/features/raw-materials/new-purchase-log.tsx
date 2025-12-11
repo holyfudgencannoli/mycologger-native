@@ -14,6 +14,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { ScrollView } from 'react-native-gesture-handler';
 import { FormStateContext } from 'src/context/FormContext';
 import { MyTabBar } from '@components/bottom-tabs';
+import { tabs } from './types/raw-material';
 
 
 export default function NewPurchaseLog({ navigation, state }) {
@@ -105,7 +106,7 @@ export default function NewPurchaseLog({ navigation, state }) {
                     
             </View>
         </ScreenPrimative>
-        <MyTabBar navigation={navigation} state={navigation.getState()} />
+        <MyTabBar navigation={navigation} state={navigation.getState()} tabs={tabs}/>
         </View>
     )
 

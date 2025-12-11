@@ -35,6 +35,7 @@ export function FormStateProvider({ children }) {
     const [vendorWebsite, setVendorWebsite] = useState("");
 
     const [image, setImage] = useState(null);
+    const [images, setImages] = useState([]);
     const [contentType, setContentType] = useState("");
     const [isNew, setIsNew] = useState(false)
 
@@ -78,6 +79,7 @@ export function FormStateProvider({ children }) {
         vendorEmail, setVendorEmail,
         vendorWebsite, setVendorWebsite,
         image, setImage,
+        images, setImages,
         contentType, setContentType,
         receiptMemo, setReceiptMemo,
         purchaseDatetime, setPurchaseDatetime

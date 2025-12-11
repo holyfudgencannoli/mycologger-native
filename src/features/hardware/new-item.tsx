@@ -13,21 +13,22 @@ import * as Form from '@custom/react-native-forms/src'
 import { useForm } from "react-hook-form";
 import * as Item from '@db/items'
 import { DrawerNavigationProp } from "@react-navigation/drawer";
-import { RootDrawerParamsList } from "@navigation";
+import { RootDrawerParamsList } from "@navigation/types";
 import { useSQLiteContext } from "expo-sqlite";
 import { FormStateContext } from "src/context/FormContext";
+import { MyTabBar } from "@components/bottom-tabs";
+import { tabs } from "./types";
 
 
 type NavigationProps = DrawerNavigationProp<RootDrawerParamsList>
 
 
-export default function NewItem() {
+export default function NewItem({ navigation, state }) {
   const [items, setItems] = useState([])
   const [selectedItem, setSelectedItem] = useState(null)
   const { name, setName } = useContext(FormStateContext);
   const { category, setCategory } = useContext(FormStateContext);
   const { subcategory, setSubcategory } = useContext(FormStateContext);
-  const navigation = useNavigation<NavigationProps>()
 
 
 
@@ -103,6 +104,8 @@ export default function NewItem() {
             </View>
         </LinearGradient>	
       </View>
+      <MyTabBar navigation={navigation} state={navigation.getState()} tabs={tabs} />
+      
     </ScreenPrimative>
   )
 

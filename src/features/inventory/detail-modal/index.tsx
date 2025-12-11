@@ -90,10 +90,10 @@ export const PurchaseLogsModal = ({ visible, setModalOpen, item}: {visible: bool
                                         day: 'numeric',
                                         year: 'numeric'
                                     })}</Text>
-                                    <Text style={styles.text}>{new Date(item.log.purchase_date).toLocaleTimeString()}</Text>
-                                    <Text style={styles.text}>{item.vendor.name}</Text>
-                                    <Text style={styles.text}>{item.item.name}</Text>
-                                    <Text style={styles.text}>${item.log.cost.toFixed(2)}</Text>
+                                    <Text style={styles.text}>{new Date(item ? item.log.purchase_date : null).toLocaleTimeString()}</Text>
+                                    <Text style={styles.text}>{item? item.vendor.name : null}</Text>
+                                    <Text style={styles.text}>{item? item.item.name : null}</Text>
+                                    {/* <Text style={styles.text}>${item? item.log.cost.toFixed(2) : null}</Text> */}
                                     {/* {item.log.notes && <Text>{item.log.notes}</Text>} */}
 
                                     

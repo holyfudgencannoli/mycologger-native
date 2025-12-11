@@ -10,20 +10,22 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Button from '@components/button';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
-import { RootDrawerParamsList } from '@navigation';
+import { RootDrawerParamsList } from '@navigation/types';
 import { FormStateContext } from 'src/context/FormContext';
+import { MyTabBar } from '@components/bottom-tabs';
+import { ScreenPrimative } from '@components/screen-primative';
+import { tabs } from './types';
 // import { useFocusEffect } from '@react-navigation/native';
 
 type NavigationProps = DrawerNavigationProp<RootDrawerParamsList>
 
 
-export default function NewItem() {
+export default function NewItem({ navigation, state }) {
 	const [items, setItems] = useState([])
 	const [selectedItem, setSelectedItem] = useState(null)
 	const { name, setName } = useContext(FormStateContext);
 	const { category, setCategory } = useContext(FormStateContext);
 	const { subcategory, setSubcategory } = useContext(FormStateContext);
-	const navigation = useNavigation<NavigationProps>();
 
 
 
@@ -77,27 +79,31 @@ export default function NewItem() {
 	};
 
 	return(
-		<View style={{ flex: 1 }}>
-			<LinearGradient
-				start={{ x: 0, y: 0 }}
-				end={{ x: 0.3, y: 0.9 }}
-				colors={['#94F8', '#00f', '#057']}
-                style={{ flex: 1, padding: 24}}
-				
-			>
-				
-				<Form.Control label='Item Name' labelStyle={{ color: 'white' }} name='name'>
-					<Form.Input size='lg' style={{ color: 'white', flex: 1 }} value={name} onChangeText={setName}  />
-				</Form.Control>
-				<Form.Control label='Item Category' labelStyle={{ color: 'white' }} name='category'>
-					<Form.Input size='lg' style={{ color: 'white', flex: 1 }} value={category} onChangeText={setCategory}  />
-				</Form.Control>
-				<Form.Control label='Species Name (Latin)' name='speciesLatin' labelStyle={{ color: 'white' }}>
-					<Form.Input value={subcategory} style={{ color: 'white', flex: 1 }} onChangeText={setSubcategory}  />
-				</Form.Control>
-				<Button viewStyle={{marginTop: 36}} color={'#f74a63cc'} title='Submit' onPress={handleSubmit(onSubmit)} />
-			</LinearGradient>
-		</View>
+		<ScreenPrimative edges={[]}>
+			<View style={{ flex: 1 }}>
+				<LinearGradient
+					start={{ x: 0, y: 0 }}
+					end={{ x: 0.3, y: 0.9 }}
+					colors={['#94F8', '#00f', '#057']}
+					style={{ flex: 1, padding: 24}}
+					
+				>
+					
+					<Form.Control label='Item Name' labelStyle={{ color: 'white' }} name='name'>
+						<Form.Input size='lg' style={{ color: 'white', flex: 1 }} value={name} onChangeText={setName}  />
+					</Form.Control>
+					<Form.Control label='Item Category' labelStyle={{ color: 'white' }} name='category'>
+						<Form.Input size='lg' style={{ color: 'white', flex: 1 }} value={category} onChangeText={setCategory}  />
+					</Form.Control>
+					<Form.Control label='Species Name (Latin)' name='speciesLatin' labelStyle={{ color: 'white' }}>
+						<Form.Input value={subcategory} style={{ color: 'white', flex: 1 }} onChangeText={setSubcategory}  />
+					</Form.Control>
+					<Button viewStyle={{marginTop: 36}} color={'#f74a63cc'} title='Submit' onPress={handleSubmit(onSubmit)} />
+				</LinearGradient>
+			</View>
+		<MyTabBar navigation={navigation} state={navigation.getState()} tabs={tabs} />
+		</ScreenPrimative>
+		
 	)
 
 }

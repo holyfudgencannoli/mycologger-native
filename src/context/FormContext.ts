@@ -72,6 +72,8 @@ export const FormStateContext = createContext<FormState>({
     setVendorWebsite: () => {},
     image: null, 
     setImage: () => {},
+    images: [], 
+    setImages: () => {},
     contentType: "",
     setContentType: () => {},
     receiptMemo: "",

@@ -68,6 +68,8 @@ export interface FormState {
         setVendorWebsite: React.Dispatch<React.SetStateAction<string>>,
         image: any, 
         setImage: React.Dispatch<React.SetStateAction<any>>,
+        images: any[], 
+        setImages: React.Dispatch<React.SetStateAction<any[]>>,
         contentType: string,
         setContentType: React.Dispatch<React.SetStateAction<string>>,
         receiptMemo: string,

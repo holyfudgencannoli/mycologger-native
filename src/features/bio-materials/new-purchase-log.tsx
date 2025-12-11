@@ -13,10 +13,12 @@ import * as Vendor from '@db/vendors'
 import { ScrollView } from 'react-native-gesture-handler';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Form from '@custom/react-native-forms/src'
+import { MyTabBar } from '@components/bottom-tabs';
+import { tabs } from './types';
 
 
 
-export default function NewPurchaseLog() {
+export default function NewPurchaseLog({ navigation, state }) {
     const db = useSQLiteContext();
 
     const [purchaseLogs, setPurchaseLogs] = useState<any>()
@@ -69,8 +71,9 @@ export default function NewPurchaseLog() {
 
 
     return(
+        <View style={styles.container}>
             <ScreenPrimative edges={[]} scroll>
-                <View style={styles.container}>
+                <View>
                         <LinearGradient
                             start={{ x: 0, y: 0 }}
                             end={{ x: 0.3, y: 0.9 }}
@@ -116,8 +119,11 @@ export default function NewPurchaseLog() {
                         <></>
                     }
                     </LinearGradient>
-            </View>                    
-        </ScreenPrimative>
+            </View>   
+                             
+            </ScreenPrimative>
+        <MyTabBar navigation={navigation} state={navigation.getState()} tabs={tabs}/>
+        </View>
     )
 
 }

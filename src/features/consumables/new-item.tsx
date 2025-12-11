@@ -12,18 +12,19 @@ import NewPurchaseLog from "./new-purchase-log";
 import * as Form from '@custom/react-native-forms/src'
 import { LinearGradient } from "expo-linear-gradient";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
-import { RootDrawerParamsList } from "@navigation";
+import { RootDrawerParamsList } from "@navigation/types";
 import { useSQLiteContext } from "expo-sqlite";
 import { useForm } from "react-hook-form";
 import * as Item from '@db/items'
-import ConsumableItem from "./types";
+import ConsumableItem, { tabs } from "./types";
 import { FormStateContext } from "src/context/FormContext";
+import { MyTabBar } from "@components/bottom-tabs";
 
 
 type NavigationProps = DrawerNavigationProp<RootDrawerParamsList>
 
 
-export default function NewItem() {
+export default function NewItem({ navigation, state }) {
   
   
     const [items, setItems] = useState([])
@@ -31,9 +32,7 @@ export default function NewItem() {
     const { name, setName } = useContext(FormStateContext);
     const { category, setCategory } = useContext(FormStateContext);
     const { subcategory, setSubcategory } = useContext(FormStateContext);
-    const navigation = useNavigation<NavigationProps>()
-  
-  
+    
   
     const db = useSQLiteContext();
   
@@ -101,8 +100,9 @@ export default function NewItem() {
             <View style={{ marginTop: 36 }}>
               <Button color={'#f74a63cc'} title='Submit' onPress={handleSubmit(onSubmit)} />
             </View>
-        </LinearGradient>	
-      </View>
+          </LinearGradient>	
+        </View>
+      <MyTabBar navigation={navigation} state={navigation.getState()} tabs={tabs}/>
     </ScreenPrimative>
   )
 

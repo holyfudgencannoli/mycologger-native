@@ -14,9 +14,11 @@ import { ScrollView } from "react-native-gesture-handler";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Form from '@custom/react-native-forms/src'
 import { AgarCulture } from "./types";
+import { MyTabBar } from "@components/bottom-tabs";
+import { tabs } from "@features/bio-materials/types";
 
 
-export default function AgarCulturesListScreen() {
+export default function AgarCulturesListScreen({ navigation, state }) {
     const db = useSQLiteContext();    
     const [recipes, setRecipes] = useState([])
     const [modalOpen, setModalOpen] = useState(false)
@@ -84,6 +86,8 @@ export default function AgarCulturesListScreen() {
                 </View>
               </LinearGradient>
           </View>
+          <MyTabBar navigation={navigation} state={navigation.getState()} tabs={tabs}/>
+          
         </ScreenPrimative>
     )
 

@@ -11,8 +11,10 @@ import * as HW from '@db/items';
 import { LinearGradient } from "expo-linear-gradient";
 import HardwareItem from "@features/hardware/types";
 import { ItemProps } from "@db/items/types";
+import { MyTabBar } from "@components/bottom-tabs";
+import { tabs } from "./types";
 
-export default function HardwareItemInventory() {
+export default function HardwareItemInventory({ navigation, state }) {
   const db = useSQLiteContext();
   const [hardwareItems, setHardwareItems] = useState([]);
   const [inventoryLogs, setInventoryLogs] = useState([]);
@@ -110,6 +112,8 @@ export default function HardwareItemInventory() {
           </Surface>
         </LinearGradient>
       </View>
+      <MyTabBar navigation={navigation} state={navigation.getState()} tabs={tabs}/>
+      
     </ScreenPrimative>
   );
 }

@@ -12,8 +12,10 @@ import PurchaseLogForm from './purchase-log-form';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ScrollView } from 'react-native-gesture-handler';
 import { FormStateContext } from 'src/context/FormContext';
+import { MyTabBar } from '@components/bottom-tabs';
+import { tabs } from './types';
 
-export default function NewPurchaseLog() {
+export default function NewPurchaseLog({ navigation, state }) {
 
     const [purchaseLogs, setPurchaseLogs] = useState([])
     const [formVisible, setFormVisible] = useState(false)
@@ -41,47 +43,51 @@ export default function NewPurchaseLog() {
     )
 
     return(
-        <ScreenPrimative edges={[]} scroll>
-            <View style={styles.container}>
-                    <LinearGradient
-                        start={{ x: 0, y: 0 }}
-                        end={{ x: 0.3, y: 0.9 }}
-                        colors={['#94F8', '#00f', '#057']}
-                        style={{ flex: 1, padding: 16}}
-                    >
-                        <Form.Control name='name'>
-                            <Form.Select
-                                style={{ color: 'rgba(255, 0, 155, 1)', width: '100%' }}
-                                type='embed'
-                                size='lg'
-                                onValueChange={async(value: any) => {
-                                    if (value.id === 999999) {
-                                        setIsNew(true)
-                                        setName('')
-                                        setCategory('')
-                                        setSubcategory('')
-                                        setFormVisible(true)
+        <View style={styles.container}>
+            <ScreenPrimative edges={[]} scroll>
+                <View>
+                        <LinearGradient
+                            start={{ x: 0, y: 0 }}
+                            end={{ x: 0.3, y: 0.9 }}
+                            colors={['#94F8', '#00f', '#057']}
+                            style={{ flex: 1, padding: 16}}
+                        >
+                            <Form.Control name='name'>
+                                <Form.Select
+                                    style={{ color: 'rgba(255, 0, 155, 1)', width: '100%' }}
+                                    type='embed'
+                                    size='lg'
+                                    onValueChange={async(value: any) => {
+                                        if (value.id === 999999) {
+                                            setIsNew(true)
+                                            setName('')
+                                            setCategory('')
+                                            setSubcategory('')
+                                            setFormVisible(true)
 
-                                    } else {
-                                        setIsNew(false)
-                                        setId(value.id)
-                                        setName(value.name)
-                                        setCategory(value.email)
-                                        setSubcategory(value.phone)
-                                        setFormVisible(true)
-                                    }
+                                        } else {
+                                            setIsNew(false)
+                                            setId(value.id)
+                                            setName(value.name)
+                                            setCategory(value.email)
+                                            setSubcategory(value.phone)
+                                            setFormVisible(true)
+                                        }
 
-                                }}    
-                                options={items}
-                            />
-                        </Form.Control>
-                    {formVisible ? 
-                        <PurchaseLogForm /> : 
-                        <></>
-                    }
-                    </LinearGradient>
-            </View>                    
-        </ScreenPrimative>
+                                    }}    
+                                    options={items}
+                                />
+                            </Form.Control>
+                        {formVisible ? 
+                            <PurchaseLogForm /> : 
+                            <></>
+                        }
+                        </LinearGradient>
+                    </View>   
+                                
+                </ScreenPrimative>
+            <MyTabBar navigation={navigation} state={navigation.getState()} tabs={tabs} />
+        </View>
     )
 
 }

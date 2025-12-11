@@ -12,8 +12,10 @@ import { LinearGradient } from "expo-linear-gradient";
 import ConsumableItem from "@features/consumables/types";
 import InventoryLogType from "./types/inventory-log";
 import { ItemProps } from "@db/items/types";
+import { MyTabBar } from "@components/bottom-tabs";
+import { tabs } from "./types";
 
-export default function ConsumableItemInventory() {
+export default function ConsumableItemInventory({ navigation, state }) {
   const db = useSQLiteContext();
   const [consumableItems, setConsumableItems] = useState<ItemProps[]>([]);
   const [inventoryLogs, setInventoryLogs] = useState<ItemProps[]>([]);
@@ -110,6 +112,8 @@ export default function ConsumableItemInventory() {
           </Surface>
         </LinearGradient>
       </View>
+      <MyTabBar navigation={navigation} state={navigation.getState()} tabs={tabs}/>
+      
     </ScreenPrimative>
   );
 }

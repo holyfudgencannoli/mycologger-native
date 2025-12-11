@@ -6,10 +6,11 @@ import { useState } from "react";
 import { useNavigation, usePreventRemove } from "@react-navigation/native";
 import { ScrollView } from "react-native-gesture-handler";
 import { LinearGradient } from "expo-linear-gradient";
+import { MyTabBar } from "@components/bottom-tabs";
+import { tabs } from "./types";
 
-export default function NewRecipe() {    
+export default function NewRecipe({ navigation, state }) {    
   const [unsaved, setUnsaved] = useState(false)
-  const navigation = useNavigation();
   
 
   usePreventRemove(unsaved, ({ data }) => {
@@ -53,6 +54,8 @@ export default function NewRecipe() {
           </LinearGradient>
         </ScrollView>
       </View>
+      <MyTabBar navigation={navigation} state={navigation.getState()} tabs={tabs}/>
+      
     </ScreenPrimative>
   )
 }
@@ -60,7 +63,7 @@ export default function NewRecipe() {
 
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: "center", alignItems: "center", },
+  container: { flex: 1 },
   text: { fontSize: 20, marginBottom: 20 },
   form: {
     backgroundColor: 'rgba(0, 17, 255, 0.3)',

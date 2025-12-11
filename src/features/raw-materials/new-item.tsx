@@ -12,6 +12,7 @@ import { ScreenPrimative } from '@components/screen-primative';
 import Button from '@components/button';
 import { FormStateContext } from 'src/context/FormContext';
 import { MyTabBar } from '@components/bottom-tabs';
+import { tabs } from './types/raw-material';
 // import { useFocusEffect } from '@react-navigation/native';
 
 type NavigationProps = DrawerNavigationProp<RootDrawerParamsList>
@@ -94,7 +95,7 @@ export default function NewItem({ navigation }) {
 					</Form.Control>
 					<Button viewStyle={{ marginTop: 36 }} color={'#f74a63cc'} title='Submit' onPress={() => onSubmit()} />
 				</LinearGradient>	
-				<MyTabBar navigation={navigation} state={navigation.getState()} />
+				<MyTabBar navigation={navigation} state={navigation.getState()} tabs={tabs} />
 
 			</View>
 		</ScreenPrimative>

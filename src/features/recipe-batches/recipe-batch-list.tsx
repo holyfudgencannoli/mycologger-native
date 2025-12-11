@@ -9,9 +9,11 @@ import RecipeBatchModal from "./detail-modal";
 import * as RecipeBatch from '@db/recipe-batches'
 import { useSQLiteContext } from "expo-sqlite";
 import { LinearGradient } from "expo-linear-gradient";
+import { MyTabBar } from "@components/bottom-tabs";
+import { tabs } from "./types";
 
 
-export default function RecipeBatchList() {
+export default function RecipeBatchList({ navigation, state }) {
     const db = useSQLiteContext();    
     const [recipeBatches, setRecipeBatches] = useState([])
     const [modalOpen, setModalOpen] = useState(false)
@@ -78,6 +80,8 @@ export default function RecipeBatchList() {
                 </Surface>
               </LinearGradient>
             </View>
+          <MyTabBar navigation={navigation} state={navigation.getState()} tabs={tabs}/>
+          
         </ScreenPrimative>
     )
 
@@ -85,7 +89,7 @@ export default function RecipeBatchList() {
 
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: "center", alignItems: "center" },
+  container: { flex: 1 },
   text: { fontSize: 20, marginBottom: 20 },
   form: {
     backgroundColor: 'rgba(0, 17, 255, 0.3)',

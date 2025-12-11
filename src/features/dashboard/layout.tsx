@@ -29,7 +29,7 @@ export default function Dashboard() {
           style={{ flex: 1 }}
         >
           <View style={{ padding: 48 }}>
-
+            <Text>weweefw</Text>
           </View>
         </LinearGradient>  
 			</View>

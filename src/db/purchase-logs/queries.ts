@@ -56,8 +56,8 @@ export async function create(
   return result.lastInsertRowId;
 }
 
-export async function readAll(db: SQLiteDatabase, type: string) {
-  return await safeExec(db, `SELECT * FROM purchase_logs ORDER BY id DESC`);
+export async function readAll<PurchaseLogData>(db: SQLiteDatabase) {
+  return await safeSelectAll<PurchaseLogData>(db, `SELECT * FROM purchase_logs ORDER BY id DESC`);
 }
 
 
