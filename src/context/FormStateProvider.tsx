@@ -6,7 +6,9 @@ export function FormStateProvider({ children }) {
     const [name, setName] = useState('');
     const [category, setCategory] = useState('');
     const [subcategory, setSubcategory] = useState('');
+    const [item, setItem] = useState();
     const [items, setItems] = useState([]);
+    const [itemId, setItemId] = useState();
     const [formVisible, setFormVisible] = useState(false);
     const [pickedImageUri, setPickedImageUri] = useState("");
     const [brand, setBrand] = useState("");
@@ -53,7 +55,9 @@ export function FormStateProvider({ children }) {
         name, setName,
         category, setCategory,
         subcategory, setSubcategory,
+        item, setItem,
         items, setItems,
+        itemId, setItemId,
         formVisible, setFormVisible,
         pickedImageUri, setPickedImageUri,
         brand, setBrand,

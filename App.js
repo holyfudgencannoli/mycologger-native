@@ -27,14 +27,12 @@ export default function App() {
     }
 
 	return (
-		<SQLiteProvider databaseName='mycologger_v2_dev.db' onInit={handleInit}>
+		<SQLiteProvider databaseName='mycologger_v2.1_dev.db' onInit={handleInit}>
 			<FormStateProvider>
 				<PaperProvider>
 					<ThemeProvider>
 						<FormProvider>
-							<ScreenPrimative>
-								<Navigation />
-							</ScreenPrimative>              
+							<Navigation />
 						</FormProvider>	
 					</ThemeProvider>
 				</PaperProvider>

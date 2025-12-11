@@ -33,6 +33,7 @@ export async function create(
 	inventory_amount: number,
 	vendor_id: number,
 	brand_id: number,
+	reciept_uri: string,
 	cost: number
 ) {
   const result = await safeRun(db,
@@ -47,6 +48,7 @@ export async function create(
 			inventory_amount,
 			vendor_id,
 			brand_id,
+			reciept_uri,
 			cost
 		]
   );
@@ -79,6 +81,7 @@ export async function getById(
 		inventory_amount: number;
 		vendor_id: number;
 		brand_id: number;
+		reciept_uri: string;
 		cost: number;
   }>(db, `SELECT * FROM purchase_logs WHERE id = ?`, [id]);
 }
@@ -105,6 +108,7 @@ export async function update(
 	inventory_amount: number,
 	vendor_id: number,
 	brand_id: number,
+	reciept_uri: string,
 	cost: number
 ) {
   const result = await safeRun(
@@ -123,6 +127,7 @@ export async function update(
 			vendor_id,
 			brand_id,
 			cost,
+			reciept_uri,
 			id
 		]
   );

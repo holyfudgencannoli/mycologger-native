@@ -17,7 +17,7 @@ import { WEIGHT_UNITS, VOLUME_UNITS } from "@constants/units";
 import { useRoute } from "@react-navigation/native";
 
 import * as Form from "@custom/react-native-forms/src";
-import { NavigationProps } from "@navigation";
+import { NavigationProps } from "@navigation/types";
 
 
 export type RootStackParamList = {

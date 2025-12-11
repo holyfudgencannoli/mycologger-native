@@ -5,22 +5,23 @@ import { useForm } from 'react-hook-form';
 import * as Item from '@db/items'
 import { useSQLiteContext } from 'expo-sqlite';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import { RootDrawerParamsList } from '@navigation';
+import { RootDrawerParamsList } from '@navigation/types';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ScreenPrimative } from '@components/screen-primative';
 import Button from '@components/button';
 import { FormStateContext } from 'src/context/FormContext';
+import { MyTabBar } from '@components/bottom-tabs';
 // import { useFocusEffect } from '@react-navigation/native';
 
 type NavigationProps = DrawerNavigationProp<RootDrawerParamsList>
 
-export default function NewItem() {
+export default function NewItem({ navigation }) {
 	const [items, setItems] = useState([])
-	const { name, setName } = useContext(FormStateContext);
-	const { category, setCategory } = useContext(FormStateContext);
-	const { subcategory, setSubcategory } = useContext(FormStateContext);
-	const navigation = useNavigation<NavigationProps>()
+	const { 
+		name, setName,
+		category, setCategory,
+		subcategory, setSubcategory } = useContext(FormStateContext);
 
 
 
@@ -36,12 +37,13 @@ export default function NewItem() {
 
 	const getData = async() => {
 		const data = await Item.readAll(db)
+		console.log(data)
 		setItems(data)
 	}
 
 	useFocusEffect(
 		useCallback(() => {
-				
+			getData()
 			return() => {
 				setName('')
 				setCategory('')
@@ -69,7 +71,6 @@ export default function NewItem() {
 			null 
 		)
 		console.log("Raw Material Created. ID:", itemId)
-		// setName('')
 		navigation.navigate("Dashboard")
 	};
 
@@ -82,17 +83,19 @@ export default function NewItem() {
 					colors={['#94F8', '#00f', '#057']}
 					style={{ flex: 1, padding: 24}}
 				>
-						<Form.Control label='Item Name' labelStyle={{ color: 'white' }} name='name'>
-							<Form.Input size='lg' style={{ color: 'white', flex: 1 }} value={name} onChangeText={setName}  />
-						</Form.Control>
-						<Form.Control label='Item Category' labelStyle={{ color: 'white' }} name='category'>
-							<Form.Input size='lg' style={{ color: 'white', flex: 1 }} value={category} onChangeText={setCategory}  />
-						</Form.Control>
-						<Form.Control label='Item Subcategory' labelStyle={{ color: 'white' }} name='subcategory'>
-							<Form.Input size='lg' value={subcategory} style={{ color: 'white', flex: 1 }} onChangeText={setSubcategory}  />
-						</Form.Control>
-						<Button viewStyle={{ marginTop: 36 }} color={'#f74a63cc'} title='Submit' onPress={() => onSubmit()} />
+					<Form.Control label='Item Name' labelStyle={{ color: 'white' }} name='name'>
+						<Form.Input size='lg' style={{ color: 'white', flex: 1 }} value={name} onChangeText={setName}  />
+					</Form.Control>
+					<Form.Control label='Item Category' labelStyle={{ color: 'white' }} name='category'>
+						<Form.Input size='lg' style={{ color: 'white', flex: 1 }} value={category} onChangeText={setCategory}  />
+					</Form.Control>
+					<Form.Control label='Item Subcategory' labelStyle={{ color: 'white' }} name='subcategory'>
+						<Form.Input size='lg' value={subcategory} style={{ color: 'white', flex: 1 }} onChangeText={setSubcategory}  />
+					</Form.Control>
+					<Button viewStyle={{ marginTop: 36 }} color={'#f74a63cc'} title='Submit' onPress={() => onSubmit()} />
 				</LinearGradient>	
+				<MyTabBar navigation={navigation} state={navigation.getState()} />
+
 			</View>
 		</ScreenPrimative>
 		

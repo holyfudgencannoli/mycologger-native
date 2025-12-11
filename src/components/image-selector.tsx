@@ -1,17 +1,18 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useContext } from 'react';
 import { Image, View, StyleSheet, Alert, Switch, Text } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { useFocusEffect } from '@react-navigation/native';
 import { Colors } from '@constants/colors';
 import Button from './button';
+import { FormStateContext } from 'src/context/FormContext';
 
-export default function ImageSelector({image, setImage, contentType, setContentType}) {
+export default function ImageSelector() {
   const [cropEnabled, setCropEnabled] = useState(false);
   const [cameraPermission, setCameraPermission] = useState<boolean | null>(null);
   const [libraryPermission, setLibraryPermission] = useState<boolean | null>(null);
 
 
-    
+    const {image, setImage, setContentType} = useContext(FormStateContext)
 
   useEffect(() => {
     (async () => {

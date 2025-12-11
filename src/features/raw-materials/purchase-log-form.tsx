@@ -16,11 +16,13 @@ import { LinearGradient } from "expo-linear-gradient";
 import NewVendorForm from "@features/vendors/new-vendor-form";
 import { CaseHelper } from "@utils/case-helper";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
-import { RootDrawerParamsList } from "@navigation";
+import { RootDrawerParamsList } from "@navigation/types";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { FormStateContext } from "src/context/FormContext";
 import { ReceiptUploader } from "@components/upload-receipt";
 import * as FileSystem from 'expo-file-system/legacy'
+import { saveReceiptLocally } from "@services/local-receipt";
+import saveImage from "@services/save-image";
 
 
 type NavigationProps = DrawerNavigationProp<RootDrawerParamsList>
@@ -55,19 +57,28 @@ export default function PurchaseLogForm() {
     const [vendorEmail, setVendorEmail] = useState("")
     const [vendorWebsite, setVendorWebsite] = useState("")
 
-    const [image, setImage] = useState(null);
-    const [contentType, setContentType] = useState("")
     
     const [receiptMemo, setReceiptMemo] = useState("")
     
     const [purchaseDatetime, setPurchaseDatetime] = useState(new Date())
 
-    const { id } = useContext(FormStateContext)
-    const { isNew } = useContext(FormStateContext)
-    const { name, setName } = useContext(FormStateContext)
-    const { category, setCategory } = useContext(FormStateContext)
-    const { subcategory, setSubcategory } = useContext(FormStateContext)
+    const formState = useContext(FormStateContext);
+    if (!formState) {
+        console.error("FormStateContext is undefined — missing provider!");
+        return null;
+    }
 
+    const {
+        item,
+        id, setId,
+        itemId, setItemId,
+        isNew,
+        image,
+        contentType,
+        name, setName,
+        category, setCategory,
+        subcategory, setSubcategory
+    } = formState;
 
   
     
@@ -104,48 +115,14 @@ export default function PurchaseLogForm() {
 
     
 
-    const handleSubmit = async () => {
+    const handleSubmit = async ({item, itemId, setItemId}) => {
         try {
-            // if (!image) {
-            //     Alert.alert("Error", "Please select a receipt image");
-            //     return;
-            // }
-            // const { fileKey, publicUrl } = await uploadReceiptToCloudflare({
-            //     image,
-            //     token,
-            //     contentType
-            // })
-
-            // const payload = {
-            //     name: name,
-            //     category: category,
-            //     speciesLatin: speciesLatin,
-            //     brand: brand,
-            //     purchaseDate: purchaseDatetime,
-            //     purchaseQuantity: parseInt(purchaseQuantity),
-            //     purchaseUnit: purchaseUnit,
-            //     inventoryQuantity: parseInt(inventoryQuantity),
-            //     inventoryUnit: inventoryUnit,
-            //     cost: parseInt(cost),
-            //     vendor: vendor,
-            //     user: user,
-            //     filename: fileKey,
-            //     imageUrl: publicUrl,
-            //     receiptMemo: receiptMemo,
-            //     notes : notes,
-            //     vendorPhone: vendorPhone,
-            //     vendorEmail: vendorEmail,
-            //     vendorWebsite: vendorWebsite,
-            // }
             console.log("Purchase Unit: ", purchaseUnit)
             const created_at = new Date().getTime();
-            const item = await Item.getById(db, id)
-            console.log("Inventory Unit: ", item.inventory_unit)
-
             const TYPE = 'raw_material'
 
             if (isNew) {
-                const itemId = await Item
+                const itemIdReturn = await Item
                 .create(
                     db,
                     name,
@@ -160,12 +137,15 @@ export default function PurchaseLogForm() {
                     null,
                     null
                 )
+                setItemId(itemIdReturn)
+
             } else {
-                const itemId = await Item
+                console.log("Inventory Unit: ", item.inventory_unit)
+                const itemUpdate = await Item
                 .update(
                     db,                
                     {
-                        id, 
+                        id: itemId, 
                         amount_on_hand: 
                             cnv.convertFromBase({
                                 value: 
@@ -183,6 +163,9 @@ export default function PurchaseLogForm() {
             // if (newVendor) {
             //     // await Vendor.create(db, Vendor, vendorEmail, vendorPhone, vendorAd)
             // }
+
+            console.log("Inventory Unit: ", item.inventory_unit)
+            const savedPath = await saveImage(image, `receipt_image_${created_at}`)
             await PurchLog.create(
                 db,
                 TYPE,
@@ -195,8 +178,11 @@ export default function PurchaseLogForm() {
                 parseFloat(inventoryQuantity),
                 vendorId,
                 brandId,
+                savedPath,
                 parseFloat(cost)
             )
+
+            console.log(savedPath)
             console.log(`Success! ${purchaseQuantity} ${purchaseUnit} of ${CaseHelper.toCleanCase(TYPE)} ${name} added to your inventory. Great Work!` )
     		navigation.navigate("Dashboard")
 
@@ -273,27 +259,6 @@ export default function PurchaseLogForm() {
     //     )
     //     return {invItemId, rawMatId}
     // }
-
-
-    const IMAGES_DIR = FileSystem.documentDirectory + "images/";
-
-    async function saveImage(localUri: string, filename: string) {
-    // Ensure images folder exists
-    const dirInfo = await FileSystem.getInfoAsync(IMAGES_DIR);
-    if (!dirInfo.exists) {
-        await FileSystem.makeDirectoryAsync(IMAGES_DIR, { intermediates: true });
-    }
-
-    const dest = IMAGES_DIR + filename;
-    await FileSystem.copyAsync({
-        from: localUri,
-        to: dest,
-    });
-
-    return dest; // <- this becomes item.filePath
-    }
-
-
 
     return (
         <>
@@ -401,8 +366,8 @@ export default function PurchaseLogForm() {
             >
                 <ReceiptUploader />
             </LinearGradient>
-            <View style={{ marginTop: 84 }}>
-                <Button color={'#f74a63cc'} title='Submit' onPress={() => handleSubmit()} />
+            <View style={{  marginTop: 36 }}>
+                <Button color={'#f74a63cc'} title='Submit' onPress={() => handleSubmit({item, itemId, setItemId})} />
             </View>
         </>
     )

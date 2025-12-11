@@ -50,6 +50,7 @@ export async function migrateDbIfNeeded(db: SQLiteDatabase) {
 				inventory_amount FLOAT,
 				vendor_id INTEGER,
 				brand_id INTEGER,
+				receipt_uri STRING,
 				cost FLOAT NOT NULL,
 				FOREIGN KEY(item_id) REFERENCES items(id),
 				FOREIGN KEY(vendor_id) REFERENCES vendors(id),

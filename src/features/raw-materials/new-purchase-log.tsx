@@ -13,9 +13,10 @@ import PurchaseLogForm from './purchase-log-form';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ScrollView } from 'react-native-gesture-handler';
 import { FormStateContext } from 'src/context/FormContext';
+import { MyTabBar } from '@components/bottom-tabs';
 
 
-export default function NewPurchaseLog() {
+export default function NewPurchaseLog({ navigation, state }) {
     const db = useSQLiteContext();
     const { control, handleSubmit, formState: { errors }, } = useForm({
         defaultValues: {
@@ -25,27 +26,30 @@ export default function NewPurchaseLog() {
             },
     });
     const [formVisible, setFormVisible] = useState(false)
-    const [items, setItems] = useState([{}])
-    const [item, setItem] = useState({})
     const [vendorsNames, setVendorsNames] = useState([])
     const [brandNames, setBrandNames] = useState([])
 
     
-    const { id, setId } = useContext(FormStateContext)
-    const { isNew, setIsNew } = useContext(FormStateContext)
-    const { name, setName } = useContext(FormStateContext)
-    const { category, setCategory } = useContext(FormStateContext)
-    const { subcategory, setSubcategory } = useContext(FormStateContext)
+    const {
+        item, setItem,
+        items, setItems,
+        setItemId,
+        setId,
+        setIsNew,
+        setName,
+        setCategory,
+        setSubcategory } = useContext(FormStateContext)
 
     
     const getData = async() => {
-        const data = await Item.getAllByType(db, 'raw_material')
-        setItems([{ id: 999999, name: 'New Item' }, ...data])
+        const data: any = await Item.getAllByType(db, 'raw_material')
+        setItems([{ id: 999999, name: 'New Item',  }, ...data])
     }
 
     useFocusEffect(
 		useCallback(() => {
 			getData()
+            console.log(items)
 			return() => {
 				setName('')
 				setCategory('')
@@ -59,8 +63,9 @@ export default function NewPurchaseLog() {
 
 
     return(
+        <View style={styles.container}>
         <ScreenPrimative edges={[]} scroll>
-            <View style={styles.container}>	
+            <View>	
                         <LinearGradient
                             start={{ x: 0, y: 0 }}
                             end={{ x: 0.3, y: 0.9 }}
@@ -81,7 +86,8 @@ export default function NewPurchaseLog() {
 
                                     } else {
                                         setIsNew(false)
-                                        setId(value.id)
+                                        setItem(value)
+                                        setItemId(value.id)
                                         setName(value.name)
                                         setCategory(value.category)
                                         setSubcategory(value.subcategory)
@@ -96,8 +102,11 @@ export default function NewPurchaseLog() {
                         <></>
                     }
                     </LinearGradient>
+                    
             </View>
         </ScreenPrimative>
+        <MyTabBar navigation={navigation} state={navigation.getState()} />
+        </View>
     )
 
 }

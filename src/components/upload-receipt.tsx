@@ -17,8 +17,6 @@ import { FormStateContext } from 'src/context/FormContext';
 export const ReceiptUploader: React.FC = () => {
   const [receipts, setReceipts] = useState<ReceiptMeta[]>([]);
   const [previewUri, setPreviewUri] = useState<string | null>(null);
-  const { image, setImage } = useContext(FormStateContext)
-  const { contentType, setContentType } = useContext(FormStateContext)
   
   // Load existing receipts on mount
   React.useEffect(() => {
@@ -55,10 +53,6 @@ export const ReceiptUploader: React.FC = () => {
         name='imageContainer'
       >
         <ImageSelector
-          image={image}
-          setImage={setImage}
-          contentType={contentType}
-          setContentType={setContentType}
         />
       </Form.Control>
       {/* List of saved receipts */}
