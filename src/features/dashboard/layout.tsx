@@ -4,19 +4,20 @@ import { LinearGradient } from 'expo-linear-gradient'
 import { Surface } from "react-native-paper";
 // import * as MediaLibrary from 'expo-media-library'
 import { Platform } from "react-native";
+import * as MediaLibrary from 'expo-media-library'
 
 
 export default function Dashboard() {
   
 
-  // async function requestFilePermissions() {
-  //   if (Platform.OS === 'android') {
-  //     const { status } = await MediaLibrary.requestPermissionsAsync();
-  //     if (status !== 'granted') {
-  //       throw new Error('Permission to access storage is required.');
-  //     }
-  //   }
-  // }
+  async function requestFilePermissions() {
+    if (Platform.OS === 'android') {
+      const { status } = await MediaLibrary.requestPermissionsAsync();
+      if (status !== 'granted') {
+        throw new Error('Permission to access storage is required.');
+      }
+    }
+  }
 
 
 	return(

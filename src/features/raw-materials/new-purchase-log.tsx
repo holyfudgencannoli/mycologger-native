@@ -103,10 +103,10 @@ export default function NewPurchaseLog({ navigation, state }) {
                         <></>
                     }
                     </LinearGradient>
-                    
-            </View>
-        </ScreenPrimative>
-        <MyTabBar navigation={navigation} state={navigation.getState()} tabs={tabs}/>
+                        
+                </View>
+            </ScreenPrimative>
+            <MyTabBar navigation={navigation} state={navigation.getState()} tabs={tabs}/>
         </View>
     )
 
