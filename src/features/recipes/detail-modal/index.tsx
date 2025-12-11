@@ -2,6 +2,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import React, { useCallback, useState } from 'react';
 import { View, Modal, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
 import * as cnv from '@utils/unitConversion'
+import { LinearGradient } from 'expo-linear-gradient';
 
 interface RecipeData {
     id: number;
@@ -28,31 +29,38 @@ const RecipeModal = ({ visible, setModalOpen, item}) => {
 
     return(
         <View style={styles.modalContainer}>
-            <Modal
-                transparent={true}
-                animationType="slide"
-                onRequestClose={() => {}} // Handle outside tap to close modal
-                visible={visible} // Make sure the modal is visible initially
+            <LinearGradient
+                start={{ x: 0, y: 0 }}
+                end={{ x: 0.3, y: 0.9 }}
+                colors={['#94F8', '#00f', '#057']}
+                style={{ flexDirection: 'column', padding: 16, borderRadius: 4, width: '75%' }}
             >
-                <View style={styles.modalContent}>
-                    <Text style={styles.headerText}>Recipes</Text>
-                    <FlatList
+                <Modal
+                    transparent={true}
+                    animationType="slide"
+                    onRequestClose={() => {}} // Handle outside tap to close modal
+                    visible={visible} // Make sure the modal is visible initially
+                >
+                    <View style={styles.modalContent}>
+                        <Text style={styles.headerText}>Recipes</Text>
+                        <FlatList
 
-                        data={ingredients}
-                        keyExtractor={(ing) => ing.ingredientId} // Use a unique key for each item
-                        renderItem={({ item }: {item: {amount: number, ingredientId: number, ingredientName: string, unit: string}}) => (
-                            <View style={styles.logItem}>
-                                <Text>
-                                    {item.ingredientName} -- {cnv.convertFromBase({value: item.amount, to: item.unit.toLowerCase()})} {item.unit}
-                                </Text>
-                            </View>
-                        )}
-                    />
-                    <TouchableOpacity style={styles.closeButton} onPress={closeModal}>
-                        <Text style={styles.closeButtonText}>Close</Text>
-                    </TouchableOpacity>
-                </View>
-            </Modal>
+                            data={ingredients}
+                            keyExtractor={(ing) => ing.ingredientId} // Use a unique key for each item
+                            renderItem={({ item }: {item: {amount: number, ingredientId: number, ingredientName: string, unit: string}}) => (
+                                <View style={styles.logItem}>
+                                    <Text>
+                                        {item.ingredientName} -- {cnv.convertFromBase({value: item.amount, to: item.unit.toLowerCase()})} {item.unit}
+                                    </Text>
+                                </View>
+                            )}
+                        />
+                        <TouchableOpacity style={styles.closeButton} onPress={closeModal}>
+                            <Text style={styles.closeButtonText}>Close</Text>
+                        </TouchableOpacity>
+                    </View>
+                </Modal>
+            </LinearGradient>
         </View>
     );
 };
