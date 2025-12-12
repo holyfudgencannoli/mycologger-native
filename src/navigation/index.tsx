@@ -9,9 +9,9 @@ import * as RawMat from '@features/raw-materials'
 import * as BioMat from '@features/bio-materials'
 import * as ConItem from '@features/consumables'
 import * as HW from '@features/hardware'
-import * as Agar from '@features/agar-cultures'
-import * as Liquid from '@features/liquid-cultues'
-import * as Spawn from '@features/spawn-cultures'
+import * as Agar from '@features/cultures/agar-cultures'
+import * as Liquid from '@features/cultures/liquid-cultues'
+import * as Spawn from '@features/cultures/spawn-cultures'
 // import Login from "../Authentication/Login";
 // // import LogoutScreen from "../../screens/HomeStack/LogoutScreen";
 import { Dashboard } from "@features/dashboard";

@@ -67,19 +67,19 @@ export default function RecipeList({ navigation, state }) {
                             headerStyle={{ backgroundColor: 'rgba(255,55,55,0.7)', }}
                             onRowPress={(item) => {openModal(item)}}
                         />
-                        {modalOpen && (
-                            <RecipeModal
-                                visible={modalOpen}
-                                setModalOpen={setModalOpen}
-                                item={currentItem}
-                            />
-                        )}
                         </>
                         ) : (
                         <>
                         </>
                         )}
                     </Surface>
+                    {modalOpen && (
+                      <RecipeModal
+                        visible={modalOpen}
+                        setModalOpen={setModalOpen}
+                        item={currentItem}
+                      />
+                    )}
                 </Surface>
               </LinearGradient>
             </View>
@@ -119,7 +119,8 @@ const styles = StyleSheet.create({
   },
   surfaceMetaContainer: {
     backgroundColor: 'rgba(55,255,55,0.4)',
-    width:350
+    width:'95%',
+    marginHorizontal: 'auto'
   },
   title: {
     fontSize: 24,

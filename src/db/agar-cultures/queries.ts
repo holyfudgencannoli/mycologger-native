@@ -1,7 +1,7 @@
 
 import { SQLiteDatabase } from "expo-sqlite";
 import { safeRun, safeSelectOne, safeSelectAll } from "../utils";
-import { AgarCulture } from "@features/agar-cultures/types";
+import { AgarCulture } from "@features/cultures/agar-cultures/types";
 
 export async function create(
   db: SQLiteDatabase,

@@ -33,19 +33,19 @@ export async function create({
 
 }) {
   const result = await safeRun(db,
-    "INSERT INTO culture_media (type, recipe_batch_id, volume_amount, volume_unit, last_updated, sterilized_id, inoculated_id, germinated_id, colonized_id, contaminated_id, harvested_id, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+    "INSERT INTO cultures (type, recipe_batch_id, volume_amount, volume_unit, last_updated, sterilized_id, inoculated_id, germinated_id, colonized_id, contaminated_id, harvested_id, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
     [type, recipe_batch_id, volume_amount, volume_unit, last_updated, sterilized_id, inoculated_id, germinated_id, colonized_id, contaminated_id, harvested_id, created_at]
   );
 
   return result.lastInsertRowId;
 }
 
-export async function readAll(db: SQLiteDatabase) {
-  return await safeSelectAll(db, "SELECT * FROM culture_media ORDER BY id ASC");
+export async function readAll<CultureObject>(db: SQLiteDatabase) {
+  return await safeSelectAll<CultureObject>(db, "SELECT * FROM cultures ORDER BY id ASC");
 }
 
 export async function readType(db: SQLiteDatabase, type: string) {
-  return await safeSelect(db, `SELECT * FROM culture_media WHERE type = ? ORDER BY id ASC`, [type]);
+  return await safeSelect(db, `SELECT * FROM cultures WHERE type = ? ORDER BY id ASC`, [type]);
 
 }
 
@@ -67,7 +67,7 @@ export async function getById(
 	harvested_id: number,
   created_at: number,
 
-  }>(db, "SELECT * FROM culture_media WHERE id = ?", [id]);
+  }>(db, "SELECT * FROM cultures WHERE id = ?", [id]);
 }
 
 export async function update(db: SQLiteDatabase, data: { id: number; [key: string]: any }) {
@@ -96,7 +96,7 @@ export async function update(db: SQLiteDatabase, data: { id: number; [key: strin
 export async function destroy(db: SQLiteDatabase, id: number) {
   const result = await safeRun(
     db,
-    "DELETE FROM culture_media WHERE id = ?",
+    "DELETE FROM cultures WHERE id = ?",
     [id]
   );
 
@@ -106,7 +106,7 @@ export async function destroy(db: SQLiteDatabase, id: number) {
 export async function exists(db: SQLiteDatabase, id: number) {
   const row = await safeSelectOne<{ count: number }>(
     db,
-    "SELECT COUNT(*) as count FROM culture_media WHERE id = ?",
+    "SELECT COUNT(*) as count FROM cultures WHERE id = ?",
     [id]
   );
 

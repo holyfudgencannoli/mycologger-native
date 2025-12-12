@@ -64,6 +64,13 @@ export default function RecipeBatchList({ navigation, state }) {
                             headerStyle={{ backgroundColor: 'rgba(255,55,55,0.7)', }}
                             onRowPress={(item) => {openModal(item)}}
                         />
+                        </>
+                        ) : (
+                        <>
+                        </>
+                        )}
+                    </Surface>
+                    
                         {modalOpen && (
                             <RecipeBatchModal
                                 visible={modalOpen}
@@ -71,12 +78,6 @@ export default function RecipeBatchList({ navigation, state }) {
                                 item={currentItem}
                             />
                         )}
-                        </>
-                        ) : (
-                        <>
-                        </>
-                        )}
-                    </Surface>
                 </Surface>
               </LinearGradient>
             </View>
@@ -94,9 +95,6 @@ const styles = StyleSheet.create({
   form: {
     backgroundColor: 'rgba(0, 17, 255, 0.3)',
     width:66    
-  },
-  backgroundImage: {
-    flex: 1
   },
   input: {
     // margin: 8,

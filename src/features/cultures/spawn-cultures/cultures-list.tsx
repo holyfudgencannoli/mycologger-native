@@ -1,35 +1,33 @@
 import { useState, useCallback } from "react"
 import { Surface } from "react-native-paper";
 import { StyleSheet, View } from 'react-native';
-import { useTheme } from "../../hooks/useTheme";
+import { useTheme } from "../../../hooks/useTheme";
 import { useFocusEffect } from "@react-navigation/native";
 import { ScrollableDataTable } from "@components/scrollable-data-table";
 import { ImageBG } from "@components/image-bg";
 import { ScreenPrimative } from "@components/screen-primative";
 import { CultureDetailModal } from "./detail-model";
 import * as Culture from '@db/cultures'
-import * as Agar from '@db/agar-cultures'
 import { useSQLiteContext } from "expo-sqlite";
 import { ScrollView } from "react-native-gesture-handler";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Form from '@custom/react-native-forms/src'
-import { AgarCulture } from "./types";
+import { SpawnCulture, tabs } from "./types";
 import { MyTabBar } from "@components/bottom-tabs";
-import { tabs } from "@features/bio-materials/types";
 
 
-export default function AgarCulturesListScreen({ navigation, state }) {
+export default function SpawnCulturesListScreen({ navigation, state }) {
     const db = useSQLiteContext();    
     const [recipes, setRecipes] = useState([])
     const [modalOpen, setModalOpen] = useState(false)
-    const [currentItem, setCurrentItem] = useState<AgarCulture>()
+    const [currentItem, setCurrentItem] = useState<SpawnCulture>()
     const { theme, toggleTheme } = useTheme()
-    const [agars, setAgars] = useState<AgarCulture[]>([])
+    const [spawns, setSpawns] = useState<SpawnCulture[]>([])
 
     const getData = async() => {
-        const Agars: AgarCulture[] = await Agar.readAll(db)
-        console.log(Agars)  
-        setAgars(Agars)
+        // const Spawns: SpawnCulture[] = await Spawn.readAll(db)
+        // console.log(Spawns)  
+        // setSpawns(Spawns)
     }
 
     useFocusEffect(
@@ -58,37 +56,39 @@ export default function AgarCulturesListScreen({ navigation, state }) {
                   colors={['#94F8', '#00f', '#057']}
                   style={{ flex: 1, padding: 16}}
               >
-                <View style={{ backgroundColor: '#fff8', height: '100%' }}>
+                <Surface style={styles.surfaceMetaContainer}>                        
+                  <Surface style={styles.surfaceContainer}>
                   <Form.Control name="table" label="Cultures" labelStyle={styles.label}>  
-                    {agars && agars.length > 0 ? (
-                        <>
-                        <ScrollableDataTable 
-                            data={agars? agars : []}
-                            columns={columns}
-                            headerTextStyle={{ textAlign: 'center', color: 'rgba(255,255,255,0.7)', textShadowColor:'blue', textShadowRadius: 4 }}
-                            cellTextStyle={{ textAlign: 'center', color: 'white', textShadowColor: 'black', textShadowRadius:4 }}
-                            headerStyle={{ backgroundColor: 'rgba(255,55,55,0.7)', }}
-                            onRowPress={(item) => {openModal(item)}}
-                        />
-                        {modalOpen && (
-                            <CultureDetailModal
-                                visible={modalOpen}
-                                setModalOpen={setModalOpen}
-                                item={currentItem}
-                            />
-                        )}
-                        </>
-                    ) : (
-                        <>
-                        </>
-                    )}
-                  </Form.Control>
-                </View>
-              </LinearGradient>
-          </View>
-          <MyTabBar navigation={navigation} state={navigation.getState()} tabs={tabs}/>
+                      {spawns && spawns.length > 0 ? (
+                          <>
+                          <ScrollableDataTable 
+                              data={spawns? spawns : []}
+                              columns={columns}
+                              headerTextStyle={{ textAlign: 'center', color: 'rgba(255,255,255,0.7)', textShadowColor:'blue', textShadowRadius: 4 }}
+                              cellTextStyle={{ textAlign: 'center', color: 'white', textShadowColor: 'black', textShadowRadius:4 }}
+                              headerStyle={{ backgroundColor: 'rgba(255,55,55,0.7)', }}
+                              onRowPress={(item) => {openModal(item)}}
+                          />
+                          </>
+                      ) : (
+                          <>
+                          </>
+                      )}
+                    </Form.Control>
+                </Surface>
+                {modalOpen && (
+                    <CultureDetailModal
+                        visible={modalOpen}
+                        setModalOpen={setModalOpen}
+                        item={currentItem}
+                    />
+                )}
+              </Surface>
+            </LinearGradient>
+        </View>
+        <MyTabBar navigation={navigation} state={navigation.getState()} tabs={tabs}/>
           
-        </ScreenPrimative>
+      </ScreenPrimative>
     )
 
 }

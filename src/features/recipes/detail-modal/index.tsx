@@ -28,40 +28,42 @@ const RecipeModal = ({ visible, setModalOpen, item}) => {
     )
 
     return(
-        <View style={styles.modalContainer}>
-            <LinearGradient
-                start={{ x: 0, y: 0 }}
-                end={{ x: 0.3, y: 0.9 }}
-                colors={['#94F8', '#00f', '#057']}
-                style={{ flexDirection: 'column', padding: 16, borderRadius: 4, width: '75%' }}
+        <View style={styles.modalContainer} >
+
+            <Modal
+                transparent={true}
+                animationType="slide"
+                onRequestClose={() => {}} // Handle outside tap to close modal
+                visible={visible} // Make sure the modal is visible initially
             >
-                <Modal
-                    transparent={true}
-                    animationType="slide"
-                    onRequestClose={() => {}} // Handle outside tap to close modal
-                    visible={visible} // Make sure the modal is visible initially
+                
+                <LinearGradient
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 0.3, y: 0.9 }}
+                    colors={['#f4F8', '#00fc', '#0578']}
+                    style={{ marginRight: 'auto', marginLeft: 'auto', marginTop: '20%', padding: 16, borderRadius: 4, height: '25%', width: '72%', justifyContent: 'center', alignItems: 'center' }}
                 >
                     <View style={styles.modalContent}>
-                        <Text style={styles.headerText}>Recipes</Text>
+                        <Text style={styles.headerText}>{item.name}</Text>
                         <FlatList
-
                             data={ingredients}
                             keyExtractor={(ing) => ing.ingredientId} // Use a unique key for each item
-                            renderItem={({ item }: {item: {amount: number, ingredientId: number, ingredientName: string, unit: string}}) => (
+                            renderItem={({ item, }: {item: {amount: number, ingredientId: number, ingredientName: string, unit: string}}) => (
                                 <View style={styles.logItem}>
-                                    <Text>
-                                        {item.ingredientName} -- {cnv.convertFromBase({value: item.amount, to: item.unit.toLowerCase()})} {item.unit}
+                                    <Text style={styles.logItemText} >
+                                        {item.ingredientId}: {cnv.convertFromBase({value: item.amount, to: item.unit.toLowerCase()})} {item.unit} of {item.ingredientName}
                                     </Text>
                                 </View>
                             )}
                         />
+
                         <TouchableOpacity style={styles.closeButton} onPress={closeModal}>
                             <Text style={styles.closeButtonText}>Close</Text>
                         </TouchableOpacity>
                     </View>
+                </LinearGradient>
                 </Modal>
-            </LinearGradient>
-        </View>
+            </View>
     );
 };
 
@@ -72,10 +74,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     modalContent: {
-        backgroundColor: 'white',
+        backgroundColor: 'transparent',
         borderRadius: 10,
-        padding: 20,
-        margin: 20,
+        padding: 12,
+        margin: 12,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.3,
@@ -84,14 +86,19 @@ const styles = StyleSheet.create({
     headerText: {
         fontSize: 18,
         fontWeight: 'bold',
-        marginBottom: 10,
+        margin: 'auto',
+        color: 'white'
     },
     logItem: {
         flexDirection: 'column',
         justifyContent: 'space-between',
         paddingVertical: 8,
-        borderBottomWidth: 1,
-        borderBottomColor: '#000',
+        // borderBottomWidth: 1,
+        // borderBottomColor: '#000',
+    },
+    logItemText: {
+        color: 'white',
+        fontSize: 16
     },
     closeButton: {
         backgroundColor: 'red',

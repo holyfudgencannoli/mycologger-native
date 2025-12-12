@@ -2,6 +2,20 @@
 import { SQLiteBindParams, SQLiteDatabase } from "expo-sqlite";
 import { safeRun, safeExec } from "./utils";
 
+export async function createIndexes(db: SQLiteDatabase) {
+	await safeExec(
+		db,
+		`CREATE INDEX IF NOT EXISTS idx_purchase_logs_type
+		ON purchase_logs (type);`
+	);
+
+	await safeExec(
+		db,
+		`CREATE INDEX IF NOT EXISTS idx_purchase_logs_receipt_uri
+		ON purchase_logs (receipt_uri);`
+	);
+}
+
 export async function migrateDbIfNeeded(db: SQLiteDatabase) {
   const DATABASE_VERSION = 1
 
@@ -41,6 +55,7 @@ export async function migrateDbIfNeeded(db: SQLiteDatabase) {
 		await safeExec(db, 
 			`CREATE TABLE IF NOT EXISTS purchase_logs (
 				id INTEGER PRIMARY KEY AUTOINCREMENT,
+				type STRING NOT NULL,
 				item_id INTEGER NOT NULL,
 				created_at INTEGER,
 				purchase_date INTEGER NOT NULL,
@@ -57,6 +72,9 @@ export async function migrateDbIfNeeded(db: SQLiteDatabase) {
 				FOREIGN KEY(brand_id) REFERENCES brands(id)
 			)`
 		)
+
+		
+
 
 		await safeExec(db, 
 			`CREATE TABLE IF NOT EXISTS usage_logs (
@@ -254,7 +272,7 @@ export async function migrateDbIfNeeded(db: SQLiteDatabase) {
 				last_updated STRING
 			)`
 		)
-	
+		createIndexes(db)
 
     // await safeExec(db, "PRAGMA foreign_keys = ON;");
 

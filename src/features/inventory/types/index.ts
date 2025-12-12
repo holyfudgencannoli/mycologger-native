@@ -5,6 +5,8 @@ export * from './purchase-log'
 export * from './vendor'
 
 export const tabs: {name: string, icon: iconTypes}[] = [
-    { name: "New Item", icon: "add-circle" },
-    { name: "New Purchase Log", icon: "receipt" },
+    { name: "Raw Materials", icon: "cube" },
+    { name: "Bio Materials", icon: "egg" },
+    { name: "Supplies", icon: "eyedrop" },
+    { name: "Hardware", icon: "flask" },
 ];

@@ -4,6 +4,7 @@ import { useTheme } from '../../theme/ThemeProvider';
 
 export interface InputProps extends Omit<TextInputProps, 'size'> {
   size?: 'sm' | 'md' | 'lg';
+  disabled?: boolean
 }
 
 const Input = forwardRef<TextInput, InputProps>((props, ref) => {

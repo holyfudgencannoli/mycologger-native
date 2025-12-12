@@ -66,25 +66,28 @@ export const PurchaseLogsModal = ({ visible, setModalOpen, item}: {visible: bool
             
 
     return (
-        <View style={styles.modalContainer}>
+        <View style={styles.modalContainer} >
+
             <Modal
                 transparent={true}
                 animationType="slide"
                 onRequestClose={() => {}} // Handle outside tap to close modal
                 visible={visible} // Make sure the modal is visible initially
             >
-                <View style={styles.modalContent}>
-                    <Text style={styles.headerText}>Purchase Logs</Text>
-                    <Text>Purchase logs will appear below</Text>
+                
+                <LinearGradient
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 0.3, y: 0.9 }}
+                    colors={['#f4F8', '#00fc', '#0578']}
+                    style={{ marginRight: 'auto', marginLeft: 'auto', marginTop: '20%', padding: 16, borderRadius: 4, height: '25%', width: '72%', justifyContent: 'center', alignItems: 'center' }}
+                >
+                    <View style={{ marginBottom: 'auto', marginRight: 'auto' }}>
+                        <Text style={styles.headerText}>Purchase Logs</Text>
+                        <Text style={styles.subheaderText}>Purchase logs will appear below</Text>
+                    
                     {purchaseLogs.map((item) => {
                         return(
                             <View style={styles.logItem}>
-                                <LinearGradient
-                                    start={{ x: 0, y: 0 }}
-                                    end={{ x: 0.3, y: 0.9 }}
-                                    colors={['#94F8', '#00f', '#057']}
-                                    style={{ flexDirection: 'column', padding: 16, borderRadius: 4, width: '75%' }}
-                                >
                                     <Text style={styles.text}>{new Date(item.log.purchase_date).toLocaleDateString('en-GB',{
                                         month: 'short',
                                         day: 'numeric',
@@ -97,21 +100,20 @@ export const PurchaseLogsModal = ({ visible, setModalOpen, item}: {visible: bool
                                     {/* {item.log.notes && <Text>{item.log.notes}</Text>} */}
 
                                     
-                                </LinearGradient>
                                 <Button
-                                viewStyle={{ margin: 'auto' }}
+                                    viewStyle={{ margin: 'auto' }}
                                     title="Delete"
                                     color="#d32f2f"          // red – feel free to change
                                     onPress={() => handleDelete(item.log.id)}
                                 />
                             </View>
-                        )
-                    })}
-                    
+                        )}
+                    )}
+                    </View>
                     <TouchableOpacity style={styles.closeButton} onPress={closeModal}>
                         <Text style={styles.closeButtonText}>Close</Text>
                     </TouchableOpacity>
-                </View>
+                </LinearGradient>
             </Modal>
         </View>
     );
@@ -139,14 +141,27 @@ const styles = StyleSheet.create({
     headerText: {
         fontSize: 18,
         fontWeight: 'bold',
-        marginBottom: 10,
+        marginBottom: 'auto',
+        color: 'white'
+    },
+
+    subheaderText: {
+        fontSize: 12,
+        // fontWeight: 'bold',
+        marginBottom: 'auto',
+        color: 'white'
+
     },
     logItem: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         paddingVertical: 8,
-        borderBottomWidth: 1,
-        borderBottomColor: '#ccc',
+        // borderBottomWidth: 1,
+        // borderBottomColor: '#ccc',
+    },
+    logItemText: {
+        color: 'white',
+        fontSize: 16
     },
     closeButton: {
         backgroundColor: 'red',

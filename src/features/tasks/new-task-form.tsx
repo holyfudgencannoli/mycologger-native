@@ -18,6 +18,8 @@ import * as Form from '@custom/react-native-forms/src'
 import { LinearGradient } from "expo-linear-gradient";
 import { ScrollView } from "react-native-gesture-handler";
 import { ScreenPrimative } from "@components/screen-primative";
+import { MyTabBar } from "@components/bottom-tabs";
+import { tabs } from ".";
 
 /* ------------------------------------------------------------------ */
 /* Types (optional – remove if you’re not using TS)                   */
@@ -211,16 +213,11 @@ export default function NewTaskForm() {
             style={{ flex: 1, padding: 16, borderRadius: 4}}
           >
             <ScrollView style={{ flex: 1 }}>
-
-              {/* List of recorded pairs */}
-              <FlatList
-                data={times}
-                keyExtractor={(item) => item.id}
-                renderItem={({ item }) => (
-                  <View>
+              {times ? times.map((time, index) => (
+                  <View key={index}>
                     {/* Time display */}
                     <Form.Control 
-                      label={`${item.startTime.toLocaleTimeString()} – ${item.endTime.toLocaleTimeString()}`}
+                      label={`${time.startTime.toLocaleTimeString()} – ${time.endTime.toLocaleTimeString()}`}
                       name="taskTime"  
                       labelStyle={styles.label}
                     >
@@ -235,7 +232,7 @@ export default function NewTaskForm() {
                           
                           setTimes((prev) =>
                             prev.map((p) =>
-                              p.id === item.id ? { ...p, category: value.value } : p
+                              p.id === time.id ? { ...p, category: value.value } : p
                             )
                           );
                           
@@ -246,20 +243,21 @@ export default function NewTaskForm() {
                         <Button
                           title="Delete"
                           color="#d32f2f"          // red – feel free to change
-                          onPress={() => handleDelete(item.id)}
+                          onPress={() => handleDelete(time.id)}
                         />
                         {/* Navigation button */}
                         <Button
                           title="Execute"
-                          onPress={() => goToScreen(item)}
+                          onPress={() => goToScreen(time)}
                           color="#4CAF50"
                         />
                       </View>
                     </View>
                     </Form.Control>
                   </View>
-                )}
-              />
+              )) : (
+                <></>
+              )}
             </ScrollView>
           </LinearGradient>
             {/* The start/stop button */}
@@ -272,6 +270,8 @@ export default function NewTaskForm() {
             />
         </LinearGradient>
       </View>
+      <MyTabBar navigation={navigation} state={navigation.getState()} tabs={tabs}/>
+      
     </ScreenPrimative>
   );
 }

@@ -1,4 +1,6 @@
-export interface AgarCulture {
+import { iconTypes } from "@components/bottom-tabs";
+
+export interface SpawnCulture {
     id: number;
     media_id: number;
     recipe_batch_id: number;
@@ -12,3 +14,11 @@ export interface AgarCulture {
     contaminated_id: number;
     harvested_id: number;
 }
+
+
+
+export const tabs: {name: string, icon: iconTypes}[] = [
+    { name: "Agar", icon: "square" },
+    { name: "Liquid", icon: "water" },
+    { name: "Spawn", icon: "triangle" },
+];

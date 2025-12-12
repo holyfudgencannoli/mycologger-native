@@ -1,16 +1,21 @@
 import { useCallback, useEffect, useState } from "react"
 import { Surface,TextInput } from "react-native-paper";
-import { StyleSheet, Text, Button } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useTheme } from "../../hooks/useTheme";
-import { View } from "react-native-reanimated/lib/typescript/Animated";
 import * as Task from '@db/tasks'
 import { SQLiteRunResult, useSQLiteContext } from "expo-sqlite";
-import * as InvLog from '@db/inventory-logs'
+// import * as InvLog from '@db/inventory-logs'
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { TimePair } from "./new-task-form";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
-import { RootDrawerParamsList } from "@navigation";
+import { RootDrawerParamsList } from "@navigation/types";
+import { ScreenPrimative } from "@components/screen-primative";
+import { ScrollView } from "react-native-gesture-handler";
+import { LinearGradient } from "expo-linear-gradient";
+import * as Form from '@custom/react-native-forms/src'
+import Button from "@components/button";
+import { Colors } from "@constants/colors";
 
 
 type NavigationProps = DrawerNavigationProp<RootDrawerParamsList>
@@ -76,55 +81,75 @@ export default function CreateMaintenanceTask({id}: {id: number}) {
 
 
     return(
-            <Surface style={styles.surfaceMetaContainer}>                        
-                <Surface style={styles.surfaceContainer}>
+  
+      <ScreenPrimative edges={[]}>
+        <View style={styles.container}>	
+            <LinearGradient
+              start={{ x: 0, y: 0 }}
+              end={{ x: 0.3, y: 0.9 }}
+              colors={['#94F8', '#00f', '#057']}
+              style={{ flex: 1, padding: 16}}
+            >
+              <Surface style={styles.surfaceContainer}>
                     <Text style={theme.formTitle}>New Maintenance Task</Text>        
                 </Surface>
-                <Surface style={styles.surfaceContainer}>
-                    <Surface style={styles.surface}>
-                        <TextInput
-                            label="Task Name"
-                            value={name}
-                            onChangeText={setName}
-                            mode="outlined"
-                        />
-                    </Surface>
-                    <Surface style={styles.surface}>
-                        <TextInput
-                            label="Start Time"
-                            value={start}
-                            disabled
-                            mode="outlined"
-                        />
-                    </Surface>
-                    <Surface style={styles.surfaceBottom}>
-                        <TextInput
-                            label="End Time"
-                            value={end}
-                            disabled
-                            mode="outlined"
-                        />
-                    </Surface>
-                    <Surface style={styles.surface}>
-                        <TextInput
-                            label="Notes"
-                            value={notes}
-                            onChangeText={setNotes}
-                            mode="outlined"
-                        />
-                    </Surface>
-                    <Button  color={'#000000'} title="Submit" onPress={() => handleSubmit()} />
+              <Form.Control label="Task Name" name="taskName" labelStyle={styles.label}>
+                <Form.Input
 
-                </Surface>    
-            </Surface>
+                  value={name}
+                  onChangeText={setName}
+                  style={{ width: '100%', backgroundColor: 'transparent' }}
+                  // mode="outlined"
+                />
+              </Form.Control>
+              
+              <Form.Control label="Stat Time" name="startName" labelStyle={styles.label}>
+                <Form.Input
+                  value={start}
+                  style={{ width: '100%', backgroundColor: 'transparent', color: 'white' }}
+                  // mode="outlined"
+                />
+              </Form.Control>
+              
+              <Form.Control label="End Time" name="endName" labelStyle={styles.label}>
+                <Form.Input
+                  value={end}
+                  style={{ width: '100%', backgroundColor: 'transparent', color: 'white' }}
+                  // mode="outlined"
+                />
+              </Form.Control>
+              
+              <Form.Control label="Notes" name="notes" labelStyle={styles.label}>
+                <Form.Input
+                  value={notes}
+                  onChangeText={setName}
+                  multiline
+                  style={{ width: '100%', backgroundColor: 'transparent', color: 'white' }}
+                  // mode="outlined"
+                />
+              </Form.Control>
+                
+              <Button viewStyle={{ margin: 36 }} color={Colors.button.primary} title="Submit" onPress={() => handleSubmit()} />
+
+          </LinearGradient>
+        </View>
+      </ScreenPrimative>
     )
 
 }
 
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: "center", alignItems: "center", },
+  container: { flex: 1 },
   text: { fontSize: 20, marginBottom: 20 },
+  label: {
+    fontSize: 18,
+    textAlign:  'center',
+    fontWeight: 'bold',
+    color: 'red',
+    textShadowColor: 'blue',
+    textShadowRadius: 16,
+  },
   form: {
     backgroundColor: 'rgba(0, 17, 255, 0.3)',
     width:66    

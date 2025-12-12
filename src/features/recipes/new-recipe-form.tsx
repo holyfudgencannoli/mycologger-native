@@ -10,7 +10,7 @@ import * as RawMat from '@db/items'
 import { useSQLiteContext } from "expo-sqlite";
 import * as cnv from '@utils/unitConversion'
 import { DrawerNavigationProp } from "@react-navigation/drawer";
-import { NavigationProps, RootDrawerParamsList } from "@navigation";
+import { NavigationProps, RootDrawerParamsList } from "@navigation/types";
 import * as Form from '@custom/react-native-forms/src'
 import { INV_UNITS } from "@constants/units";
 import { LinearGradient } from "expo-linear-gradient";

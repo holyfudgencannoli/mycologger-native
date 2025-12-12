@@ -14,7 +14,7 @@ export function MyTabBar({ navigation, state, tabs }) {
   return (
     <View style={{
       flexDirection: "row",
-      height: 100,
+      height: 125,
       backgroundColor: "#222",
     //   alignItems: "center",
     }}>

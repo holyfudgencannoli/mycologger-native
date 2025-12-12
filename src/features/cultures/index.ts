@@ -1,4 +1,9 @@
-export interface LiquidCulture {
+export * as Agar from './agar-cultures'
+export * as Liquid from './liquid-cultues'
+import * as Spawn from './spawn-cultures'
+
+
+export interface CultureObject {
     id: number;
     media_id: number;
     recipe_batch_id: number;

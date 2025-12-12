@@ -1,22 +1,13 @@
-import { StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, Text, View } from "react-native";
 import { ScreenPrimative } from "@components/screen-primative";
 import { LinearGradient } from 'expo-linear-gradient'
 import { Surface } from "react-native-paper";
 import { Platform } from "react-native";
-import { requestPermissionsAsync } from 'expo-media-library'
+import GalleryScreen from "@features/raw-materials/receipt-gallery";
 
 
-export default function Dashboard() {
+export default function Dashboard({ navigation }) {
   
-
-  async function requestFilePermissions() {
-    if (Platform.OS === 'android') {
-      const { status } = await requestPermissionsAsync();
-      if (status !== 'granted') {
-        throw new Error('Permission to access storage is required.');
-      }
-    }
-  }
 
 
 	return(
@@ -28,9 +19,7 @@ export default function Dashboard() {
           colors={['#94F8', '#00f', '#057']}
           style={{ flex: 1 }}
         >
-          <View style={{ padding: 48 }}>
-            <Text>weweefw</Text>
-          </View>
+            <GalleryScreen navigation={navigation} />
         </LinearGradient>  
 			</View>
 		</ScreenPrimative>      

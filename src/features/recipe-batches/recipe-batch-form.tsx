@@ -149,33 +149,29 @@ export default function RecipeBatchForm({ setUnsaved }: { setUnsaved: (value: bo
         <Text style={theme.formTitle}>From Recipe</Text>
       </Surface>
 
-      {/* Recipe Picker */}
-      <Surface style={styles.surfaceContainer}>
-        <Picker
+      <Form.Control
+          name="recipeId">
+        <Form.Select 
+          style={{ width: '100%' }}
           selectedValue={recipeId}
-          onValueChange={(value: number) => setRecipeId(value)}
-        >
-          <Picker.Item label="Select recipe..." value={0} />
-          {recipes.map(r => (
-            <Picker.Item
-              key={r.id}
-              label={`${r.name}, ${r.yield_amount} ${r.yield_unit}`}
-              value={r.id}
-            />
-          ))}
-        </Picker>
-
-        {/* Batch Name */}
-        <Surface style={styles.surface}>
-          <TextInput
-            label="Batch Name"
-            value={name}
-            mode="outlined"
-            disabled
-          />
-        </Surface>
+          onValueChange={(value: recipeProps) => setRecipeId(value.id)}
+          options={recipes}
+          placeholder="Select Recipe To Execute"
+          size="md"
+          type="embed"
+        />
+      </Form.Control>
+      <Form.Control name='batchName' label="Batch Name" labelStyle={styles.label}>
+        <Form.Input 
+          value={name}
+          style={{ width: '100%' }}
+        />
+      </Form.Control>
       {recipe ? 
       <>
+      <Form.Control name="recipeQuantity">
+        <Form.Input />
+      </Form.Control>
         <Surface style={styles.surface}>
           <TextInput
             label="Quantity of Recipe"
@@ -284,7 +280,6 @@ export default function RecipeBatchForm({ setUnsaved }: { setUnsaved: (value: bo
       }
       </Surface>
     
-    </Surface>
 
   );
 }

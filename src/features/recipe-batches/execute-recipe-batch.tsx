@@ -1,9 +1,10 @@
-import { Alert, Platform, StyleSheet } from "react-native";
+import { Alert, Platform, StyleSheet, View } from "react-native";
 import { ImageBG } from "@components/image-bg";
 import { ScreenPrimative } from "@components/screen-primative";
 import CreateRecipeBatch from "./recipe-batch-form";
 import { useState } from "react";
 import { useNavigation, usePreventRemove } from "@react-navigation/native";
+import { LinearGradient } from "expo-linear-gradient";
 
 export default function ExecuteRecipeBatch() {    
     const [unsaved, setUnsaved] = useState(false)
@@ -38,9 +39,18 @@ export default function ExecuteRecipeBatch() {
 
 
     return(
-            <ScreenPrimative scroll contentContainerStyle={styles.container} edges={[]}>
-                <CreateRecipeBatch setUnsaved={setUnsaved} />
-            </ScreenPrimative>
+      <ScreenPrimative edges={[]}>
+        <View style={styles.container}>	
+          <LinearGradient
+            start={{ x: 0, y: 0 }}
+            end={{ x: 0.3, y: 0.9 }}
+            colors={['#94F8', '#00f', '#057']}
+            style={{ flex: 1, padding: 24}}
+          >
+            <CreateRecipeBatch setUnsaved={setUnsaved} />
+          </LinearGradient>
+        </View>
+      </ScreenPrimative>
     )
 }
 

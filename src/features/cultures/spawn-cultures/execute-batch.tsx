@@ -5,7 +5,7 @@ import { Alert, Button, StyleSheet, Text, View } from "react-native";
 import { useSQLiteContext } from "expo-sqlite";
 import { useFocusEffect, useNavigation, useRoute } from "@react-navigation/native";
 import { useCallback, useState } from "react";
-import { useTheme } from "../../hooks/useTheme";
+import { useTheme } from "../../../hooks/useTheme";
 import { PaperSelect } from "react-native-paper-select";
 import * as Batches from '@db/recipe-batches'
 import * as Culture from '@db/cultures'
@@ -16,8 +16,8 @@ import { convertToBase } from "@utils/unitConversion";
 import { ScrollView } from "react-native-gesture-handler";
 import { LinearGradient } from "expo-linear-gradient";
 import { RouteProp } from "@react-navigation/native";
-import { NavigationProps, RootDrawerParamsList } from "@navigation";
-import { RecipeBatch } from "@features/recipe-batches/types";
+import { NavigationProps, RootDrawerParamsList } from "@navigation/types";
+import { RecipeBatch } from "@db/recipe-batches/types";
 import * as Form from '@custom/react-native-forms/src'
 import { INV_UNITS } from "@constants/units";
 
@@ -29,7 +29,7 @@ type formattedRecipe ={
 
 type TaskRouteProps = RouteProp<RootDrawerParamsList, any>
 
-export default function ExecuteAgarBatch() {  
+export default function ExecuteSpawnBatch() {  
     const db =  useSQLiteContext()
     const navigation = useNavigation<NavigationProps>();
     const route = useRoute<TaskRouteProps>();
@@ -75,18 +75,17 @@ export default function ExecuteAgarBatch() {
         try {
             for (let i=0; i<qty; i++) {
 
-                const cultureId = await Culture.create(db, 'agar_cultures', new Date().getTime());
-                console.log('Using recipebatch ID:', selectedRecipeBatchId);
+                const cultureId = await Culture.create({
+                    db, 
+                    type: 'agar_culture', 
+                    recipe_batch_id: selectedRecipeBatchId,
+                    volume_amount: parseInt(volume),
+                    volume_unit: volumeUnit,
+                    last_updated: new Date().getTime(),
+                    created_at: new Date().getTime(),
 
-                await Agar.create(
-                    db,
-                    cultureId,
-                    selectedRecipeBatchId,
-                    parseInt(volume),
-                    volumeUnit,
-                    new Date().getTime(),
-                    null, null, null, null, null, null
-                );
+                });
+                console.log('Using recipebatch ID:', selectedRecipeBatchId);
 
             }                
             const use = convertToBase({value: quantity ? parseInt(quantity) * parseFloat(volume) : parseFloat(volume), from: volumeUnit.toLowerCase()})
@@ -122,7 +121,6 @@ export default function ExecuteAgarBatch() {
     return(
         <ScreenPrimative edges={[]}>
             <View style={styles.container}>
-                <ScrollView>
                     <LinearGradient
                         start={{ x: 0, y: 0 }}
                         end={{ x: 0.3, y: 0.9 }}
@@ -130,7 +128,7 @@ export default function ExecuteAgarBatch() {
                         style={{ flex: 1, padding: 16}}
                     >
                         <Surface style={{ backgroundColor: '#0008', margin: 16, padding: 16 }}>
-                            <Text style={styles.title}>Execute New Agar Batch</Text>
+                            <Text style={styles.title}>Execute New Spawn Culture Batch</Text>
                         </Surface>
                         <Form.Control labelStyle={styles.label} label="Select Batch to Use" name="batch">
                             <Form.Select 
@@ -165,7 +163,6 @@ export default function ExecuteAgarBatch() {
                             />
                         </Form.Control>
                     </LinearGradient>
-                </ScrollView>
             </View>
         </ScreenPrimative>
     )
@@ -174,7 +171,7 @@ export default function ExecuteAgarBatch() {
 
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: "center", alignItems: "center", },
+  container: { flex: 1 },
   text: { fontSize: 20, marginBottom: 20 },
   surface: {
     padding: 16,

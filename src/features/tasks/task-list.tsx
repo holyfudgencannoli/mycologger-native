@@ -15,6 +15,8 @@ import { TaskParamList } from "@navigation";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ScrollView } from "react-native-gesture-handler";
 import { LinearGradient } from "expo-linear-gradient";
+import { MyTabBar } from "@components/bottom-tabs";
+import { tabs } from ".";
 
 interface TaskData {
     id: number;
@@ -97,10 +99,7 @@ export default function TaskListScreen() {
                       style={{ flex: 1, padding: 16}}
                   >
                 <Surface style={styles.surfaceMetaContainer}>
-                  <View style={{ margin: 16 }}>
-                    <Button color={'#f74a63cc'} title="New Task" onPress={() => navigation.navigate("New Task")} />
-                  </View>
-                    <Surface style={styles.surfaceContainer}>
+                  <Surface style={styles.surfaceContainer}>
                     {tasks && tasks.length > 0 ? (
                         <>
                         <ScrollableDataTable 
@@ -129,7 +128,9 @@ export default function TaskListScreen() {
                     </Surface>
                 </Surface>
             </LinearGradient>
-        </View>
+          </View>
+        <MyTabBar navigation={navigation} state={navigation.getState()} tabs={tabs}/>
+        
       </ScreenPrimative>
     )
 
@@ -137,7 +138,7 @@ export default function TaskListScreen() {
 
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: "center", alignItems: "center" },
+  container: { flex: 1 },
   text: { fontSize: 20, marginBottom: 20 },
   form: {
     backgroundColor: 'rgba(0, 17, 255, 0.3)',

@@ -27,7 +27,7 @@ export default function App() {
     }
 
 	return (
-		<SQLiteProvider databaseName='mycologger_v2.2_dev.db' onInit={handleInit}>
+		<SQLiteProvider databaseName='mycologger_v2.3_dev.db' onInit={handleInit}>
 			<FormStateProvider>
 				<PaperProvider>
 					<ThemeProvider>

@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react"
 import { Surface } from "react-native-paper";
 import { StyleSheet, View } from 'react-native';
-import { useTheme } from "../../hooks/useTheme";
+import { useTheme } from "../../../hooks/useTheme";
 import { useFocusEffect } from "@react-navigation/native";
 import { ScrollableDataTable } from "@components/scrollable-data-table";
 import { ImageBG } from "@components/image-bg";
@@ -13,9 +13,8 @@ import { useSQLiteContext } from "expo-sqlite";
 import { ScrollView } from "react-native-gesture-handler";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Form from '@custom/react-native-forms/src'
-import { LiquidCulture } from "./types";
+import { LiquidCulture, tabs } from "./types";
 import { MyTabBar } from "@components/bottom-tabs";
-import { tabs } from "@features/bio-materials/types";
 
 
 export default function LiquidCulturesListScreen({ navigation, state }) {
@@ -58,8 +57,9 @@ export default function LiquidCulturesListScreen({ navigation, state }) {
                   colors={['#94F8', '#00f', '#057']}
                   style={{ flex: 1, padding: 16}}
               >
-                <View style={{ backgroundColor: '#fff8', height: '100%' }}>
-                  <Form.Control name="table" label="Cultures" labelStyle={styles.label}>  
+                <Surface style={styles.surfaceMetaContainer}>                        
+                  <Surface style={styles.surfaceContainer}>
+                    <Form.Control name="table" label="Cultures" labelStyle={styles.label}>  
                     {liquids && liquids.length > 0 ? (
                         <>
                         <ScrollableDataTable 
@@ -70,24 +70,26 @@ export default function LiquidCulturesListScreen({ navigation, state }) {
                             headerStyle={{ backgroundColor: 'rgba(255,55,55,0.7)', }}
                             onRowPress={(item) => {openModal(item)}}
                         />
-                        {modalOpen && (
-                            <CultureDetailModal
-                                visible={modalOpen}
-                                setModalOpen={setModalOpen}
-                                item={currentItem}
-                            />
-                        )}
                         </>
                     ) : (
                         <>
                         </>
                     )}
                   </Form.Control>
-                </View>
-              </LinearGradient>
-            <MyTabBar navigation={navigation} state={navigation.getState()} tabs={tabs}/>
+                </Surface>
+                {modalOpen && (
+                    <CultureDetailModal
+                        visible={modalOpen}
+                        setModalOpen={setModalOpen}
+                        item={currentItem}
+                    />
+                )}
+              </Surface>
+            </LinearGradient>
               
           </View>
+          <MyTabBar navigation={navigation} state={navigation.getState()} tabs={tabs}/>
+
         </ScreenPrimative>
     )
 
@@ -130,7 +132,8 @@ const styles = StyleSheet.create({
   },
   surfaceMetaContainer: {
     backgroundColor: 'rgba(55,255,55,0.4)',
-    width:350
+    width:'95%',
+    marginHorizontal: 'auto'
   },
   title: {
     fontSize: 24,

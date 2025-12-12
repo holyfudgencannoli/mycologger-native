@@ -12,7 +12,7 @@ export interface PurchaseLogData {
     purchase_amount: number;
     inventory_unit: string;
     inventory_amount: number;
-    // receipt_entry_id: number;
+    receipt_uri: string;
     vendor_id: number;
     brand_id: number;
     cost: number;

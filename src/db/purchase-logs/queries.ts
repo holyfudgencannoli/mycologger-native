@@ -37,20 +37,21 @@ export async function create(
 	cost: number
 ) {
   const result = await safeRun(db,
-    `INSERT INTO purchase_logs (item_id, created_at, purchase_date, purchase_unit, purchase_amount, inventory_unit, inventory_amount, vendor_id, brand_id, cost) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    `INSERT INTO purchase_logs (type, item_id, created_at, purchase_date, purchase_unit, purchase_amount, inventory_unit, inventory_amount, vendor_id, brand_id, receipt_uri, cost) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     [
-			item_id, 
-			created_at,
-			purchase_date,
-			purchase_unit,
-			purchase_amount,
-			inventory_unit,
-			inventory_amount,
-			vendor_id,
-			brand_id,
-			reciept_uri,
-			cost
-		]
+		type,
+		item_id, 
+		created_at,
+		purchase_date,
+		purchase_unit,
+		purchase_amount,
+		inventory_unit,
+		inventory_amount,
+		vendor_id,
+		brand_id,
+		reciept_uri,
+		cost
+	]
   );
 
   return result.lastInsertRowId;
@@ -59,7 +60,6 @@ export async function create(
 export async function readAll<PurchaseLogData>(db: SQLiteDatabase) {
   return await safeSelectAll<PurchaseLogData>(db, `SELECT * FROM purchase_logs ORDER BY id DESC`);
 }
-
 
 export async function getAllByType<PurchaseLogData>(db: SQLiteDatabase, type: string) {
   return await safeSelectAll<PurchaseLogData>(db, `SELECT * FROM purchase_logs WHERE type = ?`, [type]);

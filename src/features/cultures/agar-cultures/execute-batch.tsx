@@ -5,7 +5,7 @@ import { Alert, StyleSheet, Text, View } from "react-native";
 import { useSQLiteContext } from "expo-sqlite";
 import { useFocusEffect, useNavigation, useRoute } from "@react-navigation/native";
 import { useCallback, useContext, useState } from "react";
-import { useTheme } from "../../hooks/useTheme";
+import { useTheme } from "../../../hooks/useTheme";
 import { PaperSelect } from "react-native-paper-select";
 import * as Batches from '@db/recipe-batches'
 import * as Culture from '@db/cultures'
@@ -17,7 +17,7 @@ import { convertToBase } from "@utils/unitConversion";
 import { ScrollView } from "react-native-gesture-handler";
 import { LinearGradient } from "expo-linear-gradient";
 import { RouteProp } from "@react-navigation/native";
-import { NavigationProps, RootDrawerParamsList } from "@navigation";
+import { NavigationProps, RootDrawerParamsList } from "@navigation/types";
 import { RecipeBatch } from "@db/recipe-batches/types";
 import { INV_UNITS } from "@constants/units";
 import Button from "@components/button";
@@ -135,7 +135,7 @@ export default function ExecuteAgarBatch() {
                     style={{ flex: 1, padding: 16}}
                 >
                     <Surface style={{ backgroundColor: '#0008', margin: 16, padding: 16 }}>
-                        <Text style={styles.title}>Execute New Agar Batch</Text>
+                        <Text style={styles.title}>Execute New Agar Culture Batch</Text>
                     </Surface>
                     <Form.Control labelStyle={styles.label} label="Select Batch to Use" name="batch">
                         <Form.Select 

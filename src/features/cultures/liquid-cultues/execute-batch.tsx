@@ -5,7 +5,7 @@ import { Alert, Button, StyleSheet, Text, View } from "react-native";
 import { useSQLiteContext } from "expo-sqlite";
 import { useFocusEffect, useNavigation, useRoute } from "@react-navigation/native";
 import { useCallback, useState } from "react";
-import { useTheme } from "../../hooks/useTheme";
+import { useTheme } from "../../../hooks/useTheme";
 import { PaperSelect } from "react-native-paper-select";
 import * as Batches from '@db/recipe-batches'
 import * as Culture from '@db/cultures'
@@ -17,8 +17,8 @@ import { convertToBase } from "@utils/unitConversion";
 import { ScrollView } from "react-native-gesture-handler";
 import { LinearGradient } from "expo-linear-gradient";
 import { RouteProp } from "@react-navigation/native";
-import { NavigationProps, RootDrawerParamsList } from "@navigation";
-import { RecipeBatch } from "@features/recipe-batches/types";
+import { NavigationProps, RootDrawerParamsList } from "@navigation/types";
+import { RecipeBatch } from "@db/recipe-batches/types";
 import { INV_UNITS } from "@constants/units";
 
 type TaskRouteProps = RouteProp<RootDrawerParamsList, any>
@@ -76,7 +76,7 @@ export default function ExecuteAgarBatch() {
         try {
             for (let i=0; i<qty; i++) {
 
-                const cultureId = await Culture.create(db, 'agar_cultures', new Date().getTime());
+                const cultureId = await Culture.create(db, 'liquid_culture', new Date().getTime());
                 console.log('Using recipebatch ID:', selectedRecipeBatchId);
 
                 await Agar.create(
@@ -123,50 +123,48 @@ export default function ExecuteAgarBatch() {
     return(
         <ScreenPrimative edges={[]}>
             <View style={styles.container}>
-                <ScrollView>
-                    <LinearGradient
-                        start={{ x: 0, y: 0 }}
-                        end={{ x: 0.3, y: 0.9 }}
-                        colors={['#94F8', '#00f', '#057']}
-                        style={{ flex: 1, padding: 16}}
-                    >
-                        <Surface style={{ backgroundColor: '#0008', margin: 16, padding: 16 }}>
-                            <Text style={styles.title}>Execute New Agar Batch</Text>
-                        </Surface>
-                        <Form.Control labelStyle={styles.label} label="Select Batch to Use" name="batch">
-                            <Form.Select 
-                                options={recipeBatches}
-                                style={{ width: '100%' }}
-                                onValueChange={(value: formattedRecipe) => {
-                                    setSelectedRecipeBatchId(value.id)
-                                    setSelectedRecipeBatchName(value.value)
-                                }}
-                            />
-                        </Form.Control>
-                        <Form.Control labelStyle={styles.label} label="Volume Per Container" name="volumePer" >
-                            <Form.Input
-                                value={volume}
-                                onChangeText={setVolume} 
-                                style={{ width: '50%', textAlign: 'center', backgroundColor: 'transparent', color: 'white' }}
-                            />
-                            <Form.Select
-                                style={{ width: '50%', backgroundColor: 'transparent' }} 
-                                options={[...INV_UNITS]}
-                                onValueChange={(value: any) => {
-                                    setVolumeUnit(value.value)
-                                    console.log(value.value)
-                                }}
-                            />
-                        </Form.Control>
-                        <Form.Control labelStyle={styles.label} label="Number of Containers" name="quantity" >
-                            <Form.Input
-                                value={quantity}
-                                onChangeText={setQuantity} 
-                                style={{ width: '100%', textAlign: 'center', backgroundColor: 'transparent', color: 'white' }}
-                            />
-                        </Form.Control>
-                    </LinearGradient>
-                </ScrollView>
+                <LinearGradient
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 0.3, y: 0.9 }}
+                    colors={['#94F8', '#00f', '#057']}
+                    style={{ flex: 1, padding: 16}}
+                >
+                    <Surface style={{ backgroundColor: '#0008', margin: 16, padding: 16 }}>
+                        <Text style={styles.title}>Execute New Liquid Culture Batch</Text>
+                    </Surface>
+                    <Form.Control labelStyle={styles.label} label="Select Batch to Use" name="batch">
+                        <Form.Select 
+                            options={recipeBatches}
+                            style={{ width: '100%' }}
+                            onValueChange={(value: formattedRecipe) => {
+                                setSelectedRecipeBatchId(value.id)
+                                setSelectedRecipeBatchName(value.value)
+                            }}
+                        />
+                    </Form.Control>
+                    <Form.Control labelStyle={styles.label} label="Volume Per Container" name="volumePer" >
+                        <Form.Input
+                            value={volume}
+                            onChangeText={setVolume} 
+                            style={{ width: '50%', textAlign: 'center', backgroundColor: 'transparent', color: 'white' }}
+                        />
+                        <Form.Select
+                            style={{ width: '50%', backgroundColor: 'transparent' }} 
+                            options={[...INV_UNITS]}
+                            onValueChange={(value: any) => {
+                                setVolumeUnit(value.value)
+                                console.log(value.value)
+                            }}
+                        />
+                    </Form.Control>
+                    <Form.Control labelStyle={styles.label} label="Number of Containers" name="quantity" >
+                        <Form.Input
+                            value={quantity}
+                            onChangeText={setQuantity} 
+                            style={{ width: '100%', textAlign: 'center', backgroundColor: 'transparent', color: 'white' }}
+                        />
+                    </Form.Control>
+                </LinearGradient>
             </View>
         </ScreenPrimative>
     )

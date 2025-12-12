@@ -13,6 +13,7 @@ import HardwareItem from "@features/hardware/types";
 import { ItemProps } from "@db/items/types";
 import { MyTabBar } from "@components/bottom-tabs";
 import { tabs } from "./types";
+import * as Form from '@custom/react-native-forms/src'
 
 export default function HardwareItemInventory({ navigation, state }) {
   const db = useSQLiteContext();
@@ -78,6 +79,8 @@ export default function HardwareItemInventory({ navigation, state }) {
         >
           <Surface style={styles.surfaceMetaContainer}>
             <Surface style={styles.surfaceContainer}>
+              <Form.Control name="table" label="Hardware" labelStyle={styles.label}>  
+              
               {inventoryLogs.length > 0 && (
                 <>
                   <ScrollableDataTable
@@ -99,16 +102,17 @@ export default function HardwareItemInventory({ navigation, state }) {
                     onRowPress={openModal}
                   />
 
-                  {modalOpen && (
-                    <PurchaseLogsModal
-                      visible={modalOpen}
-                      setModalOpen={setModalOpen}
-                      item={currentItem}
-                    />
-                  )}
                 </>
               )}
+              </Form.Control>
             </Surface>
+            {modalOpen && (
+              <PurchaseLogsModal
+                visible={modalOpen}
+                setModalOpen={setModalOpen}
+                item={currentItem}
+              />
+            )}
           </Surface>
         </LinearGradient>
       </View>
@@ -119,7 +123,7 @@ export default function HardwareItemInventory({ navigation, state }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: "center", alignItems: "center" },
+  container: { flex: 1 },
   surfaceContainer: {
     padding: 16,
     backgroundColor: "rgba(56,185,255,0.3)"
@@ -127,5 +131,13 @@ const styles = StyleSheet.create({
   surfaceMetaContainer: {
     backgroundColor: "rgba(55,255,55,0.4)",
     width: 350
-  }
+  },
+  label: {
+    fontSize: 18,
+    textAlign:  'center',
+    fontWeight: 'bold',
+    color: 'red',
+    textShadowColor: 'blue',
+    textShadowRadius: 16,
+  },
 });

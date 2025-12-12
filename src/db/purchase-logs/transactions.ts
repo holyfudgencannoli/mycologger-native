@@ -1,6 +1,8 @@
 import { SQLiteDatabase, useSQLiteContext } from 'expo-sqlite'
-import * as Batch from '@db/recipe-batches/'
+import * as PurchLog from '@db/purchase-logs'
 import * as Recipe from '@db/recipes/'
+import * as Vendor from '@db/vendors'
+import * as Brand from '@db/brands'
 import * as Task from '@db/tasks'
 import * as Usage from '@db/usage_logs'
 import * as Item from '@db/items'
@@ -9,173 +11,147 @@ import { ingredientProps, recipeProps } from '@db/recipes/types'
 import { Alert } from 'react-native'
 import { convertToBase } from '@utils/unitConversion'
 import { PurchaseLogType } from './types'
+import { VendorType } from '@db/vendors'
+import BrandType from '@features/brands/type'
+import { Item as ItemType } from '@db/items/types'
+import * as cnv from '@utils/unitConversion'
+import { saveReceiptWithSAF } from '@utils/database-utils'
+import { SQLiteAnyDatabase } from 'node_modules/expo-sqlite/build/NativeSession'
 
-export async function ExecutePurchaseLog(params: SQLiteDatabase, {
+
+export async function ExecutePurchaseLog(params: SQLiteAnyDatabase, {
     db,
-    recipe_id,
-    quantity,
-    real_volume,
-    real_volume_unit,
-    real_weight,
-    real_weight_unit,
-    loss,
-    name,
-    batch_notes,
-    start_time,
-    end_time,
-    task_notes,
-    usage_notes
+    type,
+    item_id,
+    purchase_date,
+    purchase_unit,
+    purchase_amount,
+    inventory_unit,
+    inventory_amount,
+    vendor_id,
+    brand_id,
+    reciept_uri,
+    cost,
+    new_brand,
+    new_vendor,
+    new_item,
+    image
 } : {
     db: SQLiteDatabase,
     type: PurchaseLogType,
-    item_id: number,
-    created_at: number,
+    item_id?: number,
     purchase_date: number,
     purchase_unit: string,
     purchase_amount: number,
     inventory_unit: string,
     inventory_amount: number,
-    vendor_id: number,
-    brand_id: number,
-    reciept_uri: string,
-    cost: number
+    vendor_id?: number,
+    brand_id?: number,
+    reciept_uri?: string,
+    cost: number,
+    new_vendor?: VendorType,
+    new_brand?: BrandType,
+    new_item?: ItemType,
+    image?: string
 
 }) {
     await params.db.withTransactionAsync(async () => {
                 
         const created_at = new Date().getTime()
-        
-        const recipeBatchId = await Batch.create(
-            db, 
-            recipe_id, 
-            quantity, 
-            real_volume,
-            real_volume_unit,
-            real_weight,
-            real_weight_unit,
-            loss,
-            name, 
-            batch_notes, 
-            created_at
-        )
-        console.log("Recipe Batch ID: ", recipeBatchId)
-        
-        const recipe: recipeProps = await Recipe.getById(
-            db, 
-            recipe_id
-        )
-        console.log("Recipe: ", recipe)
-        
-        const ingredients: ingredientProps[] = JSON.parse(recipe.ingredients ?? "[]")
-        console.log("Ingredients: ", ingredients)
-        
-        
-        const taskName = `Execute ${quantity * recipe.yield_amount} ${recipe.yield_unit} of ${recipe.name}`
-        console.log('Task Name: ', taskName)
-        
-        const taskId = await Task.create(
-            db, 
-            taskName, 
-            new Date(start_time).getTime(), 
-            new Date(end_time).getTime(), 
-            task_notes
-        )
-        console.log('Task ID: ', taskId)
-
-        let usageLogIds: number[] = []
 
 
-        for (let i = 0; i < ingredients.length; i++) {
 
-            const ingredient: ingredientProps = ingredients[i];
-            console.log("Ingredient: ", ingredient)
+        let currentVendorId: number;
+        let currentBrandId: number;
 
-            const RM = await Item.getById(
-                db, 
-                ingredient.ingredientId
-            )
-            console.log("Raw Material Data: ", RM)
-
-            const usageLogId = await Usage.create(
+        if (new_vendor) {
+            const new_vendor_id = await Vendor.create(
                 db,
-                RM.type,
-                RM.id,
-                taskId,
-                ingredient.amount,
-                ingredient.unit?.toLowerCase() ?? "", 
-                usage_notes, 
-                created_at 
-            ) 
-            console.log("Usage Log ID: ", usageLogId)
-            usageLogIds.push(usageLogId)   
+                new_vendor.name,
+                new_vendor.email,
+                new_vendor.phone,
+                new_vendor.address,
+                new_vendor.contact_name,
+                new_vendor.website,
+                created_at
+            )
+            currentVendorId = new_vendor_id
+
+        } else {
+            currentVendorId = vendor_id
         }
-        return {batch_id: recipeBatchId, task_id: taskId, usage_log_ids: usageLogIds}
-    })
-}
+        console.log("Vendor ID: ", currentVendorId)
 
-export async function ExecutePurchaseLogNewItem(params: SQLiteDatabase, {
-    db,
-    quantity,
-    type,
-    recipe_batch_id,
-    volume_amount,
-    volume_unit,
-    start_time,
-    end_time,
-    notes
-} : {
-    db: SQLiteDatabase,
-    quantity: string,
-    type: string,
-    recipe_batch_id: number,
-    volume_amount: string,
-    volume_unit: string,
-    start_time: number,
-    end_time: number,
-    notes: string
-}) {
-    await params.db.withTransactionAsync(async () => {
-        
-        const qty = parseInt(quantity);
-            // const name = 
-            if (isNaN(qty) || qty <= 0) {
-                Alert.alert('Invalid Quantity', 'Please enter a valid positive number.');
-                return;
-            }
+        if (new_brand) {
+            const new_brand_id = await Brand.create(
+                db,
+                item_id,
+                new_brand.name,
+                new_brand.website,
+                created_at
+            )
+            currentBrandId = new_brand_id
+        } else {
+            currentBrandId = brand_id
+        }
+        console.log("Brand ID: ", currentVendorId)
 
-            const recipe_batch = await Batch.getById(db, recipe_batch_id)
-            let usage_log_ids = []
-            let task_log_ids = []
-    
-        const created_at = new Date().getTime()
-            try {
-                for (let i=0; i<qty; i++) {
-    
-                    const cultureId = await Culture.create({
-                        db, 
-                        type, 
-                        recipe_batch_id,
-                        volume_amount: parseFloat(volume_amount),
-                        volume_unit, 
-                        last_updated: new Date().getTime(),
-                        created_at:  new Date().getTime()
-                    });
-                    console.log('Using recipebatch ID:', recipe_batch_id);
-    
-                }                
-                const use = convertToBase({value: quantity ? parseInt(quantity) * parseFloat(volume_amount) : parseFloat(volume_amount), from: volume_unit.toLowerCase()})
-                console.log(use)
-                
-                const taskId = await Task.create(db, recipe_batch.name, start_time, end_time, notes)
-                console.log(taskId)
-                task_log_ids.push(taskId)
-                
-                const usageId = await Usage.create(db, 'recipe_batch', recipe_batch.id, taskId, use, volume_unit, notes, new Date().getTime() )
-                usage_log_ids.push(usageId)
-            } catch (error) {
-                console.error('Failed to create cultures:', error);
-                Alert.alert('Error', 'Failed to create one or more cultures. Please try again.');
-            } 
-        return {batch_id: recipe_batch.id, task_id: task_log_ids, usage_log_ids: usage_log_ids}
+        let currentItemId: number;
+
+        if (new_item) {
+            const new_item_id = await Item.create(
+                db,
+                new_item.name,
+                new_item.category,
+                new_item.subcategory,
+                new_item.type,
+                created_at,
+                cnv.convertFromBase({
+                    value: 
+                        cnv.convertToBase({ value: new_item.amount_on_hand, from: new_item.inventory_unit === null ? 'gram' : new_item.inventory_unit }) || 0 
+                        + cnv.convertToBase({ value: purchase_amount * inventory_amount, from: inventory_unit }),
+                    to: 
+                        inventory_unit
+                }),
+                inventory_unit,
+                0,
+                created_at,
+                0,
+                inventory_unit
+            )
+            currentItemId = new_item_id
+        } else {
+            currentItemId = item_id
+        }
+
+        console.log("Item ID: ", currentItemId)
+
+        let targetUri: string;
+
+        if (!reciept_uri) {    
+            targetUri = await saveReceiptWithSAF(image, `receipt_image_${created_at}.jpeg`)
+        } else {
+            targetUri = reciept_uri
+        }
+
+        console.log("Image URI: ", targetUri)
+
+        const purchLogId = await PurchLog.create(
+            db,
+            type,
+            currentItemId,
+            created_at,
+            purchase_date,
+            purchase_unit,
+            purchase_amount,
+            inventory_unit,
+            inventory_amount,
+            currentVendorId,
+            currentBrandId,
+            targetUri,
+            cost
+        )
+        console.log("Purchase Log ID: ", purchLogId)
+
     })
 }
