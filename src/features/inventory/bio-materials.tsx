@@ -104,7 +104,7 @@ export default function BioMaterialInventory({ navigation, state }) {
                   />
                 </>
               )}
-              </Form.Control>
+              </Form.Control> 
             </Surface>
             {modalOpen && (
               <PurchaseLogsModal

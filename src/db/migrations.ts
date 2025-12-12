@@ -16,6 +16,60 @@ export async function createIndexes(db: SQLiteDatabase) {
 	);
 }
 
+async function deleteEverything(db: SQLiteDatabase) {
+	await safeExec(db,
+		`DROP TABLE IF EXISTS items;`
+	)
+	await safeExec(db,
+		`DROP TABLE IF EXISTS purchase_logs;`
+	)
+	await safeExec(db,
+		`DROP TABLE IF EXISTS usage_logs;`
+	)
+	await safeExec(db,
+		`DROP TABLE IF EXISTS recipes;`
+	)
+	await safeExec(db,
+		`DROP TABLE IF EXISTS recipe_batches;`
+	)
+	await safeExec(db,
+		`DROP TABLE IF EXISTS recipe_batch_inventory_logs;`
+	)
+	await safeExec(db,
+		`DROP TABLE IF EXISTS recipe_batch_usage_logs;`
+	)
+	await safeExec(db,
+		`DROP TABLE IF EXISTS cultures;`
+	)
+	await safeExec(db,
+		`DROP TABLE IF EXISTS sterilizations;`
+	)
+	await safeExec(db,
+		`DROP TABLE IF EXISTS inoculations;`
+	)
+	await safeExec(db,
+		`DROP TABLE IF EXISTS germinations;`
+	)
+	await safeExec(db,
+		`DROP TABLE IF EXISTS colonizations;`
+	)
+	await safeExec(db,
+		`DROP TABLE IF EXISTS contaminations;`
+	)
+	await safeExec(db,
+		`DROP TABLE IF EXISTS harvests;`
+	)
+	await safeExec(db,
+		`DROP TABLE IF EXISTS tasks;`
+	)
+	await safeExec(db,
+		`DROP TABLE IF EXISTS vendors;`
+	)
+	await safeExec(db,
+		`DROP TABLE IF EXISTS brands;`
+	)
+}
+
 export async function migrateDbIfNeeded(db: SQLiteDatabase) {
   const DATABASE_VERSION = 1
 
@@ -24,6 +78,8 @@ export async function migrateDbIfNeeded(db: SQLiteDatabase) {
   );
 
 //   const user_version = 0
+	// deleteEverything(db)
+	
 
   if (user_version >= DATABASE_VERSION) return;
 

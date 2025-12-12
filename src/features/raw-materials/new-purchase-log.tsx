@@ -65,14 +65,14 @@ export default function NewPurchaseLog({ navigation, state }) {
 
     return(
         <View style={styles.container}>
-        <ScreenPrimative edges={[]} scroll>
-            <View>	
-                        <LinearGradient
-                            start={{ x: 0, y: 0 }}
-                            end={{ x: 0.3, y: 0.9 }}
-                            colors={['#94F8', '#00f', '#057']}
-                            style={{ flex: 1, padding: 16}}
-                        >
+            <ScreenPrimative edges={[]} scroll>
+                <View>	
+                    <LinearGradient
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 0.3, y: 0.9 }}
+                        colors={['#94F8', '#00f', '#057']}
+                        style={{ flex: 1, padding: 16}}
+                    >
                         <Form.Control name='name'>
                             <Form.Select  
                                 type='embed'

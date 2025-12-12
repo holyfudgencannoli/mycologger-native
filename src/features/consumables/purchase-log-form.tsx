@@ -21,6 +21,7 @@ import { FormStateContext } from "src/context/FormContext";
 import saveImage from "@services/save-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { ReceiptUploader } from "@components/upload-receipt";
+import { saveReceiptWithSAF } from "@utils/database-utils";
 
 
 export default function PurchaseLogForm() {
@@ -166,7 +167,7 @@ export default function PurchaseLogForm() {
                 )
             }
             
-            const savedPath = await saveImage(image, `receipt_image_${created_at}`)
+            const savedPath = await saveReceiptWithSAF(image, `receipt_image_${created_at}`)
             console.log(savedPath)    
             await PurchLog.create(
                 db,

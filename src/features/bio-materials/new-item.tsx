@@ -98,7 +98,7 @@ export default function NewItem({ navigation, state }) {
 					<Form.Control label='Species Name (Latin)' name='speciesLatin' labelStyle={{ color: 'white' }}>
 						<Form.Input value={subcategory} style={{ color: 'white', flex: 1 }} onChangeText={setSubcategory}  />
 					</Form.Control>
-					<Button viewStyle={{marginTop: 36}} color={'#f74a63cc'} title='Submit' onPress={handleSubmit(onSubmit)} />
+					<Button viewStyle={{marginTop: 36}} color={'#f74a63cc'} title='Submit' onPress={onSubmit} />
 				</LinearGradient>
 			</View>
 		<MyTabBar navigation={navigation} state={navigation.getState()} tabs={tabs} />

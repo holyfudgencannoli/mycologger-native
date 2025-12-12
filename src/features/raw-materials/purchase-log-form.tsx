@@ -143,23 +143,23 @@ export default function PurchaseLogForm() {
 							setItemId(itemIdReturn)
 
 					} else {
-							console.log("Inventory Unit: ", item.inventory_unit)
-							const itemUpdate = await Item
-							.update(
-									db,                
-									{
-											id: itemId, 
-											amount_on_hand: 
-													cnv.convertFromBase({
-															value: 
-																	(cnv.convertToBase({ value: item.amount_on_hand, from: item.inventory_unit === null ? 'gram' : item.inventory_unit }) || 0 )
-																	+ (cnv.convertToBase({ value: parseFloat(purchaseQuantity) * parseFloat(inventoryQuantity), from: inventoryUnit })),
-															to: 
-																	inventoryUnit
-													}),
-											last_updated:
-													created_at
-									}
+						console.log("Inventory Unit: ", item.inventory_unit)
+						const itemUpdate = await Item
+						.update(
+							db,                
+							{
+								id: itemId, 
+								amount_on_hand: 
+									cnv.convertFromBase({
+										value: 
+											(cnv.convertToBase({ value: item.amount_on_hand, from: item.inventory_unit === null ? 'gram' : item.inventory_unit }) || 0 )
+											+ (cnv.convertToBase({ value: parseFloat(purchaseQuantity) * parseFloat(inventoryQuantity), from: inventoryUnit })),
+										to: 
+											inventoryUnit
+									}),
+									last_updated:
+											created_at
+								}
 
 							)
 					}

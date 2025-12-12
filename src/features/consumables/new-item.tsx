@@ -98,7 +98,7 @@ export default function NewItem({ navigation, state }) {
               <Form.Input size='lg' value={subcategory} style={{ color: 'white', flex: 1 }} onChangeText={setSubcategory}  />
             </Form.Control>
             <View style={{ marginTop: 36 }}>
-              <Button color={'#f74a63cc'} title='Submit' onPress={handleSubmit(onSubmit)} />
+              <Button color={'#f74a63cc'} title='Submit' onPress={onSubmit} />
             </View>
           </LinearGradient>	
         </View>

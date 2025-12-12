@@ -1,6 +1,7 @@
 // src/api/localReceipt.ts
 import * as FileSystem from 'expo-file-system/legacy';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { PurchaseLogData } from '@db/purchase-logs/types';
 
 export interface ReceiptMeta {
   id: string;          // UUID or timestamp
@@ -55,11 +56,11 @@ export async function saveReceiptLocally(tempUri: string): Promise<ReceiptMeta> 
 /**
  * Load all stored receipts (metadata only).
  */
-export async function loadAllReceipts(): Promise<ReceiptMeta[]> {
+export async function loadAllReceipts(): Promise<PurchaseLogData[]> {
   const keys = await AsyncStorage.getAllKeys();
   const receiptKeys = keys.filter(k => k.startsWith('receipt-'));
   const stores = await AsyncStorage.multiGet(receiptKeys);
   return stores
     .map(([_, value]) => (value ? JSON.parse(value) : null))
-    .filter(Boolean) as ReceiptMeta[];
+    .filter(Boolean) as PurchaseLogData[];
 }

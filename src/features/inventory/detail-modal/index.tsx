@@ -45,7 +45,7 @@ export const PurchaseLogsModal = ({ visible, setModalOpen, item}: {visible: bool
     )
 
     
-        const handleDelete = (id: number) => {
+        const handleDelete = (id: number, type: string) => {
             Alert.alert(
                 "Delete entry",
                 "Are you sure you want to remove this time record?",
@@ -55,7 +55,7 @@ export const PurchaseLogsModal = ({ visible, setModalOpen, item}: {visible: bool
                     text: "Delete",
                     style: "destructive",
                     onPress: async() => {
-                        await Item.destroy(db, id)
+                        await PurchLogs.destroy(db, type, id)
                     },
                     },
                 ],
@@ -88,6 +88,7 @@ export const PurchaseLogsModal = ({ visible, setModalOpen, item}: {visible: bool
                     {purchaseLogs.map((item) => {
                         return(
                             <View style={styles.logItem}>
+                                <View style={styles.logItemContent}>
                                     <Text style={styles.text}>{new Date(item.log.purchase_date).toLocaleDateString('en-GB',{
                                         month: 'short',
                                         day: 'numeric',
@@ -99,12 +100,12 @@ export const PurchaseLogsModal = ({ visible, setModalOpen, item}: {visible: bool
                                     {/* <Text style={styles.text}>${item? item.log.cost.toFixed(2) : null}</Text> */}
                                     {/* {item.log.notes && <Text>{item.log.notes}</Text>} */}
 
-                                    
+                                </View>
                                 <Button
                                     viewStyle={{ margin: 'auto' }}
                                     title="Delete"
                                     color="#d32f2f"          // red – feel free to change
-                                    onPress={() => handleDelete(item.log.id)}
+                                    onPress={() => handleDelete(item.log.id, item.item.type)}
                                 />
                             </View>
                         )}
@@ -158,6 +159,11 @@ const styles = StyleSheet.create({
         paddingVertical: 8,
         // borderBottomWidth: 1,
         // borderBottomColor: '#ccc',
+    },
+    logItemContent: {
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        paddingVertical: 8
     },
     logItemText: {
         color: 'white',

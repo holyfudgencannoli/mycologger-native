@@ -1,5 +1,5 @@
 import { SQLiteDatabase, useSQLiteContext } from 'expo-sqlite'
-import * as PurchLog from '@db/purchase-logs'
+import * as PurchLog from '@db/purchase-logs/queries'
 import * as Recipe from '@db/recipes/'
 import * as Vendor from '@db/vendors'
 import * as Brand from '@db/brands'
@@ -58,8 +58,6 @@ export async function ExecutePurchaseLog(params: SQLiteAnyDatabase, {
     await params.db.withTransactionAsync(async () => {
                 
         const created_at = new Date().getTime()
-
-
 
         let currentVendorId: number;
         let currentBrandId: number;
