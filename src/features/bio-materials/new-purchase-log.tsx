@@ -15,6 +15,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { FormStateContext } from 'src/context/FormContext';
 import { MyTabBar } from '@components/bottom-tabs';
 import { tabs } from './types';
+import { COLORS } from '@constants/colors';
 
 
 export default function NewPurchaseLog({ navigation, state }) {
@@ -70,7 +71,7 @@ export default function NewPurchaseLog({ navigation, state }) {
                     <LinearGradient
                         start={{ x: 0, y: 0 }}
                         end={{ x: 0.3, y: 0.9 }}
-                        colors={['#94F8', '#00f', '#057']}
+                        colors={COLORS.BACKGROUND_GRADIENT.PRIMARY}
                         style={{ flex: 1, padding: 16}}
                     >
                         <Form.Control name='name'>

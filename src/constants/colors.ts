@@ -1,4 +1,6 @@
-export const Colors = {
+import { ColorValue } from "react-native";
+
+export const COLORS = {
   light: {
     text: '#11181C',
     background: '#fff',
@@ -47,5 +49,41 @@ export const Colors = {
   },
   button: {
     primary: '#f74a63cc'
+  },
+  BACKGROUND_GRADIENT: {
+    PRIMARY: ['#94F8', '#00f', '#057'],
+    SECONDARY: ['#00ff88', '#8800ff', '#ff8800'],
+  } as const satisfies {
+    PRIMARY: [ColorValue, ColorValue, ColorValue],
+    SECONDARY: [ColorValue, ColorValue, ColorValue]
   }
-};
+} as const;
+
+
+interface ThemeMode {
+  text: ColorValue;
+  background: ColorValue;
+  tint: ColorValue;
+  icon: ColorValue;
+  surface: ColorValue;
+  surfaceAlt: ColorValue;
+
+  formBackground: ColorValue;
+  formLabelText: ColorValue;
+  formTitleText: ColorValue;
+
+  primary1: ColorValue;
+  secondary1: ColorValue;
+  primary2: ColorValue;
+  secondary2: ColorValue;
+  primary3: ColorValue;
+  secondary3: ColorValue;
+  primary4: ColorValue; 
+  secondary4: ColorValue;
+}
+
+export type Theme = typeof COLORS;
+export type ColorMode = keyof Pick<Theme, 'light' | 'dark'>; // "light" | "dark"
+
+// Optional: helper to get colors safely
+export const getTheme = (mode: ColorMode = 'light') => COLORS[mode];

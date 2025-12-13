@@ -25,7 +25,7 @@ export async function create(
   return result.lastInsertRowId;
 }
 
-export async function readAll(db: SQLiteDatabase) {
+export async function readAll(db: SQLiteDatabase): Promise<Item[]> {
   return await safeSelectAll<Item>(db, "SELECT * FROM items ORDER BY id ASC");
 }
 

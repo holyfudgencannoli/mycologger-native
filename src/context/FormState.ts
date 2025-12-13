@@ -4,10 +4,12 @@ import Brand from "@features/brands/type";
 import React from "react";
 
 export interface FormState {
+        type: string,
+        setType:  React.Dispatch<React.SetStateAction<string>>,
         selectedRecipeBatchId: number, 
         setSelectedRecipeBatchId: React.Dispatch<React.SetStateAction<number>>,
         selectedRecipeBatchName: string, 
-        setSelectedRecipeBatchName: React.Dispatch<React.SetStateAction<string>>
+        setSelectedRecipeBatchName: React.Dispatch<React.SetStateAction<string>>,
         nuteConcentration: string,
         setNuteConcentration: React.Dispatch<React.SetStateAction<string>>,
         isNew: boolean,

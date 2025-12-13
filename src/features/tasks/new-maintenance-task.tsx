@@ -15,7 +15,7 @@ import { ScrollView } from "react-native-gesture-handler";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Form from '@custom/react-native-forms/src'
 import Button from "@components/button";
-import { Colors } from "@constants/colors";
+import { COLORS, Colors } from "@constants/colors";
 
 
 type NavigationProps = DrawerNavigationProp<RootDrawerParamsList>
@@ -87,7 +87,7 @@ export default function CreateMaintenanceTask({id}: {id: number}) {
             <LinearGradient
               start={{ x: 0, y: 0 }}
               end={{ x: 0.3, y: 0.9 }}
-              colors={['#94F8', '#00f', '#057']}
+              colors={COLORS.BACKGROUND_GRADIENT.PRIMARY}
               style={{ flex: 1, padding: 16}}
             >
               <Surface style={styles.surfaceContainer}>
@@ -129,7 +129,7 @@ export default function CreateMaintenanceTask({id}: {id: number}) {
                 />
               </Form.Control>
                 
-              <Button viewStyle={{ margin: 36 }} color={Colors.button.primary} title="Submit" onPress={() => handleSubmit()} />
+              <Button viewStyle={{ margin: 36 }} color={COLORS.button.primary} title="Submit" onPress={() => handleSubmit()} />
 
           </LinearGradient>
         </View>

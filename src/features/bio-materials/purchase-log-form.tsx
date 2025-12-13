@@ -24,6 +24,7 @@ import * as FileSystem from 'expo-file-system/legacy'
 import { saveReceiptLocally } from "@services/local-receipt";
 import saveImage from "@services/save-image";
 import { saveReceiptWithSAF } from "@utils/database-utils";
+import { COLORS } from "@constants/colors";
 // import { saveFileWithSAF } from "@utils/database-utils";
 
 
@@ -373,13 +374,13 @@ export default function PurchaseLogForm() {
             <LinearGradient
                 start={{ x: 0, y: 0 }}
                 end={{ x: 0.3, y: 0.9 }}
-                colors={['#94F8', '#00f', '#057']}
+                colors={COLORS.BACKGROUND_GRADIENT.PRIMARY}
                 style={{ flex: 1, padding: 16}}
             >
                 <ReceiptUploader />
             </LinearGradient>
             <View style={{  marginTop: 36 }}>
-                <Button color={'#f74a63cc'} title='Submit' onPress={() => handleSubmit({item, itemId, setItemId})} />
+                <Button color={COLORS.button.primary} title='Submit' onPress={() => handleSubmit({item, itemId, setItemId})} />
             </View>
         </>
     )

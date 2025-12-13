@@ -7,12 +7,13 @@ import { FormState } from "./FormState";
 
 
 export const FormStateContext = createContext<FormState>({
-    
+    type: '',
+    setType: () => {},
     selectedRecipeBatchId: 0,
     setSelectedRecipeBatchId: () => {},
     selectedRecipeBatchName: '',
     setSelectedRecipeBatchName: () => {},
-    nuteConcentration: '',
+    nuteConcentration: '', 
     setNuteConcentration: () => {},
     isNew: false,
     setIsNew: () => {},

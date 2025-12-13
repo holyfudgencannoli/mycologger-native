@@ -5,6 +5,7 @@ import CreateRecipeBatch from "./recipe-batch-form";
 import { useState } from "react";
 import { useNavigation, usePreventRemove } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
+import { COLORS } from "@constants/colors";
 
 export default function ExecuteRecipeBatch() {    
     const [unsaved, setUnsaved] = useState(false)
@@ -44,7 +45,7 @@ export default function ExecuteRecipeBatch() {
           <LinearGradient
             start={{ x: 0, y: 0 }}
             end={{ x: 0.3, y: 0.9 }}
-            colors={['#94F8', '#00f', '#057']}
+            colors={COLORS.BACKGROUND_GRADIENT.PRIMARY}
             style={{ flex: 1, padding: 24}}
           >
             <CreateRecipeBatch setUnsaved={setUnsaved} />

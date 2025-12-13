@@ -24,6 +24,7 @@ import saveImage from "@services/save-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { ReceiptUploader } from "@components/upload-receipt";
 import { saveReceiptWithSAF } from "@utils/database-utils";
+import { COLORS } from "@constants/colors";
 
 type NavigationProps = DrawerNavigationProp<RootDrawerParamsList>
 
@@ -284,13 +285,13 @@ export default function PurchaseLogForm() {
             <LinearGradient
                 start={{ x: 0, y: 0 }}
                 end={{ x: 0.3, y: 0.9 }}
-                colors={['#94F8', '#00f', '#057']}
+                colors={COLORS.BACKGROUND_GRADIENT.PRIMARY}
                 style={{ flex: 1, padding: 16}}
             >
                 <ReceiptUploader />
             </LinearGradient>
             <View style={{ marginTop: 84 }}>
-                <Button color={'#f74a63cc'} title='Submit' onPress={() => handleSubmit()} />
+                <Button color={COLORS.button.primary} title='Submit' onPress={() => handleSubmit()} />
             </View>
         </>
     )

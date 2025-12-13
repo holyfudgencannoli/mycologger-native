@@ -11,6 +11,7 @@ import Button from '@components/button';
 import { ItemProps } from '@db/items/types';
 import { PurchaseLogData } from '@db/purchase-logs/types';
 import { LinearGradient } from 'expo-linear-gradient';
+import { COLORS } from '@constants/colors';
 
 
 export const PurchaseLogsModal = ({ visible, setModalOpen, item}: {visible: boolean, setModalOpen: (arg0: boolean) => void, item: ItemProps}) => {
@@ -82,7 +83,7 @@ export const PurchaseLogsModal = ({ visible, setModalOpen, item}: {visible: bool
                                 <LinearGradient
                                     start={{ x: 0, y: 0 }}
                                     end={{ x: 0.3, y: 0.9 }}
-                                    colors={['#94F8', '#00f', '#057']}
+                                    colors={COLORS.BACKGROUND_GRADIENT.PRIMARY}
                                     style={{ flexDirection: 'column', padding: 16, borderRadius: 4, width: '75%' }}
                                 >
                                     <Text style={styles.text}>{new Date(item.log.purchase_date).toLocaleDateString('en-GB',{

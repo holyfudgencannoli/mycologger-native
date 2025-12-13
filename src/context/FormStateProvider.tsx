@@ -23,6 +23,7 @@ export function FormStateProvider({ children }) {
     
     const [nuteConcentration, setNuteConcentration] = useState<string | null>(null);
     
+    const [type, setType] = useState<string | null>(null);
     const [id, setId] = useState<number | null>(null);
     const [vendorId, setVendorId] = useState<number | null>(null);
     const [brandId, setBrandId] = useState<number | null>(null);
@@ -47,6 +48,7 @@ export function FormStateProvider({ children }) {
 
     
     const value = {
+        type, setType,
         selectedRecipeBatchId, setSelectedRecipeBatchId,
         selectedRecipeBatchName, setSelectedRecipeBatchName,
         nuteConcentration, setNuteConcentration,

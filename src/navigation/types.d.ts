@@ -1,10 +1,11 @@
+import { ParamListBase, RouteProp } from "@react-navigation/native";
 
 export type RootDrawerParamsList = {
     'Dashboard': undefined,
     'Raw Materials': undefined,
     'Bio Materials': {params: any[]},
     'Consumable Items': undefined,
-    'Hardware': undefined,
+    'Hardware Items': undefined,
     'Recipes': undefined, 
     'Cultures': undefined,
     'Tasks': {params: [{ startTime: any, endTime: any }]},
@@ -13,7 +14,7 @@ export type RootDrawerParamsList = {
 }
 
 export type InventoryItemParamList = {
-  "New Item": undefined;
+  "New Item": {msg: string, msg2: string};
   "New Purchase Log": undefined;
 };
 

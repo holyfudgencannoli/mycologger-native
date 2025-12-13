@@ -4,6 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient'
 import { Surface } from "react-native-paper";
 import { Platform } from "react-native";
 import GalleryScreen from "@features/raw-materials/receipt-gallery";
+import { COLORS } from "@constants/colors";
 
 
 export default function Dashboard({ navigation }) {
@@ -16,7 +17,7 @@ export default function Dashboard({ navigation }) {
         <LinearGradient 
           start={{ x: 0, y: 0 }}
           end={{ x: 0.3, y: 0.9 }}
-          colors={['#94F8', '#00f', '#057']}
+          colors={COLORS.BACKGROUND_GRADIENT.PRIMARY}
           style={{ flex: 1 }}
         >
             <GalleryScreen navigation={navigation} />

@@ -15,6 +15,7 @@ import { FormStateContext } from 'src/context/FormContext';
 import { MyTabBar } from '@components/bottom-tabs';
 import { ScreenPrimative } from '@components/screen-primative';
 import { tabs } from './types';
+import { COLORS } from '@constants/colors';
 // import { useFocusEffect } from '@react-navigation/native';
 
 type NavigationProps = DrawerNavigationProp<RootDrawerParamsList>
@@ -84,7 +85,7 @@ export default function NewItem({ navigation, state }) {
 				<LinearGradient
 					start={{ x: 0, y: 0 }}
 					end={{ x: 0.3, y: 0.9 }}
-					colors={['#94F8', '#00f', '#057']}
+					colors={COLORS.BACKGROUND_GRADIENT.PRIMARY}
 					style={{ flex: 1, padding: 24}}
 					
 				>
@@ -98,7 +99,7 @@ export default function NewItem({ navigation, state }) {
 					<Form.Control label='Species Name (Latin)' name='speciesLatin' labelStyle={{ color: 'white' }}>
 						<Form.Input value={subcategory} style={{ color: 'white', flex: 1 }} onChangeText={setSubcategory}  />
 					</Form.Control>
-					<Button viewStyle={{marginTop: 36}} color={'#f74a63cc'} title='Submit' onPress={onSubmit} />
+					<Button viewStyle={{marginTop: 36}} color={COLORS.button.primary} title='Submit' onPress={onSubmit} />
 				</LinearGradient>
 			</View>
 		<MyTabBar navigation={navigation} state={navigation.getState()} tabs={tabs} />

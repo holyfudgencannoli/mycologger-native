@@ -1,26 +1,20 @@
 import { useState, useCallback, useContext } from "react"
-import { Surface,TextInput } from "react-native-paper";
-import { StyleSheet, Text, View, ImageBackground, Button, Alert } from 'react-native';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import { useEffect } from "react";
+import { StyleSheet, View, Button } from 'react-native';
+import { RouteProp, useFocusEffect, useRoute, useRoutePath } from '@react-navigation/native';
 import { ScreenPrimative } from "@components/screen-primative";
-import { ImageBG } from "@components/image-bg";
-import CreateHardwareItem from "./purchase-log-form";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Form from '@custom/react-native-forms/src'
-import { useForm } from "react-hook-form";
 import * as Item from '@db/items'
-import { DrawerNavigationProp } from "@react-navigation/drawer";
-import { RootDrawerParamsList } from "@navigation/types";
+import { InventoryItemParamList, RootDrawerParamsList } from "@navigation/types";
 import { useSQLiteContext } from "expo-sqlite";
 import { FormStateContext } from "src/context/FormContext";
 import { MyTabBar } from "@components/bottom-tabs";
 import { tabs } from "./types";
+import { COLORS } from "@constants/colors";
+import { CaseHelper } from "@utils/case-helper";
 
 
-type NavigationProps = DrawerNavigationProp<RootDrawerParamsList>
+type NavigationProps = RouteProp<InventoryItemParamList, 'New Item'>
 
 
 export default function NewItem({ navigation, state }) {
@@ -29,27 +23,19 @@ export default function NewItem({ navigation, state }) {
   const { name, setName } = useContext(FormStateContext);
   const { category, setCategory } = useContext(FormStateContext);
   const { subcategory, setSubcategory } = useContext(FormStateContext);
-
+  const path = useRoutePath(); 
+  const { params } = useRoute<NavigationProps>();
+  const { msg, msg2 } = params;
 
 
   const db = useSQLiteContext();
 
-  const { control, handleSubmit, formState: { errors }, } = useForm({
-    defaultValues: {
-      name: '',
-      category: '',
-      subcategory: ''
-    },
-  });
-
-  const getData = async() => {
-    const data = await Item.readAll(db)
-    setItems(data)
-  }
 
   useFocusEffect(
 		useCallback(() => {
-				
+      console.log(CaseHelper.toSnakeCase(decodeURIComponent(path.split('/')[2])).slice(0, -1))
+      console.log(msg)
+      console.log(msg2)
 			return() => {
 				setName('')
 				setCategory('')
@@ -61,7 +47,7 @@ export default function NewItem({ navigation, state }) {
 
   const onSubmit = async() => {
     const nowMs = new Date().getTime()
-    const TYPE = 'hardware_item'
+    const TYPE = CaseHelper.toSnakeCase(decodeURIComponent(path.split('/')[2])).slice(0, -1)
     const itemId = await Item
     .create(
       db, 
@@ -77,7 +63,7 @@ export default function NewItem({ navigation, state }) {
       null, 
       null 
     )
-    console.log("Consumable Supply Item Created. ID:", itemId)
+    console.log(`${CaseHelper.toCleanCase(TYPE)} Created. ID: `, itemId)
     navigation.navigate("Dashboard")
   };
 
@@ -87,7 +73,7 @@ export default function NewItem({ navigation, state }) {
         <LinearGradient
           start={{ x: 0, y: 0 }}
           end={{ x: 0.3, y: 0.9 }}
-          colors={['#94F8', '#00f', '#057']}
+          colors={COLORS.BACKGROUND_GRADIENT.PRIMARY}
           style={{ flex: 1, padding: 24}}
         >
             <Form.Control label='Item Name' labelStyle={{ color: 'white' }} name='name'>

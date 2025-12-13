@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useContext } from 'react';
 import { Image, View, StyleSheet, Alert, Switch, Text } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { useFocusEffect } from '@react-navigation/native';
-import { Colors } from '@constants/colors';
+import { COLORS } from '@constants/colors';
 import Button from './button';
 import { FormStateContext } from 'src/context/FormContext';
 
@@ -86,12 +86,12 @@ export default function ImageSelector() {
       </View>
       <View style={styles.buttonContainer}>
         <Button 
-          color={Colors.button.primary} 
+          color={COLORS.button.primary} 
           title="Pick an image from library" 
           onPress={pickImageFromLibrary} 
         />
         <Button 
-          color={Colors.button.primary} 
+          color={COLORS.button.primary} 
           title="Take a photo with camera" 
           onPress={takePhotoWithCamera} 
         />

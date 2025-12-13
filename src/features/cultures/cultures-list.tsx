@@ -1,38 +1,37 @@
 import { useState, useCallback } from "react"
 import { Surface } from "react-native-paper";
 import { StyleSheet, View } from 'react-native';
-import { useTheme } from "../../../hooks/useTheme";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect, useRoutePath } from "@react-navigation/native";
 import { ScrollableDataTable } from "@components/scrollable-data-table";
-import { ImageBG } from "@components/image-bg";
 import { ScreenPrimative } from "@components/screen-primative";
 import { CultureDetailModal } from "./detail-model";
 import * as Culture from '@db/cultures'
 import { useSQLiteContext } from "expo-sqlite";
-import { ScrollView } from "react-native-gesture-handler";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Form from '@custom/react-native-forms/src'
-import { tabs } from "./types";
+import { CultureObject, tabs } from "./types";
 import { MyTabBar } from "@components/bottom-tabs";
-import { CultureObject } from "..";
+import { COLORS } from "@constants/colors";
+import { CaseHelper } from "@utils/case-helper";
 
 export default function AgarCulturesListScreen({ navigation, state }) {
     const db = useSQLiteContext();    
-    const [recipes, setRecipes] = useState([])
     const [modalOpen, setModalOpen] = useState(false)
-    const [currentItem, setCurrentItem] = useState<CultureObject[]>([])
-    const { theme, toggleTheme } = useTheme()
-    const [agars, setAgars] = useState<CultureObject[]>([])
+    const [currentItem, setCurrentItem] = useState<CultureObject>()
+    const [cultures, setCultures] = useState<CultureObject[]>([])
+    const path = useRoutePath();
 
     const getData = async() => {
-        const Agars: CultureObject[] = await Culture.readAll(db)
-        console.log(Agars)  
-        setAgars(Agars)
+        const TYPE = CaseHelper.toSnakeCase(path.split('/')[3])
+        const objects: CultureObject[] = await Culture.readTByType(db, `${TYPE}_culture`)
+        console.log(TYPE)  
+        setCultures(objects)
     }
 
     useFocusEffect(
         useCallback(() => {
             getData()
+            console.log(path)
         }, [])
     )
 
@@ -42,7 +41,7 @@ export default function AgarCulturesListScreen({ navigation, state }) {
         {key: 'last_updated', title: 'Last Updated', msDate: true}
     ]
 
-    function openModal(item) {
+    function openModal(item: CultureObject) {
         setCurrentItem(item)
         setModalOpen(true)
     }
@@ -53,16 +52,16 @@ export default function AgarCulturesListScreen({ navigation, state }) {
               <LinearGradient
                   start={{ x: 0, y: 0 }}
                   end={{ x: 0.3, y: 0.9 }}
-                  colors={['#94F8', '#00f', '#057']}
+                  colors={COLORS.BACKGROUND_GRADIENT.PRIMARY}
                   style={{ flex: 1, padding: 16}}
               >
               <Surface style={styles.surfaceMetaContainer}>                        
                   <Surface style={styles.surfaceContainer}>
                   <Form.Control name="table" label="Cultures" labelStyle={styles.label}>  
-                    {agars && agars.length > 0 ? (
+                    {cultures && cultures.length > 0 ? (
                         <>
                         <ScrollableDataTable 
-                            data={agars? agars : []}
+                            data={cultures? cultures : []}
                             columns={columns}
                             headerTextStyle={{ textAlign: 'center', color: 'rgba(255,255,255,0.7)', textShadowColor:'blue', textShadowRadius: 4 }}
                             cellTextStyle={{ textAlign: 'center', color: 'white', textShadowColor: 'black', textShadowRadius:4 }}

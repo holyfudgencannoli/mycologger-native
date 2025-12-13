@@ -9,7 +9,7 @@ import { PurchaseLogsModal } from "./detail-modal";
 import { useSQLiteContext } from "expo-sqlite";
 import * as HW from '@db/items';
 import { LinearGradient } from "expo-linear-gradient";
-import HardwareItem from "@features/hardware/types";
+import HardwareItem from "@features/items/types";
 import { ItemProps } from "@db/items/types";
 import { MyTabBar } from "@components/bottom-tabs";
 import { tabs } from "./types";

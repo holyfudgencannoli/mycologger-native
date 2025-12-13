@@ -17,6 +17,7 @@ import { ScrollView } from "react-native-gesture-handler";
 import { LinearGradient } from "expo-linear-gradient";
 import { MyTabBar } from "@components/bottom-tabs";
 import { tabs } from ".";
+import { COLORS } from "@constants/colors";
 
 interface TaskData {
     id: number;
@@ -95,7 +96,7 @@ export default function TaskListScreen() {
                   <LinearGradient
                       start={{ x: 0, y: 0 }}
                       end={{ x: 0.3, y: 0.9 }}
-                      colors={['#94F8', '#00f', '#057']}
+                      colors={COLORS.BACKGROUND_GRADIENT.PRIMARY}
                       style={{ flex: 1, padding: 16}}
                   >
                 <Surface style={styles.surfaceMetaContainer}>

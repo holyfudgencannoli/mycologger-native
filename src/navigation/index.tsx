@@ -5,13 +5,8 @@ import { createDrawerNavigator, DrawerNavigationProp } from "@react-navigation/d
 // import ExecuteBatch from "../AgarCultures/ExecuteBatch";
 import { getHeaderTitle } from '@react-navigation/elements';
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import * as RawMat from '@features/raw-materials'
-import * as BioMat from '@features/bio-materials'
-import * as ConItem from '@features/consumables'
-import * as HW from '@features/hardware'
-import * as Agar from '@features/cultures/agar-cultures'
-import * as Liquid from '@features/cultures/liquid-cultues'
-import * as Spawn from '@features/cultures/spawn-cultures'
+import * as Items from '@features/items'
+import * as Culture from '@features/cultures'
 // import Login from "../Authentication/Login";
 // // import LogoutScreen from "../../screens/HomeStack/LogoutScreen";
 import { Dashboard } from "@features/dashboard";
@@ -33,7 +28,7 @@ import HardwareItemInventory from "@features/inventory/hardware-items";
 import { View, Platform } from 'react-native';
 import { useLinkBuilder, useTheme } from '@react-navigation/native';
 import { Text, PlatformPressable } from '@react-navigation/elements';
-import { Colors } from "@constants/colors";
+import { COLORS } from "@constants/colors";
 import React from 'react';
 import { Ionicons } from '@expo/vector-icons'; // change to your icon library
 import { CultureParamList, InventoryItemParamList, RecipeParamList, RootDrawerParamsList, RootStackProps } from "@navigation/types";
@@ -172,7 +167,7 @@ function DrawerNavigator() {
                             colors={['#00f', '#94F8', '#f00']}
                             locations={[0, 0.5, 1]}
                         >
-                            <Header navigation={navigation} title={title} style={options.headerStyle} textStyle={options.headerTitleStyle} />
+                    useRoute();        <Header navigation={navigation} title={title} style={options.headerStyle} textStyle={options.headerTitleStyle} />
                         </LinearGradient>
                     ) 
                 },
@@ -207,7 +202,7 @@ function DrawerNavigator() {
             <Drawer.Screen component={RawMatStackNav} name='Raw Materials' options={{ popToTopOnBlur: true }} />
             <Drawer.Screen component={BioMaterialNavigator} name='Bio Materials' options={{ popToTopOnBlur: true }} />
             <Drawer.Screen component={ConsumablesNavigator} name='Consumable Items' options={{ popToTopOnBlur: true }} />
-            <Drawer.Screen component={HardwareNavigator} name='Hardware' options={{ popToTopOnBlur: true }} />
+            <Drawer.Screen component={HardwareNavigator} name='Hardware Items' options={{ popToTopOnBlur: true }} />
             <Drawer.Screen component={ReceipesNavigator} name='Recipes' options={{ popToTopOnBlur: true }} />
             <Drawer.Screen component={CulturesNavigator} name='Cultures' options={{ popToTopOnBlur: true }} />
             {/* <Drawer.Screen component={DBManagement} name='DB Management'/> */}
@@ -232,8 +227,8 @@ function RawMatStackNav() {
             id="raw-mat-stack"
             screenOptions={{ headerShown: false }}
         >
-            <RawMatStack.Screen name="New Item" component={RawMat.NewItem} />
-            <RawMatStack.Screen name="New Purchase Log" component={RawMat.NewPurchaseLog} />
+            <RawMatStack.Screen name="New Item" component={Items.NewItem}  initialParams={{ msg: 'Hello World', msg2: 'Fuck yeah this is awesome'}}/>
+            <RawMatStack.Screen name="New Purchase Log" component={Items.NewPurchaseLog} />
         </RawMatStack.Navigator>
     )
 }
@@ -281,9 +276,9 @@ function BioMaterialNavigator() {
                 headerShown: false
             }}
         >
-            <BioMaterial.Screen component={BioMat.NewItem} name="New Item" />
+            <BioMaterial.Screen component={Items.NewItem} name="New Item" initialParams={{ msg: 'Hello World', msg2: 'Fuck yeah this is awesome'}} />
             {/* <BioMaterial.Screen component={BioMat} name="Bio-Material List" /> */}
-            <BioMaterial.Screen component={BioMat.NewPurchaseLog} name="New Purchase Log" />
+            <BioMaterial.Screen component={Items.NewPurchaseLog} name="New Purchase Log" />
         </BioMaterial.Navigator>
     )
 }
@@ -298,8 +293,8 @@ function ConsumablesNavigator () {
                 headerShown: false
             }}
         >
-            <Consumables.Screen component={ConItem.NewItem} name="New Item"/>
-            <Consumables.Screen component={ConItem.NewPurchaseLog} name="New Purchase Log"/>
+            <Consumables.Screen component={Items.NewItem} name="New Item" initialParams={{ msg: 'Hello World', msg2: 'Fuck yeah this is awesome'}}/>
+            <Consumables.Screen component={Items.NewPurchaseLog} name="New Purchase Log"/>
         </Consumables.Navigator>
     )
 }
@@ -315,8 +310,8 @@ function HardwareNavigator () {
                 headerShown: false
             }}
         >
-            <Hardware.Screen component={HW.NewItem} name="New Item"/>
-            <Hardware.Screen component={HW.NewPurchaseLog} name="New Purchase Log"/>
+            <Hardware.Screen component={Items.NewItem} name="New Item" initialParams={{ msg: 'Hello World', msg2: 'Fuck yeah this is awesome'}}/>
+            <Hardware.Screen component={Items.NewPurchaseLog} name="New Purchase Log" />
         </Hardware.Navigator>
     )
 }
@@ -360,9 +355,9 @@ function CulturesNavigator() {
             }}
             id={'culture-stack'}
         >
-            <Cultures.Screen component={Agar.CultureList.default} name="Agar" />
-            <Cultures.Screen component={Liquid.CultureList.default} name="Liquid" />
-            <Cultures.Screen component={Spawn.CultureList.default} name="Spawn" />
+            <Cultures.Screen component={Culture.CultureList.default} name="Agar" />
+            <Cultures.Screen component={Culture.CultureList.default} name="Liquid" />
+            <Cultures.Screen component={Culture.CultureList.default} name="Spawn" />
         </Cultures.Navigator>
     )
 }
@@ -417,10 +412,10 @@ function TasksNavigator() {
         >
             <Tasks.Screen component={TaskListScreen} name='Task List' options={{ headerShown: false }}/>
             <Tasks.Screen component={NewTaskForm} name='New Task' options={{ headerShown: false }}/>
-            <Tasks.Screen component={Agar.Batch} name="New Agar Culture" options={{ headerShown: false }}/>
+            <Tasks.Screen component={Culture.Batch} name="New Agar Culture" options={{ headerShown: false }}/>
             <Tasks.Screen component={ExecuteRecipeBatch} name="New Batch From Recipe" options={{ headerShown: false }}/>
-            <Tasks.Screen component={Spawn.Batch} name="New Spawn Culture" options={{ headerShown: false }}/>
-            <Tasks.Screen component={Liquid.Batch} name="New Liquid Culture" options={{ headerShown: false }}/>
+            <Tasks.Screen component={Culture.Batch} name="New Spawn Culture" options={{ headerShown: false }}/>
+            <Tasks.Screen component={Culture.Batch} name="New Liquid Culture" options={{ headerShown: false }}/>
             <Tasks.Screen component={CreateMaintenanceTask} name='New Maintenance Task' options={{ headerShown: false }}/>
 
         </Tasks.Navigator>

@@ -3,13 +3,11 @@ import { ImageBG } from "@components/image-bg";
 import { ScreenPrimative } from "@components/screen-primative";
 import { Alert, StyleSheet, Text, View } from "react-native";
 import { useSQLiteContext } from "expo-sqlite";
-import { useFocusEffect, useNavigation, useRoute } from "@react-navigation/native";
+import { useFocusEffect, useNavigation, useRoute, useRoutePath } from "@react-navigation/native";
 import { useCallback, useContext, useState } from "react";
-import { useTheme } from "../../../hooks/useTheme";
 import { PaperSelect } from "react-native-paper-select";
 import * as Batches from '@db/recipe-batches'
 import * as Culture from '@db/cultures'
-import * as Agar from '@db/agar-cultures'
 import * as Usage from '@db/usage_logs'
 import * as Task from '@db/tasks'
 import * as Form from '@custom/react-native-forms/src'
@@ -21,8 +19,9 @@ import { NavigationProps, RootDrawerParamsList } from "@navigation/types";
 import { RecipeBatch } from "@db/recipe-batches/types";
 import { INV_UNITS } from "@constants/units";
 import Button from "@components/button";
-import { Colors } from "@constants/colors";
+import { COLORS } from "@constants/colors";
 import { FormStateContext } from "src/context/FormContext";
+import { CaseHelper } from "@utils/case-helper";
 
 type formattedRecipe ={
     _id: string,
@@ -32,11 +31,11 @@ type formattedRecipe ={
 
 type TaskRouteProps = RouteProp<RootDrawerParamsList, any>
 
-export default function ExecuteAgarBatch() {  
+export default function ExecuteBatch({}) {  
     const db =  useSQLiteContext()
     const navigation = useNavigation<NavigationProps>();
     const route = useRoute<TaskRouteProps>();
-    const { startTime, endTime } = route.params
+    const { startTime, endTime, type } = route.params
     const [volume, setVolume] = useState("")
     const [volumeUnit, setVolumeUnit] = useState("")
     const [notes, setNotes] = useState("")
@@ -45,7 +44,8 @@ export default function ExecuteAgarBatch() {
     const { selectedRecipeBatchId, setSelectedRecipeBatchId } =useContext(FormStateContext)
     const { selectedRecipeBatchName, setSelectedRecipeBatchName } =useContext(FormStateContext)
     const [loading, setLoading] = useState(true)
-    const { theme } = useTheme()
+    const path = useRoutePath();
+    
 
     const getRecipeBatchData = async () => {
         const items: RecipeBatch[] = await Batches.readAll(db)
@@ -62,7 +62,7 @@ export default function ExecuteAgarBatch() {
         await Task.ExecuteAgar({ db }, {
             db,
             quantity,
-            type: 'agar_culture',
+            type,
             recipe_batch_id: selectedRecipeBatchId,
             volume_amount: volume,
             volume_unit: volumeUnit,
@@ -131,11 +131,11 @@ export default function ExecuteAgarBatch() {
                 <LinearGradient
                     start={{ x: 0, y: 0 }}
                     end={{ x: 0.3, y: 0.9 }}
-                    colors={['#94F8', '#00f', '#057']}
+                    colors={COLORS.BACKGROUND_GRADIENT.PRIMARY}
                     style={{ flex: 1, padding: 16}}
                 >
                     <Surface style={{ backgroundColor: '#0008', margin: 16, padding: 16 }}>
-                        <Text style={styles.title}>Execute New Agar Culture Batch</Text>
+                        <Text style={styles.title}>Execute New {CaseHelper.toCleanCase(type)} Batch</Text>
                     </Surface>
                     <Form.Control labelStyle={styles.label} label="Select Batch to Use" name="batch">
                         <Form.Select 
@@ -170,7 +170,7 @@ export default function ExecuteAgarBatch() {
                             style={{ width: '100%', textAlign: 'center', backgroundColor: 'transparent', color: 'white' }}
                         />
                     </Form.Control>
-                    <Button title="Submit" viewStyle={{ marginTop: 72, }} color={Colors.button.primary} onPress={handleExecute}/>
+                    <Button title="Submit" viewStyle={{ marginTop: 72, }} color={COLORS.button.primary} onPress={handleExecute}/>
                 </LinearGradient>
             </View>
         </ScreenPrimative>

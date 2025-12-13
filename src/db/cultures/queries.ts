@@ -1,6 +1,7 @@
 
 import { SQLiteDatabase } from "expo-sqlite";
 import { safeExec, safeRun, safeSelect, safeSelectOne, safeSelectAll } from "../utils";
+import { CultureObject } from "@features/cultures";
 
 export async function create({
   db,
@@ -44,8 +45,8 @@ export async function readAll<CultureObject>(db: SQLiteDatabase) {
   return await safeSelectAll<CultureObject>(db, "SELECT * FROM cultures ORDER BY id ASC");
 }
 
-export async function readType(db: SQLiteDatabase, type: string) {
-  return await safeSelect(db, `SELECT * FROM cultures WHERE type = ? ORDER BY id ASC`, [type]);
+export async function readTByType<CultureObject>(db: SQLiteDatabase, type: string) {
+  return await safeSelect<CultureObject>(db, `SELECT * FROM cultures WHERE type = ? ORDER BY id ASC`, [type]);
 
 }
 
@@ -53,21 +54,7 @@ export async function getById(
   db: SQLiteDatabase,
   id: number
 ) {
-  return await safeSelectOne<{
-  type: string,
-  recipe_batch_id: number,
-	volume_amount: number,
-	volume_unit: string,
-	last_updated: number,
-	sterilized_id: number,
-	inoculated_id: number,
-	germinated_id: number,
-	colonized_id: number,
-	contaminated_id: number,
-	harvested_id: number,
-  created_at: number,
-
-  }>(db, "SELECT * FROM cultures WHERE id = ?", [id]);
+  return await safeSelectOne<CultureObject>(db, "SELECT * FROM cultures WHERE id = ?", [id]);
 }
 
 export async function update(db: SQLiteDatabase, data: { id: number; [key: string]: any }) {

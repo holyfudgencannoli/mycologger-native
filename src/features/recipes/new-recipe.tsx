@@ -8,6 +8,7 @@ import { ScrollView } from "react-native-gesture-handler";
 import { LinearGradient } from "expo-linear-gradient";
 import { MyTabBar } from "@components/bottom-tabs";
 import { tabs } from "./types";
+import { COLORS } from "@constants/colors";
 
 export default function NewRecipe({ navigation, state }) {    
   const [unsaved, setUnsaved] = useState(false)
@@ -47,7 +48,7 @@ export default function NewRecipe({ navigation, state }) {
           <LinearGradient
             start={{ x: 0, y: 0 }}
             end={{ x: 0.3, y: 0.9 }}
-            colors={['#94F8', '#00f', '#057']}
+            colors={COLORS.BACKGROUND_GRADIENT.PRIMARY}
             style={{ flex: 1, padding: 16}}
           >
             <CreateRecipe setUnsaved={setUnsaved} />
