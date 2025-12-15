@@ -145,12 +145,36 @@ export default function PurchaseLogForm() {
             }
 
 
+
+
+
             const created_at = new Date().getTime();
             const item = await Item.getById(db, id)
             const TYPE = CaseHelper.toSnakeCase(decodeURIComponent(path.split('/')[2])).slice(0, -1)
             console.log("Item.unit", item.inventory_unit)
             console.log("Inventory", inventoryUnit)
             console.log("Item.unit", item.inventory_unit)
+
+            let Amount: number;
+            let Unit: string;
+            if (item.inventory_unit === null) { 
+                Amount = cnv.convertFromBase({
+                    value: 
+                        (cnv.convertToBase({ value: parseFloat(purchaseQuantity) * parseFloat(inventoryQuantity), from: inventoryUnit })),
+                    to: 
+                        inventoryUnit
+                })
+                Unit = inventoryUnit
+                } else {
+                    Amount = cnv.convertFromBase({
+                        value: 
+                            cnv.convertToBase({ value: item.amount_on_hand, from: item.inventory_unit  }) 
+                            + (cnv.convertToBase({ value: parseFloat(purchaseQuantity) * parseFloat(inventoryQuantity), from: item.inventory_unit })),
+                        to: 
+                            item.inventory_unit
+                    })
+                    Unit = item.inventory_unit
+            }
 
             if (isNew) {
                 const itemId = await Item
@@ -169,27 +193,6 @@ export default function PurchaseLogForm() {
                     null
                 )
             } else {
-                let Amount: number;
-                let Unit: string;
-                if (item.inventory_unit === null) { 
-                    Amount = cnv.convertFromBase({
-                        value: 
-                            (cnv.convertToBase({ value: parseFloat(purchaseQuantity) * parseFloat(inventoryQuantity), from: inventoryUnit })),
-                        to: 
-                            inventoryUnit
-                    })
-                    Unit = inventoryUnit
-                    } else {
-                        Amount = cnv.convertFromBase({
-                            value: 
-                                cnv.convertToBase({ value: item.amount_on_hand, from: item.inventory_unit  }) 
-                                + (cnv.convertToBase({ value: parseFloat(purchaseQuantity) * parseFloat(inventoryQuantity), from: item.inventory_unit })),
-                            to: 
-                                item.inventory_unit
-                        })
-                        Unit = item.inventory_unit
-                }
-
                 const itemId = await Item
                 .update(
                     db,                
