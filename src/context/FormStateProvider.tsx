@@ -1,5 +1,53 @@
 import { useState } from "react";
-import { FormStateContext } from "./FormContext";
+import { BrandFormStateContext, FormStateContext, VendorFormStateContext } from "./FormContext";
+import { FormState, NewBrandFormState, NewVendorFormState } from "./FormState";
+import { VendorType } from "@db/vendors";
+
+export function VendorFormStateProvider({ children }) {
+    const [name, setName] = useState("");
+    const [contactName, setContactName] = useState("");
+    const [address, setAddress] = useState("");
+    const [phone, setPhone] = useState("");
+    const [email, setEmail] = useState("");
+    const [website, setWebsite] = useState("");
+    
+    const vendorValue = {
+        name, setName,
+        contactName, setContactName,
+        address, setAddress,
+        phone, setPhone,
+        email, setEmail,
+        website, setWebsite,
+        
+    } satisfies NewVendorFormState
+
+
+    return(
+        <VendorFormStateContext.Provider value={vendorValue}>
+            {children}
+        </VendorFormStateContext.Provider>
+    )
+
+};
+
+export function BrandFormStateProvider({ children }) {
+    const [brandName, setBrandName] = useState("");
+    const [brandWebsite, setBrandWebsite] = useState("");
+
+
+    const brandValue = {
+        brandName, setBrandName,
+        brandWebsite, setBrandWebsite
+    } satisfies NewBrandFormState
+
+    
+    return(
+        <BrandFormStateContext.Provider value={brandValue}>
+            {children}
+        </BrandFormStateContext.Provider>
+    )
+    
+};
 
 export function FormStateProvider({ children }) {
     const [selectedItem, setSelectedItem] = useState(null)
@@ -28,13 +76,10 @@ export function FormStateProvider({ children }) {
     const [vendorId, setVendorId] = useState<number | null>(null);
     const [brandId, setBrandId] = useState<number | null>(null);
 
-    const [vendors, setVendors] = useState([]);
+    const [vendors, setVendors] = useState<VendorType[]>([]);
+    const [vendor, setVendor] = useState<VendorType>();
     const [brands, setBrands] = useState([]);
     const [newVendor, setNewVendor] = useState(false);
-    const [vendorPhone, setVendorPhone] = useState("");
-    const [vendorEmail, setVendorEmail] = useState("");
-    const [vendorWebsite, setVendorWebsite] = useState("");
-
     const [image, setImage] = useState(null);
     const [images, setImages] = useState([]);
     const [contentType, setContentType] = useState("");
@@ -74,22 +119,26 @@ export function FormStateProvider({ children }) {
         notes, setNotes,
         vendorId, setVendorId,
         brandId, setBrandId,
+        vendor, setVendor,
         vendors, setVendors,
         brands, setBrands,
         newVendor, setNewVendor,
-        vendorPhone, setVendorPhone,
-        vendorEmail, setVendorEmail,
-        vendorWebsite, setVendorWebsite,
         image, setImage,
         images, setImages,
         contentType, setContentType,
         receiptMemo, setReceiptMemo,
         purchaseDatetime, setPurchaseDatetime
-    };
+    } satisfies FormState
+
 
     return (
-        <FormStateContext.Provider value={value}>
-            {children}
-        </FormStateContext.Provider>
+        <VendorFormStateProvider>
+            <BrandFormStateProvider>
+                <FormStateContext.Provider value={value}>
+                    {children}
+                </FormStateContext.Provider>    
+            </BrandFormStateProvider>
+        </VendorFormStateProvider>
+
     );
 }

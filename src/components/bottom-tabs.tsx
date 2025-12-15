@@ -18,12 +18,13 @@ export function MyTabBar({ navigation, state, tabs }) {
       backgroundColor: "#222",
     //   alignItems: "center",
     }}>
-      {tabs.map((tab, index) => {
+      {tabs.map((tab: {name: string, icon: iconTypes}, index: number) => {
         const isFocused = state.routes[state.index].name === tab.name;
 
         return (
           <Pressable
-            key={tab.name}
+            key={index}
+            id={tab.name}
             onPress={() => navigation.navigate(tab.name)}
             style={{ flex: 1, alignItems: "center", padding: 10 }}
           >

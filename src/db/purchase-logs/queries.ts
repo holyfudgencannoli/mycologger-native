@@ -23,7 +23,7 @@ export function purchaseLogTable(type: string) {
 
 export async function create(
   db: SQLiteDatabase,
-  type: PurchaseLogType,
+  type: string,
   item_id: number,
 	created_at: number,
 	purchase_date: number,
@@ -67,7 +67,6 @@ export async function getAllByType<PurchaseLogData>(db: SQLiteDatabase, type: st
 
 export async function getById(
   db: SQLiteDatabase,
-	type: string,
   id: number
 ) {
   return await safeSelectOne<{
@@ -89,7 +88,7 @@ export async function getById(
 
 export async function getByItemId(
 	db: SQLiteDatabase,
-	type: PurchaseLogType,
+	type: PurchaseLogType<string>,
 	item_id: number
 ) {
 	return await safeSelectAll<PurchaseLogData>(db, `SELECT * FROM purchase_logs WHERE item_id = ?`, [item_id]);

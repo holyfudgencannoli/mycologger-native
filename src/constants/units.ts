@@ -1,5 +1,4 @@
 export const INV_UNITS = [
-    {name:"Select Unit", value: ''},
     {name:"Tablespoons", value: 'tablespoon'},
     {name:"Units", value:'unit'},
     {name:"Grams", value:'gram'},
@@ -13,7 +12,6 @@ export const INV_UNITS = [
 
 ]
 export const PUR_UNITS = [
-    {name:"Select Unit", value: ''},
     {name:"Bag", value:'bag'},
     {name:"Case", value:'case'},
     {name:"Box", value:'box'},

@@ -58,16 +58,12 @@ export interface FormState {
         setBrandId: React.Dispatch<React.SetStateAction<number>>,
         vendors: VendorType[],
         setVendors: React.Dispatch<React.SetStateAction<VendorType[]>>,
+        vendor: VendorType,
+        setVendor: React.Dispatch<React.SetStateAction<VendorType>>,
         brands: Brand[], 
         setBrands: React.Dispatch<React.SetStateAction<Brand[]>>,
         newVendor: boolean,
         setNewVendor: React.Dispatch<React.SetStateAction<boolean>>,
-        vendorPhone: string,
-        setVendorPhone: React.Dispatch<React.SetStateAction<string>>,
-        vendorEmail: string,
-        setVendorEmail: React.Dispatch<React.SetStateAction<string>>,
-        vendorWebsite: string,
-        setVendorWebsite: React.Dispatch<React.SetStateAction<string>>,
         image: any, 
         setImage: React.Dispatch<React.SetStateAction<any>>,
         images: any[], 
@@ -79,4 +75,26 @@ export interface FormState {
         purchaseDatetime: Date,
         setPurchaseDatetime: React.Dispatch<React.SetStateAction<Date>>
 
+}
+
+export interface NewBrandFormState {
+        brandName: string,
+        setBrandName: React.Dispatch<React.SetStateAction<string>>,
+        brandWebsite: string,
+        setBrandWebsite: React.Dispatch<React.SetStateAction<string>>
+}
+        
+export interface NewVendorFormState {
+        phone: string,
+        setPhone: React.Dispatch<React.SetStateAction<string>>,
+        email: string,
+        setEmail: React.Dispatch<React.SetStateAction<string>>,
+        website: string,
+        setWebsite: React.Dispatch<React.SetStateAction<string>>,
+        name: string,
+        setName: React.Dispatch<React.SetStateAction<string>>,
+        address: string,
+        setAddress: React.Dispatch<React.SetStateAction<string>>,
+        contactName: string,
+        setContactName: React.Dispatch<React.SetStateAction<string>>
 }

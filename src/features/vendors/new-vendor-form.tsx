@@ -1,9 +1,14 @@
 import * as Form from '@custom/react-native-forms/src'
+import { useFocusEffect } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useCallback, useContext } from 'react';
 import { StyleSheet, View } from 'react-native';
+import { VendorFormStateContext } from 'src/context/FormContext';
 
 
 export default function NewVendorForm() {
+    const vendor = useContext(VendorFormStateContext)
+
     return(
 
         <LinearGradient
@@ -22,6 +27,8 @@ export default function NewVendorForm() {
                     >
                         <Form.Input
                             style={{ backgroundColor: 'transparent', width: '100%' }} 
+                            value={vendor.name}
+                            onChangeText={vendor.setName}
                         />
                     </Form.Control>
                     
@@ -32,6 +39,9 @@ export default function NewVendorForm() {
                     >
                         <Form.Input
                             style={{ backgroundColor: 'transparent', width: '100%' }} 
+                            value={vendor.email}
+                            onChangeText={vendor.setEmail}
+                            
                         />
                     </Form.Control>
                     
@@ -42,6 +52,8 @@ export default function NewVendorForm() {
                     >
                         <Form.Input
                             style={{ backgroundColor: 'transparent', width: '100%' }} 
+                            value={vendor.phone}
+                            onChangeText={vendor.setPhone}
                         />
                     </Form.Control>
                     
@@ -52,6 +64,8 @@ export default function NewVendorForm() {
                     >
                         <Form.Input
                             style={{ backgroundColor: 'transparent', width: '100%' }} 
+                            value={vendor.address}
+                            onChangeText={vendor.setAddress}
                             multiline
                         />
                     </Form.Control>
@@ -63,6 +77,8 @@ export default function NewVendorForm() {
                     >
                         <Form.Input
                             style={{ backgroundColor: 'transparent', width: '100%' }} 
+                            value={vendor.contactName}
+                            onChangeText={vendor.setContactName}
                         />
                     </Form.Control>
                     <Form.Control
@@ -72,6 +88,8 @@ export default function NewVendorForm() {
                     >
                         <Form.Input
                             style={{ backgroundColor: 'transparent', width: '100%' }}
+                            value={vendor.website}
+                            onChangeText={vendor.setWebsite}
                         />
                     </Form.Control>
                 </View>

@@ -13,9 +13,10 @@ import * as ImagePicker from 'expo-image-picker';
 import { saveReceiptLocally, loadAllReceipts, ReceiptMeta } from '@services/local-receipt';
 import * as Form from '@custom/react-native-forms/src'
 import { FormStateContext } from 'src/context/FormContext';
+import { PurchaseLogData } from '@db/purchase-logs/types';
 
 export const ReceiptUploader: React.FC = () => {
-  const [receipts, setReceipts] = useState<ReceiptMeta[]>([]);
+  const [receipts, setReceipts] = useState<PurchaseLogData[]>([]);
   const [previewUri, setPreviewUri] = useState<string | null>(null);
   
   // Load existing receipts on mount

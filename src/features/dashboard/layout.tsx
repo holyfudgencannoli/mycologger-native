@@ -1,9 +1,7 @@
-import { Image, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { ScreenPrimative } from "@components/screen-primative";
 import { LinearGradient } from 'expo-linear-gradient'
-import { Surface } from "react-native-paper";
-import { Platform } from "react-native";
-import GalleryScreen from "@features/raw-materials/receipt-gallery";
+import GalleryScreen from "@features/receipts/receipt-gallery";
 import { COLORS } from "@constants/colors";
 
 
@@ -30,5 +28,5 @@ export default function Dashboard({ navigation }) {
 
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
+  container: { flex: 1 }
 });

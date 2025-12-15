@@ -167,7 +167,7 @@ function DrawerNavigator() {
                             colors={['#00f', '#94F8', '#f00']}
                             locations={[0, 0.5, 1]}
                         >
-                    useRoute();        <Header navigation={navigation} title={title} style={options.headerStyle} textStyle={options.headerTitleStyle} />
+                            <Header navigation={navigation} title={title} style={options.headerStyle} textStyle={options.headerTitleStyle} />
                         </LinearGradient>
                     ) 
                 },

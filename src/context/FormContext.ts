@@ -1,5 +1,5 @@
 import { createContext, useState } from "react";
-import { FormState } from "./FormState";
+import { FormState, NewBrandFormState, NewVendorFormState } from "./FormState";
     import { Item } from "@db/items/types";
     import { VendorType } from "@db/vendors";
     import Brand from "@features/brands/type";
@@ -59,18 +59,14 @@ export const FormStateContext = createContext<FormState>({
     setVendorId: () => {},
     brandId: 0,
     setBrandId: () => {},
+    vendor: null,
+    setVendor: () => {},
     vendors: null,
     setVendors: () => {},
     brands: null, 
     setBrands: () => {},
     newVendor: false,
     setNewVendor: () => {},
-    vendorPhone: "",
-    setVendorPhone: () => {},
-    vendorEmail: "",
-    setVendorEmail: () => {},
-    vendorWebsite: "",
-    setVendorWebsite: () => {},
     image: null, 
     setImage: () => {},
     images: [], 
@@ -83,3 +79,28 @@ export const FormStateContext = createContext<FormState>({
     setPurchaseDatetime: () => {}
     
 });
+
+export const BrandFormStateContext = createContext<NewBrandFormState>({
+    brandName: "",
+    setBrandName: (text: string) => {},
+    brandWebsite: "",
+    setBrandWebsite: (text: string) => {},
+    
+
+
+});
+
+export const VendorFormStateContext = createContext<NewVendorFormState>({
+    phone: "",
+    setPhone: (text: string) => {},
+    email: "",
+    setEmail: (text: string) => {},
+    website: "",
+    setWebsite: (text: string) => {},
+    name: "",
+    setName: (text: string) => {},
+    address: "",
+    setAddress: (text: string) => {},
+    contactName: "",
+    setContactName: (text: string) => {},
+})

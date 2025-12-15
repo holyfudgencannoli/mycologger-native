@@ -1,5 +1,5 @@
-import Itemerial from '@features/raw-materials/types/raw-material';
-import { useFocusEffect } from '@react-navigation/native';
+// import Item from '@features/raw-materials/types/raw-material';
+import { NavigationProp, RouteProp, useFocusEffect, useNavigation, useRoutePath } from '@react-navigation/native';
 import React, { useCallback, useState } from 'react';
 import { View, Modal, Text, StyleSheet, TouchableOpacity, FlatList, Alert } from 'react-native';
 import * as Item from '@db/items'
@@ -11,12 +11,20 @@ import Button from '@components/button';
 import { ItemProps } from '@db/items/types';
 import { PurchaseLogData } from '@db/purchase-logs/types';
 import { LinearGradient } from 'expo-linear-gradient';
+import * as cnv from '@utils/unitConversion'
+import { InventoryParamList } from '@navigation';
+import { CaseHelper } from '@utils/case-helper';
+
+type NavigationProps = RouteProp<InventoryParamList, 'Raw Materials'>
 
 
 export const PurchaseLogsModal = ({ visible, setModalOpen, item}: {visible: boolean, setModalOpen: (arg0: boolean) => void, item: ItemProps}) => {
     const [purchaseLogs, setPurchaseLogs] = useState<{ item: ItemProps, log: PurchaseLogData, vendor: Vendor.VendorType  }[]>([]);
     const [vendors, setVendors] = useState([]);
     const db = useSQLiteContext();
+    const navigation = useNavigation<NavigationProp<InventoryParamList>>();
+    const path = useRoutePath();
+    const screenName = decodeURIComponent(path.split('/')[3]) as keyof InventoryParamList
 
     const closeModal = () => {
         // Close the modal (e.g., using a parent component's state)
@@ -41,6 +49,7 @@ export const PurchaseLogsModal = ({ visible, setModalOpen, item}: {visible: bool
     useFocusEffect(
         useCallback(() => {
             getPurchaseLogs()
+            console.log(decodeURIComponent(path.split('/')[3]))
         }, [])
     )
 
@@ -55,7 +64,36 @@ export const PurchaseLogsModal = ({ visible, setModalOpen, item}: {visible: bool
                     text: "Delete",
                     style: "destructive",
                     onPress: async() => {
+                        const log = await PurchLogs.getById(
+                            db,
+                            id
+                        )
+                        const item = await Item.getById(
+                            db,
+                            log.item_id
+                        )
+
+                        const created_at = new Date().getTime()
+                        const log_amount = cnv.convertFromBase({
+                            value: 
+                                cnv.convertToBase({ value: item.amount_on_hand, from: item.inventory_unit  }) 
+                                - (cnv.convertToBase({ value: (log.purchase_amount * log.inventory_amount), from: log.inventory_unit })),
+                            to: 
+                                item.inventory_unit
+                        })
+                        const log_unit = item.inventory_unit
+                        const itemId = await Item.update(
+                            db,
+                            {
+                                id: log.item_id, 
+                                amount_on_hand: log_amount,
+                                inventory_unit: log_unit,
+                                last_updated: created_at
+                            }
+
+                        )
                         await PurchLogs.destroy(db, type, id)
+                        navigation.navigate(screenName)
                     },
                     },
                 ],

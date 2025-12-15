@@ -1,9 +1,17 @@
 import * as Form from '@custom/react-native-forms/src'
+import { useFocusEffect } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useCallback, useContext } from 'react';
 import { StyleSheet, View } from 'react-native';
+import { BrandFormStateContext } from 'src/context/FormContext';
 
 
 export default function NewBrandForm() {
+    const {
+        brandName, setBrandName,
+        brandWebsite, setBrandWebsite
+    } = useContext(BrandFormStateContext)
+
     return(
 
         <LinearGradient
@@ -22,6 +30,8 @@ export default function NewBrandForm() {
                     >
                         <Form.Input
                             style={{ backgroundColor: 'transparent', width: '100%' }} 
+                            value={brandName}
+                            onChangeText={setBrandName}
                         />
                     </Form.Control>
                     <Form.Control
@@ -31,6 +41,8 @@ export default function NewBrandForm() {
                     >
                         <Form.Input
                             style={{ backgroundColor: 'transparent', width: '100%' }}
+                            value={brandWebsite}
+                            onChangeText={setBrandWebsite}
                         />
                     </Form.Control>
                 </View>

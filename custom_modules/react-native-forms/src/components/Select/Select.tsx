@@ -49,7 +49,7 @@ const Select = forwardRef<View, SelectProps>((props, ref) => {
           itemStyle={{ height: 44, color: theme.colors.primary }}
         >
           {placeholder && (
-            <Picker.Item label={placeholder} value="" color={theme.colors.primary} />
+            <Picker.Item label={placeholder} value="" color='black' />
           )}
           {options.map((opt: any) => (
             <Picker.Item label={opt.name} value={{...opt}} />

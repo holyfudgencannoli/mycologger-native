@@ -6,7 +6,7 @@ import { useFocusEffect, useNavigation, usePreventRemove } from "@react-navigati
 import { PaperSelect } from "react-native-paper-select";
 import { Alert } from "react-native";
 import * as Recipe from '@db/recipes'
-import * as RawMat from '@db/items'
+import * as Item from '@db/items'
 import { useSQLiteContext } from "expo-sqlite";
 import * as cnv from '@utils/unitConversion'
 import { DrawerNavigationProp } from "@react-navigation/drawer";
@@ -68,7 +68,8 @@ export default function CreateRecipe({ setUnsaved }: { setUnsaved: (value: boole
 
 
     const getRMData = async () => {
-        const items: any = await RawMat.readAll(db)
+        const TYPE = 'raw_material'
+        const items: any = await Item.getAllByType(db, TYPE)
         const formatted = items.map((item, index) => ({
             _id: String(index),
             id: item.id,
@@ -159,6 +160,7 @@ export default function CreateRecipe({ setUnsaved }: { setUnsaved: (value: boole
                 <Form.Select
                     style={{ width: '50%', backgroundColor: 'transparent' }} 
                     options={[...INV_UNITS]}
+                    placeholder="Select Unit"
                     onValueChange={(value: any) => {
                         setYieldUnit(value.value)
                         console.log(value.value)
@@ -183,6 +185,7 @@ export default function CreateRecipe({ setUnsaved }: { setUnsaved: (value: boole
                     <Form.Select 
                         style={styles.input}
                         options={rawMaterialNames}
+                        placeholder="Select Ingredient"
                         onValueChange={(value: any) => {
                             setIngredientId(value.id)
                             setIngredientName(value.name)
@@ -199,6 +202,7 @@ export default function CreateRecipe({ setUnsaved }: { setUnsaved: (value: boole
                     <Form.Select
                         style={{ width: '50%', backgroundColor: 'transparent' }} 
                         options={[...INV_UNITS]}
+                        placeholder="Select Unit"
                         onValueChange={(value: any) => {
                             setUnit(value.value)
                             console.log(value.value)

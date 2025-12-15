@@ -4,14 +4,13 @@ import { safeExec, safeRun, safeSelect, safeSelectOne, safeSelectAll } from "../
 
 export async function create(
   db: SQLiteDatabase,
-  item_id: number,
   name: string,
   website: string,
   last_updated: number
 ) {
   const result = await safeRun(db,
-    "INSERT INTO brands (item_id, name, website, last_updated) VALUES (?, ?, ?, ?)",
-    [item_id, name, website, last_updated]
+    "INSERT INTO brands (name, website, last_updated) VALUES (?, ?, ?)",
+    [name, website, last_updated]
   );
 
   return result.lastInsertRowId;
@@ -27,7 +26,6 @@ export async function getById(
 ) {
   return await safeSelectOne<{
     id: number;
-    item_id: number;
     name: string;
     website: string;
     last_updated: number;
@@ -40,7 +38,6 @@ export async function getByName(
 ) {
   return await safeSelectOne<{
     id: number;
-    item_id: number;
     name: string;
     website: string;
     last_updated: number;
@@ -60,7 +57,7 @@ export async function update(
     `UPDATE brands
        SET name = ?, website = ?, last_updated = ?
        WHERE id = ?`,
-    [name, website, id]
+    [name, website, last_updated, id]
   );
 
   return result.changes; // number of rows updated

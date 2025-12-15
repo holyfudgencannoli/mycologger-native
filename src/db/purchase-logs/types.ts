@@ -1,11 +1,11 @@
 
-export type PurchaseLogType = 'raw_material' | 'bio_material' | 'consumable_item' | 'hardware_item'
+export type PurchaseLogType<T> = 'raw_material' | 'bio_material' | 'consumable_item' | 'hardware_item'
 
 
 export interface PurchaseLogData {
     id: number;
     item_id: number;
-    type: PurchaseLogType;
+    type: PurchaseLogType<string>;
     created_at: number;
     purchase_date: string;
     purchase_unit: string;

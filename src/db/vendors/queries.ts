@@ -24,7 +24,7 @@ export async function create(
 	last_updated: number
 ) {
   const result = await safeRun(db,
-    "INSERT INTO vendors (name, email, phone, address, contact_name, website, last_updated) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+    "INSERT INTO vendors (name, email, phone, address, contact_name, website, last_updated) VALUES (?, ?, ?, ?, ?, ?, ?)",
     [name, email, phone, address, contact_name, website, last_updated]
   );
 

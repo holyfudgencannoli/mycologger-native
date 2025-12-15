@@ -1,21 +1,18 @@
-import { StyleSheet, Text, View, ImageBackground, Button, Alert, ScrollView } from 'react-native';
+import { View } from 'react-native';
 import { ScreenPrimative } from "@components/screen-primative";
-import { ImageBG } from "@components/image-bg";
 import { useFocusEffect, useRoutePath } from "@react-navigation/native";
 import { useCallback, useContext, useState } from "react";
-import { Surface } from "react-native-paper";
-import { Picker } from "@react-native-picker/picker";
 import { useSQLiteContext } from "expo-sqlite";
-import CreateConsumableItemPurchase from "./purchase-log-form";
 import PurchaseLogForm from './purchase-log-form';
 import * as Item from '@db/items'
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Form from '@custom/react-native-forms/src'
-import { FormStateContext } from 'src/context/FormContext';
+import { BrandFormStateContext, FormStateContext, VendorFormStateContext } from 'src/context/FormContext';
 import { MyTabBar } from '@components/bottom-tabs';
 import { tabs } from './types';
 import { COLORS } from '@constants/colors';
 import { CaseHelper } from '@utils/case-helper';
+import { CONTAINER } from '@constants/styles';
 
 
 export default function NewPurchaseLog({ navigation, state }) {
@@ -27,18 +24,22 @@ export default function NewPurchaseLog({ navigation, state }) {
     const [brandNames, setBrandNames] = useState([])
     const db = useSQLiteContext();
     const path = useRoutePath();
-
+    const vendor = useContext(VendorFormStateContext)
+    
+    const {
+            brandName, setBrandName,
+            brandWebsite, setBrandWebsite
+        } = useContext(BrandFormStateContext)
+    
 
     const { 
+        item, setItem,
         id, setId,
         isNew, setIsNew,
         name, setName,
         category, setCategory,
         subcategory, setSubcategory,
         type, setType } = useContext(FormStateContext)
-
-
-
 
     const getItemNames = async() => {
         const TYPE = CaseHelper.toSnakeCase(decodeURIComponent(path.split('/')[2])).slice(0, -1)
@@ -54,12 +55,21 @@ export default function NewPurchaseLog({ navigation, state }) {
 				setName('')
 				setCategory('')
 				setSubcategory('')
+                setBrandName('')
+                setBrandWebsite('')
+                
+                vendor.setAddress('')
+                vendor.setContactName('')
+                vendor.setEmail('')
+                vendor.setName('')
+                vendor.setPhone('')
+                vendor.setWebsite('')
 			}
         }, [])
     )
 
     return(
-        <View style={styles.container}>
+        <View style={CONTAINER.FULL}>
             <ScreenPrimative edges={[]} scroll>
                 <View>
                         <LinearGradient
@@ -76,13 +86,16 @@ export default function NewPurchaseLog({ navigation, state }) {
                                     onValueChange={async(value: any) => {
                                         if (value.id === 999999) {
                                             setIsNew(true)
+                                            setItem(null)
                                             setName('')
                                             setCategory('')
                                             setSubcategory('')
                                             setFormVisible(true)
 
                                         } else {
-                                            setIsNew(false)
+                                            console.log(value)
+                                            setIsNew(false)                      
+                                            setItem(value)
                                             setId(value.id)
                                             setName(value.name)
                                             setCategory(value.email)
@@ -99,7 +112,7 @@ export default function NewPurchaseLog({ navigation, state }) {
                             <></>
                         }
                         </LinearGradient>
-                </View>                            
+                    </View>                            
                 </ScreenPrimative>
             <MyTabBar navigation={navigation} state={navigation.getState()} tabs={tabs} />
         </View>
@@ -107,7 +120,3 @@ export default function NewPurchaseLog({ navigation, state }) {
 
 }
 
-
-const styles = StyleSheet.create({
-    container: { flex: 1 }
-});

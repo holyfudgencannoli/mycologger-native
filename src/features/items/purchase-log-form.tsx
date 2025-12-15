@@ -1,7 +1,7 @@
 import { useState, useCallback, useContext } from "react"
 import { Surface,TextInput } from "react-native-paper";
 import { StyleSheet, Text, View, ImageBackground, Button, Alert } from 'react-native';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation, useRoutePath } from '@react-navigation/native';
 import { useEffect } from "react";
 import { uploadReceiptToCloudflare } from "../../services/UploadReceiptToCloudflare";
 // import UploadReceipt from "../UploadReceipt";
@@ -19,12 +19,15 @@ import * as Item from '@db/items'
 import { CaseHelper } from "@utils/case-helper";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { RootDrawerParamsList } from "@navigation/types";
-import { FormStateContext } from "src/context/FormContext";
+import { BrandFormStateContext, FormStateContext, VendorFormStateContext } from "src/context/FormContext";
 import saveImage from "@services/save-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { ReceiptUploader } from "@components/upload-receipt";
 import { saveReceiptWithSAF } from "@utils/database-utils";
 import { COLORS } from "@constants/colors";
+import { PurchaseLogType } from "@db/purchase-logs/types";
+import NewBrandForm from "@features/brands/new-brand-form";
+import NewVendorForm from "@features/vendors/new-vendor-form";
 
 type NavigationProps = DrawerNavigationProp<RootDrawerParamsList>
 
@@ -34,44 +37,40 @@ export default function PurchaseLogForm() {
     // const{ user, token } = useAuth();
     const db = useSQLiteContext();
     const navigation = useNavigation<NavigationProps>()
+    const path = useRoutePath();
 
     // const navigation = useNavigation();    
     const [items, setItems] = useState([])
-    const [formVisible, setFormVisible] = useState(false)
-    const [pickedImageUri, setPickedImageUri] = useState("")
-    const [brand, setBrand] = useState("")
     const [newBrand, setNewBrand] = useState(false)
-    const [purchaseQuantity, setPurchaseQuantity] = useState("")
-    const [purchaseUnit, setPurchaseUnit] = useState("")
-    const [inventoryQuantity, setInventoryQuantity] = useState("")
-    const [inventoryUnit, setInventoryUnit] = useState("")
-    const [cost, setCost] = useState("")
-    const [receiptPath, setReceiptPath] = useState("")
-    const [notes, setNotes] = useState("")
-
-    const [vendor, setVendor] = useState("")
 
     const [vendors, setVendors] = useState([])
     const [brands, setBrands] = useState([])
     const [newVendor, setNewVendor] = useState(false)
-    const [vendorPhone, setVendorPhone] = useState("")
-    const [vendorEmail, setVendorEmail] = useState("")
-    const [vendorWebsite, setVendorWebsite] = useState("")
 
-    const [image, setImage] = useState(null);
-    const [contentType, setContentType] = useState("")
-    
-    const [receiptMemo, setReceiptMemo] = useState("")
     
     const [purchaseDatetime, setPurchaseDatetime] = useState(new Date())
 
-    const { id } = useContext(FormStateContext)
-    const { isNew } = useContext(FormStateContext)
-    const { name, setName } = useContext(FormStateContext)
-    const { category, setCategory } = useContext(FormStateContext)
-    const { subcategory, setSubcategory } = useContext(FormStateContext)
-    const { vendorId, setVendorId } = useContext(FormStateContext);
-    const { brandId, setBrandId } = useContext(FormStateContext);
+    const { id,
+        image,
+        brand, setBrand,
+        vendor, setVendor,
+        item, setItem,
+        isNew,
+        name, setName,
+        category, setCategory,
+        subcategory, setSubcategory,
+        purchaseQuantity, setPurchaseQuantity,
+        purchaseUnit, setPurchaseUnit,
+        inventoryQuantity, setInventoryQuantity,
+        inventoryUnit, setInventoryUnit,
+        cost, setCost,
+        notes, setNotes,
+        vendorId, setVendorId,
+        brandId, setBrandId } = useContext(FormStateContext);
+
+    const brandState = useContext(BrandFormStateContext)
+
+    const vendorState = useContext(VendorFormStateContext)
 
   
     
@@ -83,59 +82,76 @@ export default function PurchaseLogForm() {
 
     async function getVendors() {
         const vendor_rows = await Vendor.readAll(db)
-        setVendors([...vendor_rows, {id: 999999, name: 'New Vendor'}])
+        setVendors([{id: 999999, name: 'New Vendor'}, ...vendor_rows])
         return vendor_rows
     }
 
     async function getBrands() {
         const brand_rows = await Brand.readAll(db)
-        setBrands([...brand_rows, {id: 999999, name: 'New Brand'}])
+        setBrands([{id: 999999, name: 'New Brand'}, ...brand_rows])
         return brand_rows
     }
 
-    useEffect(() => {
-        getVendors()
-        getBrands()
+    useFocusEffect(
+        useCallback(() => {
+            getData()
+            getVendors()
+            getBrands()
+            return() => {
+                setVendor(null)
+                setBrand(null)
+                setName('')
+				setCategory('')
+				setSubcategory('')
+                setPurchaseQuantity('')
+                setPurchaseUnit('')
+                setInventoryQuantity('')
+                setInventoryUnit('')
+                setCost('')
+                setNotes('')
+            }
 
-    }, [])
+        }, [])
+    )
 
     const handleSubmit = async () => {
         try {
+            
+            if (isNew) {
+                const itemNames: string[] = items.map((item) => item.name)
+                if (itemNames.includes(name)) {
+                    Alert.alert("Duplicate Item Creation", "Item Already Exists!")
+                    return
+                }
+            }
+            if (newBrand) {
+                const brandNames: string[] = brands.map((brand) => brand.name)
+                if (brandNames.includes(brandState.brandName)) {
+                    Alert.alert("Duplicate Brand Creation", "Brand Already Exists!")
+                    return
+                } 
+            }
+            if (newVendor) {
+                const vendorNames: string[] = vendors.map((vendor) => vendor.name)
+                if (vendorNames.includes(vendorState.name)) {
+                    Alert.alert("Duplicate Vendor Creation", "Vendor Already Exists!")
+                    return
+                } 
+            }
+
             if (!image) {
                 Alert.alert("Error", "Please select a receipt image");
                 return;
             }
-            // const { fileKey, publicUrl } = await uploadReceiptToCloudflare({
-            //     image,
-            //     token,
-            //     contentType
-            // })
 
-            // const payload = {
-            //     name: name,
-            //     category: category,
-            //     speciesLatin: speciesLatin,
-            //     brand: brand,
-            //     purchaseDate: purchaseDatetime,
-            //     purchaseQuantity: parseInt(purchaseQuantity),
-            //     purchaseUnit: purchaseUnit,
-            //     inventoryQuantity: parseInt(inventoryQuantity),
-            //     inventoryUnit: inventoryUnit,
-            //     cost: parseInt(cost),
-            //     vendor: vendor,
-            //     user: user,
-            //     filename: fileKey,
-            //     imageUrl: publicUrl,
-            //     receiptMemo: receiptMemo,
-            //     notes : notes,
-            //     vendorPhone: vendorPhone,
-            //     vendorEmail: vendorEmail,
-            //     vendorWebsite: vendorWebsite,
-            // }
-            
+
             const created_at = new Date().getTime();
             const item = await Item.getById(db, id)
-            const TYPE = 'hardware_item'
+            const TYPE = CaseHelper.toSnakeCase(decodeURIComponent(path.split('/')[2])).slice(0, -1)
+            console.log("Item.unit", item.inventory_unit)
+            console.log("Inventory", inventoryUnit)
+            console.log("Item.unit", item.inventory_unit)
+
             if (isNew) {
                 const itemId = await Item
                 .create(
@@ -153,24 +169,66 @@ export default function PurchaseLogForm() {
                     null
                 )
             } else {
+                let Amount: number;
+                let Unit: string;
+                if (item.inventory_unit === null) { 
+                    Amount = cnv.convertFromBase({
+                        value: 
+                            (cnv.convertToBase({ value: parseFloat(purchaseQuantity) * parseFloat(inventoryQuantity), from: inventoryUnit })),
+                        to: 
+                            inventoryUnit
+                    })
+                    Unit = inventoryUnit
+                    } else {
+                        Amount = cnv.convertFromBase({
+                            value: 
+                                cnv.convertToBase({ value: item.amount_on_hand, from: item.inventory_unit  }) 
+                                + (cnv.convertToBase({ value: parseFloat(purchaseQuantity) * parseFloat(inventoryQuantity), from: item.inventory_unit })),
+                            to: 
+                                item.inventory_unit
+                        })
+                        Unit = item.inventory_unit
+                }
+
                 const itemId = await Item
                 .update(
                     db,                
                     {
                         id, 
-                        amount_on_hand: 
-                            cnv.convertFromBase({
-                                value: 
-                                    cnv.convertToBase({ value: item.amount_on_hand, from: item.inventory_unit }) 
-                                    + (cnv.convertToBase({ value: parseFloat(purchaseQuantity), from: purchaseUnit })),
-                                to: 
-                                    item.inventory_unit
-                            }),
-                        last_updated:
-                            created_at
+                        amount_on_hand: Amount,
+                        inventory_unit: Unit,
+                        last_updated: created_at
                     }
 
                 )
+            }
+            let current_brand_id: number;
+            let current_vendor_id: number;
+            if (newBrand) {
+                const brandId = await Brand.create(
+                    db,
+                    brandState.brandName,
+                    brandState.brandWebsite,
+                    created_at
+                )
+                current_brand_id = brandId
+            } else {
+                current_brand_id = brand.id
+            }
+            if (newVendor) {
+                const vendorId = await Vendor.create(
+                    db,
+                    vendorState.name,
+                    vendorState.email,
+                    vendorState.phone,
+                    vendorState.address,
+                    vendorState.contactName,
+                    vendorState.website,
+                    created_at
+                )
+                current_vendor_id = vendorId
+            } else {
+                current_vendor_id = vendor.id
             }
             const savedPath = await saveReceiptWithSAF(image, `receipt_image_${created_at}`)
             console.log(savedPath)    
@@ -185,7 +243,7 @@ export default function PurchaseLogForm() {
                 inventoryUnit,
                 parseFloat(inventoryQuantity),
                 vendorId,
-                brandId,
+                current_brand_id,
                 savedPath,
                 parseFloat(cost)
             )
@@ -200,11 +258,18 @@ export default function PurchaseLogForm() {
 
     return (
         <>
+            {
+                isNew ?
+                <Form.Control labelStyle={styles.label} label='Item Name' name='name'>
+                    <Form.Input style={{ backgroundColor:'transparent', width: '100%' }} value={name} onChangeText={setName}  />
+                </Form.Control> :
+                <></>
+            }
             <Form.Control labelStyle={styles.label} label='Item Category' name='category'>
-                <Form.Input style={{ backgroundColor:'transparent', width: '100%' }} value={category} onChangeText={setCategory}  />
+                <Form.Input style={{ backgroundColor:'transparent', width: '100%' }} value={isNew ? category : item.category} onChangeText={isNew ? setCategory : null}  />
             </Form.Control>
             <Form.Control label='Item Subcategory' labelStyle={styles.label} name='subcategory'>
-                <Form.Input style={{ backgroundColor:'transparent', width: '100%' }} value={subcategory} onChangeText={setSubcategory}  />
+                <Form.Input style={{ backgroundColor:'transparent', width: '100%' }} value={isNew ? subcategory : item.subcategory} onChangeText={isNew ? setSubcategory : null}  />
             </Form.Control>
             <Form.Control name="brand" label="Brand" labelStyle={styles.label} >
                 <Form.Select
@@ -222,6 +287,11 @@ export default function PurchaseLogForm() {
                     options={brands}
                 />
             </Form.Control>
+            {
+                newBrand ? 
+                <NewBrandForm /> :
+                <></>
+            }
             <Form.Control labelStyle={styles.label} label="Purchase Quantity" name="purchase_quantity" >
                 <Form.Input
                     value={purchaseQuantity}
@@ -274,6 +344,11 @@ export default function PurchaseLogForm() {
                     options={vendors}
                 />
             </Form.Control>
+            {
+                newVendor ? 
+                <NewVendorForm /> :
+                <></>
+            }
             <Form.Control name="notes" label="Notes" labelStyle={styles.label}>
                 <Form.Input 
                     multiline
@@ -291,7 +366,7 @@ export default function PurchaseLogForm() {
                 <ReceiptUploader />
             </LinearGradient>
             <View style={{ marginTop: 84 }}>
-                <Button color={COLORS.button.primary} title='Submit' onPress={() => handleSubmit()} />
+                <Button color={COLORS.button.primary} title='Submit' onPress={handleSubmit} />
             </View>
         </>
     )
