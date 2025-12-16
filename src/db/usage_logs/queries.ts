@@ -13,12 +13,16 @@ const VALID_TYPES = new Set([
   // add more as needed
 ]);
      
-export function usageLogTable(type: string) {
-  if (!VALID_TYPES.has(type)) {
-    throw new Error(`Invalid type: ${type}`);
-  }
-  return `${type}_usage_logs`;
-}
+// export function usageLogTable(type: string) {
+//   if (!VALID_TYPES.has(type)) {
+//     throw new Error(`Invalid type: ${type}`);
+//   }
+//   if (type === 'recipe_batch') {
+//     return `${type}_usage_logs`;
+//   } else {
+//     return 'usage_logs'
+//   }
+// }
 
 
 
@@ -40,14 +44,13 @@ export async function create(
   return result.lastInsertRowId;
 }
 
-export async function readAll(db: SQLiteDatabase, type: string) {
+export async function readAll(db: SQLiteDatabase) {
   return await safeSelectAll(db, `SELECT * FROM usage_logs ORDER BY id ASC`);
 }
 
 export async function getById(
     db: SQLiteDatabase,
     id: number,
-    type: string,
 
 ) {
   return await safeSelectOne<{

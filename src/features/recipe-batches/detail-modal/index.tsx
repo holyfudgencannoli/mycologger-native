@@ -1,5 +1,7 @@
+import { ItemProps } from '@db/items/types';
+import { RecipeBatch } from '@db/recipe-batches/types';
 import { useFocusEffect } from '@react-navigation/native';
-import React, { useCallback, useState } from 'react';
+import React, { SetStateAction, useCallback, useState } from 'react';
 import { View, Modal, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
 
 interface RecipeData {
@@ -11,7 +13,7 @@ interface RecipeData {
 
 
 
-const RecipeBatchModal = ({ visible, setModalOpen, item}) => {
+const RecipeBatchModal = ({ visible, setModalOpen, item}: {visible: boolean, setModalOpen: React.Dispatch<SetStateAction<boolean>>, item: RecipeBatch}) => {
 
     const closeModal = () => {
         // Close the modal (e.g., using a parent component's state)
@@ -19,7 +21,7 @@ const RecipeBatchModal = ({ visible, setModalOpen, item}) => {
         console.log('Modal closed'); // Replace with your actual close logic
     };
 
-    const { name, real_amount, real_unit, loss, notes, recipe_id } = item
+    const { name,   real_volume, real_volume_unit, loss, notes, recipe_id,  } = item
     return (
         <View style={styles.modalContainer}>
             <Modal
@@ -30,9 +32,9 @@ const RecipeBatchModal = ({ visible, setModalOpen, item}) => {
             >
                 <View style={styles.modalContent}>
                     <Text>{name}</Text>
-                    <Text>Real Yield: {real_amount} {real_unit}</Text>
-                    <Text>Loss: {loss}</Text>
-                    <Text>Notes: {notes}</Text>
+                    <Text>Real Yield: {real_volume} {real_volume_unit}</Text>
+                    <Text>Loss: {loss} </Text>
+                    <Text>Notes: {notes ? notes: "No recorded notes"}</Text>
                     <TouchableOpacity style={styles.closeButton} onPress={closeModal}>
                         <Text style={styles.closeButtonText}>Close</Text>
                     </TouchableOpacity>

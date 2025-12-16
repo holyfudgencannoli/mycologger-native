@@ -1,5 +1,6 @@
 import { SQLiteDatabase, useSQLiteContext } from 'expo-sqlite'
 import * as Batch from '@db/recipe-batches/'
+import * as BatchLog from '@db/recipe-batch-inventory-logs/'
 import * as Recipe from '@db/recipes/'
 import * as Task from './queries'
 import * as Usage from '@db/usage_logs'
@@ -8,6 +9,9 @@ import * as Culture from '@db/cultures'
 import { ingredientProps, recipeProps } from '@db/recipes/types'
 import { Alert } from 'react-native'
 import { convertToBase } from '@utils/unitConversion'
+import * as cnv from '@utils/unitConversion'
+import { RecipeBatchInventoryLog } from '@db/recipe-batch-inventory-logs/types'
+
 
 export async function ExecuteRecipe(params: any, {
     db,
@@ -59,6 +63,18 @@ export async function ExecuteRecipe(params: any, {
             created_at
         )
         console.log("Recipe Batch ID: ", recipeBatchId)
+
+        const batchLogId = await BatchLog.create(
+                db,
+                recipeBatchId,
+                quantity * real_volume,
+                real_volume_unit,
+                0,
+                created_at
+            )
+
+        console.log("Recipe Batch Inventory Log ID: ", batchLogId)
+
         
         const recipe: recipeProps = await Recipe.getById(
             db, 
@@ -95,7 +111,6 @@ export async function ExecuteRecipe(params: any, {
                 ingredient.ingredientId
             )
             console.log("Raw Material Data: ", RM)
-
             const usageLogId = await Usage.create(
                 db,
                 RM.type,
@@ -106,7 +121,36 @@ export async function ExecuteRecipe(params: any, {
                 usage_notes, 
                 created_at 
             ) 
+            console.log('1234: ', RM.amount_on_hand)
+            console.log('1234: ', RM.inventory_unit)
+            console.log('1234: ', ingredient.amount)
+            console.log('1234: ', ingredient.unit)
+            let one = cnv.convertToBase({ value: RM.amount_on_hand, from: RM.inventory_unit  }) 
+            let two = quantity * cnv.convertToBase({ value: ingredient.amount, from: ingredient.unit })
+            console.log('1: ', one)
+            console.log('2: ', two)
+            
+            let Amount = cnv.convertFromBase({
+
+                value: 
+                    (one - two),
+                to: 
+                    RM.inventory_unit
+            })
+            let Unit = RM.inventory_unit
+
+            await Item.update(
+                db, 
+                {
+                    id: RM.id,
+                    amount_on_hand: Amount,
+                    inventory_unit: Unit,
+                    last_updated: created_at
+                    
+                })
+            
             console.log("Usage Log ID: ", usageLogId)
+            console.log(Amount)
             usageLogIds.push(usageLogId)   
         }
         return {batch_id: recipeBatchId, task_id: taskId, usage_log_ids: usageLogIds}
@@ -120,6 +164,8 @@ export async function ExecuteAgar(params: any, {
     recipe_batch_id,
     volume_amount,
     volume_unit,
+    usage_amount,
+    usage_unit,
     start_time,
     end_time,
     notes
@@ -130,6 +176,8 @@ export async function ExecuteAgar(params: any, {
     recipe_batch_id: number,
 	volume_amount: string,
 	volume_unit: string,
+    usage_amount: string,
+    usage_unit: string,
     start_time: number,
     end_time: number,
     notes: string
@@ -144,10 +192,11 @@ export async function ExecuteAgar(params: any, {
             }
 
             const recipe_batch = await Batch.getById(db, recipe_batch_id)
+            let batch_log: RecipeBatchInventoryLog = await BatchLog.getByBatchId(db, recipe_batch_id)
             let usage_log_ids = []
             let task_log_ids = []
     
-        const created_at = new Date().getTime()
+            const created_at = new Date().getTime()
             try {
                 for (let i=0; i<qty; i++) {
     
@@ -163,15 +212,48 @@ export async function ExecuteAgar(params: any, {
                     console.log('Using recipebatch ID:', recipe_batch_id);
     
                 }                
-                const use = convertToBase({value: quantity ? parseInt(quantity) * parseFloat(volume_amount) : parseFloat(volume_amount), from: volume_unit.toLowerCase()})
+                const use = quantity ? parseInt(quantity) * parseFloat(volume_amount) : parseFloat(volume_amount)
                 console.log(use)
                 
                 const taskId = await Task.create(db, recipe_batch.name, start_time, end_time, notes)
                 console.log(taskId)
                 task_log_ids.push(taskId)
                 
-                const usageId = await Usage.create(db, 'recipe_batch', recipe_batch.id, taskId, use, volume_unit, notes, new Date().getTime() )
-                usage_log_ids.push(usageId)
+            
+            const usageLogId = await Usage.create(
+                db,
+                'recipe_batch',
+                recipe_batch.id,
+                taskId,
+                parseFloat(usage_amount),
+                usage_unit?.toLowerCase() ?? "", 
+                notes, 
+                created_at 
+            ) 
+                let one = cnv.convertToBase({ value: batch_log.amount_on_hand, from: batch_log.inventory_unit })
+                let two = cnv.convertToBase({ value: parseFloat(usage_amount), from: usage_unit })
+                
+                let Amount = cnv.convertFromBase({
+
+                    value: 
+                        one - two,
+                    to: 
+                        batch_log.inventory_unit
+                })
+                let Unit = batch_log.inventory_unit
+
+                await BatchLog.update(
+                    db, 
+                    {
+                        id: batch_log.id,
+                        amount_on_hand: Amount,
+                        inventory_unit: Unit,
+                        last_updated: created_at
+                        
+                    })
+                
+                console.log("Usage Log ID: ", usageLogId)
+                usage_log_ids.push(usageLogId)
             } catch (error) {
                 console.error('Failed to create cultures:', error);
                 Alert.alert('Error', 'Failed to create one or more cultures. Please try again.');

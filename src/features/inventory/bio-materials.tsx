@@ -130,7 +130,6 @@ const styles = StyleSheet.create({
   },
   surfaceMetaContainer: {
     backgroundColor: "rgba(55,255,55,0.4)",
-    width: 350
   },
   label: {
     fontSize: 18,

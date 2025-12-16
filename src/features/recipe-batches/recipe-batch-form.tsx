@@ -1,7 +1,7 @@
-import { Button, StyleSheet, Text } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { Surface, TextInput } from "react-native-paper";
 import { useTheme } from "../../hooks/useTheme";
-import { useCallback, useEffect, useState, useMemo } from "react";
+import { useCallback, useEffect, useState, useMemo, useContext } from "react";
 import { RouteProp, useFocusEffect, useNavigation } from "@react-navigation/native";
 import { Picker } from "@react-native-picker/picker";
 import { useSQLiteContext } from "expo-sqlite";
@@ -18,6 +18,10 @@ import { useRoute } from "@react-navigation/native";
 
 import * as Form from "@custom/react-native-forms/src";
 import { NavigationProps } from "@navigation/types";
+import { ScreenPrimative } from "@components/screen-primative";
+import { COLORS } from "@constants/colors";
+import Button from "@components/button";
+import { RecipeBatchFormStateContext } from "src/context/FormContext";
 
 
 export type RootStackParamList = {
@@ -36,18 +40,19 @@ export default function RecipeBatchForm({ setUnsaved }: { setUnsaved: (value: bo
   const [recipes, setRecipes] = useState<recipeProps[]>([]);
   const [recipe, setRecipe] = useState<recipeProps | null>(null);
 
-  const [recipeId, setRecipeId] = useState(0);
-  const [name, setName] = useState("");
+  const {
+		recipeId, setRecipeId,
+		name, setName,
 
-  const [quantity, setQuantity] = useState("");
-  const [realWeightAmount, setRealWeightAmount] = useState("");
-  const [realWeightUnit, setRealWeightUnit] = useState("");
+		quantity, setQuantity,
+		realWeightAmount, setRealWeightAmount,
+		realWeightUnit, setRealWeightUnit,
 
-  const [realVolume, setRealVolume] = useState("");
-  const [realVolumeUnit, setRealVolumeUnit] = useState("");
+		realVolume, setRealVolume,
+		realVolumeUnit, setRealVolumeUnit,
 
-  const [loss, setLoss] = useState("");
-  const [notes, setNotes] = useState("");
+		loss, setLoss,
+		notes, setNotes} = useContext(RecipeBatchFormStateContext)
 
   // ------------ Fetch recipes on screen focus ------------
   const loadRecipes = async () => {
@@ -143,12 +148,11 @@ export default function RecipeBatchForm({ setUnsaved }: { setUnsaved: (value: bo
   // -----------------------------------------------------------------------
 
   return (
-    <Surface style={styles.surfaceMetaContainer}>
-      <Surface style={styles.surfaceContainer}>
-        <Text style={theme.formTitle}>New Batch</Text>
-        <Text style={theme.formTitle}>From Recipe</Text>
-      </Surface>
-
+    <ScreenPrimative edges={[]} scroll style={styles.surfaceMetaContainer}>
+      <View style={styles.surfaceContainer}>
+        <Text style={theme.formTitle}>New Batch From Recipe</Text>
+      </View>
+    
       <Form.Control
           name="recipeId">
         <Form.Select 
@@ -172,20 +176,20 @@ export default function RecipeBatchForm({ setUnsaved }: { setUnsaved: (value: bo
       <Form.Control name="recipeQuantity">
         <Form.Input />
       </Form.Control>
-        <Surface style={styles.surface}>
+        <View style={styles.surface}>
           <TextInput
             label="Quantity of Recipe"
             value={quantity}
             onChangeText={setQuantity}
             mode="outlined"
           />
-        </Surface>
+        </View>
 
         {/* Real Weight + Volume */}
-        <Surface style={styles.surfaceContainer}>
-          <Surface style={styles.surface}>
+        <View style={styles.surfaceContainer}>
+          <View style={styles.surface}>
             <Text style={styles.subtitle}>Real Yield</Text>
-          </Surface>
+          </View>
 
           {recipe.yield_unit == typeof WEIGHT_UNITS ? 
           <>
@@ -251,34 +255,32 @@ export default function RecipeBatchForm({ setUnsaved }: { setUnsaved: (value: bo
             </Form.Control>
           </>
           }
-        </Surface>
+        </View>
 
         {/* Loss */}
-        <Surface style={styles.surface}>
+        <View style={styles.surface}>
           <TextInput
             label="Loss"
             value={loss}
             mode="outlined"
             disabled
-            style={{ flex: 1 }}
           />
-        </Surface>
+        </View>
 
         {/* Notes */}
-        <Surface style={styles.surface}>
+        <View style={styles.surface}>
           <TextInput
             label="Batch Notes"
             value={notes}
             onChangeText={setNotes}
             mode="outlined"
-            style={{ flex: 1 }}
           />
-        </Surface>
-        <Button title="Submit" color="#000" onPress={handleSubmit} />
+        </View>
+        <Button viewStyle={{ margin: 36 }} title="Submit" color={COLORS.button.primary} onPress={handleSubmit} />
       </>:
       <></>
       }
-      </Surface>
+      </ScreenPrimative>
     
 
   );
@@ -299,14 +301,11 @@ const styles = StyleSheet.create({
   },
   surface: {
     padding: 16,
-    backgroundColor: "rgba(0,0,0,0.5)"
   },
   surfaceContainer: {
     padding: 16,
-    backgroundColor: "rgba(56,185,255,0.3)"
   },
   surfaceMetaContainer: {
-    backgroundColor: "rgba(55,255,55,0.4)",
     width: 350,
     margin: "auto",
     marginTop: 16,

@@ -32,7 +32,7 @@ export const DetailModal = ({ visible, setModalOpen, item}) => {
             setPurchaseLogs(item? item.purchase_logs : [])
         }, [])
     )
-
+    const item_object = item
     return (
         <View style={styles.modalContainer}>
             <Modal
@@ -49,8 +49,8 @@ export const DetailModal = ({ visible, setModalOpen, item}) => {
                         renderItem={({ item }) => (
                             <View style={styles.logItem}>
                                 <Text>{item.date}</Text>
-                                <Text>{item.supplier}</Text>
-                                <Text>{item.material}</Text>
+                                <Text>{item_object.name}</Text>
+                                <Text>{item.na}</Text>
                                 <Text>${item.price.toFixed(2)}</Text>
                                 {item.notes && <Text>{item.notes}</Text>}
                             </View>

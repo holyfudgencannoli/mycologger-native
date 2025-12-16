@@ -1,9 +1,32 @@
 import { createContext, useState } from "react";
-import { FormState, NewBrandFormState, NewVendorFormState } from "./FormState";
+import { FormState, NewBrandFormState, NewVendorFormState, RecipeBatchFormState } from "./FormState";
     import { Item } from "@db/items/types";
     import { VendorType } from "@db/vendors";
     import Brand from "@features/brands/type";
     import React from "react";
+
+
+export const RecipeBatchFormStateContext = createContext<RecipeBatchFormState>({
+    recipeId: 0, 
+    setRecipeId: (int: number) => {},
+    name: "", 
+    setName: (text: string) => {},
+    quantity: "", 
+    setQuantity: (text: string) => {},
+    realWeightAmount: "", 
+    setRealWeightAmount: (text: string) => {},
+    realWeightUnit: "", 
+    setRealWeightUnit: (text: string) => {},
+    realVolume: "", 
+    setRealVolume: (text: string) => {},
+    realVolumeUnit: "", 
+    setRealVolumeUnit: (text: string) => {},
+    loss: "", 
+    setLoss: (text: string) => {},
+    notes: "", 
+    setNotes: (text: string) => {},
+
+});
 
 
 export const FormStateContext = createContext<FormState>({

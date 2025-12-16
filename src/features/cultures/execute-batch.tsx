@@ -40,6 +40,8 @@ export default function ExecuteBatch({}) {
     const [volumeUnit, setVolumeUnit] = useState("")
     const [notes, setNotes] = useState("")
     const [quantity, setQuantity] = useState("")
+    const [usageAmount, setUsageAmount] = useState("")
+    const [usageUnit, setUsageUnit] = useState("")
     const [recipeBatches, setRecipeBatches] = useState<formattedRecipe[]>([])
     const { selectedRecipeBatchId, setSelectedRecipeBatchId } =useContext(FormStateContext)
     const { selectedRecipeBatchName, setSelectedRecipeBatchName } =useContext(FormStateContext)
@@ -59,6 +61,7 @@ export default function ExecuteBatch({}) {
     };
 
     const handleExecute = async () => {
+        // const type = CaseHelper.toSnakeCase(decodeURIComponent(path.split('/')[3])).split('?')[0].slice(4)
         await Task.ExecuteAgar({ db }, {
             db,
             quantity,
@@ -66,6 +69,8 @@ export default function ExecuteBatch({}) {
             recipe_batch_id: selectedRecipeBatchId,
             volume_amount: volume,
             volume_unit: volumeUnit,
+            usage_amount: usageAmount,
+            usage_unit: usageUnit,
             start_time: startTime,
             end_time: endTime,
             notes
@@ -116,6 +121,7 @@ export default function ExecuteBatch({}) {
         useCallback(() => {
             getRecipeBatchData()
             console.log(recipeBatches)
+            console.log(type)
             return () => {
                 // setSelectedRecipeId(null);
                 setVolume('');
@@ -168,6 +174,23 @@ export default function ExecuteBatch({}) {
                             value={quantity}
                             onChangeText={setQuantity} 
                             style={{ width: '100%', textAlign: 'center', backgroundColor: 'transparent', color: 'white' }}
+                        />
+                    </Form.Control>
+                    
+                    <Form.Control labelStyle={styles.label} label="Total Usage" name="usage" >
+                        <Form.Input
+                            value={usageAmount}
+                            onChangeText={setUsageAmount} 
+                            style={{ width: '50%', textAlign: 'center', backgroundColor: 'transparent', color: 'white' }}
+                        />
+                        
+                        <Form.Select
+                            style={{ width: '50%', backgroundColor: 'transparent' }} 
+                            options={[...INV_UNITS]}
+                            onValueChange={(value: any) => {
+                                setUsageUnit(value.value)
+                                console.log(value.value)
+                            }}
                         />
                     </Form.Control>
                     <Button title="Submit" viewStyle={{ marginTop: 72, }} color={COLORS.button.primary} onPress={handleExecute}/>

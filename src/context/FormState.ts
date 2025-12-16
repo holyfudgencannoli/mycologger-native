@@ -1,7 +1,30 @@
 import { Item } from "@db/items/types";
 import { VendorType } from "@db/vendors";
 import Brand from "@features/brands/type";
-import React from "react";
+import React, { SetStateAction } from "react";
+
+export interface RecipeBatchFormState { 
+    recipeId: number,
+    setRecipeId: React.Dispatch<SetStateAction<number>>,
+    name: string,
+    setName: React.Dispatch<SetStateAction<string>>,
+    quantity: string,
+    setQuantity: React.Dispatch<SetStateAction<string>>,
+    realWeightAmount: string,
+    setRealWeightAmount: React.Dispatch<SetStateAction<string>>,
+    realWeightUnit: string,
+    setRealWeightUnit: React.Dispatch<SetStateAction<string>>,
+    realVolume: string,
+    setRealVolume: React.Dispatch<SetStateAction<string>>,
+    realVolumeUnit: string,
+    setRealVolumeUnit: React.Dispatch<SetStateAction<string>>,
+    loss: string,
+    setLoss: React.Dispatch<SetStateAction<string>>,
+    notes: string,
+    setNotes: React.Dispatch<SetStateAction<string>>,
+
+}
+
 
 export interface FormState {
         type: string,

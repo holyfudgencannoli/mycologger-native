@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { BrandFormStateContext, FormStateContext, VendorFormStateContext } from "./FormContext";
+import { BrandFormStateContext, FormStateContext, RecipeBatchFormStateContext, VendorFormStateContext } from "./FormContext";
 import { FormState, NewBrandFormState, NewVendorFormState } from "./FormState";
 import { VendorType } from "@db/vendors";
 
@@ -134,11 +134,44 @@ export function FormStateProvider({ children }) {
     return (
         <VendorFormStateProvider>
             <BrandFormStateProvider>
-                <FormStateContext.Provider value={value}>
-                    {children}
-                </FormStateContext.Provider>    
+                <RecipeBatchFormStateProvider>
+                    <FormStateContext.Provider value={value}>
+                        {children}
+                    </FormStateContext.Provider>    
+                </RecipeBatchFormStateProvider>
             </BrandFormStateProvider>
         </VendorFormStateProvider>
 
     );
 }
+
+export function RecipeBatchFormStateProvider({ children }) {
+    const [recipeId, setRecipeId] = useState(0);
+    const [name, setName] = useState("");
+    const [quantity, setQuantity] = useState("");
+    const [realWeightAmount, setRealWeightAmount] = useState("");
+    const [realWeightUnit, setRealWeightUnit] = useState("");
+    const [realVolume, setRealVolume] = useState("");
+    const [realVolumeUnit, setRealVolumeUnit] = useState("");
+    const [loss, setLoss] = useState("");
+    const [notes, setNotes] = useState("");
+
+    const value = {
+        recipeId, setRecipeId,
+        name, setName,
+        quantity, setQuantity,
+        realWeightAmount, setRealWeightAmount,
+        realWeightUnit, setRealWeightUnit,
+        realVolume, setRealVolume,
+        realVolumeUnit, setRealVolumeUnit,
+        loss, setLoss,
+        notes, setNotes
+    }
+
+    return(
+        <RecipeBatchFormStateContext.Provider value={value}>
+            {children}
+        </RecipeBatchFormStateContext.Provider>
+)}
+
+

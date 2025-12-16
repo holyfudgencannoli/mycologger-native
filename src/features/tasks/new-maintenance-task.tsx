@@ -15,7 +15,7 @@ import { ScrollView } from "react-native-gesture-handler";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Form from '@custom/react-native-forms/src'
 import Button from "@components/button";
-import { COLORS, Colors } from "@constants/colors";
+import { COLORS } from "@constants/colors";
 
 
 type NavigationProps = DrawerNavigationProp<RootDrawerParamsList>

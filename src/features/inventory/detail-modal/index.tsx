@@ -1,7 +1,7 @@
 // import Item from '@features/raw-materials/types/raw-material';
 import { NavigationProp, RouteProp, useFocusEffect, useNavigation, useRoutePath } from '@react-navigation/native';
 import React, { useCallback, useState } from 'react';
-import { View, Modal, Text, StyleSheet, TouchableOpacity, FlatList, Alert } from 'react-native';
+import { View, Modal, Text, StyleSheet, TouchableOpacity, FlatList, Alert, Image, Dimensions } from 'react-native';
 import * as Item from '@db/items'
 import * as PurchLogs from '@db/purchase-logs'
 import * as Vendor from '@db/vendors'
@@ -43,6 +43,7 @@ export const PurchaseLogsModal = ({ visible, setModalOpen, item}: {visible: bool
             vendorAddedLogs.push({ item: {...item}, log: {...current}, vendor: {...vendor}})
         }
         setPurchaseLogs(vendorAddedLogs)
+        console.log(vendorAddedLogs)
 
     }
 
@@ -100,6 +101,7 @@ export const PurchaseLogsModal = ({ visible, setModalOpen, item}: {visible: bool
                 { cancelable: true }
             );
         };
+            const size = Dimensions.get("window").width / 3.5;
             
             
 
@@ -107,6 +109,7 @@ export const PurchaseLogsModal = ({ visible, setModalOpen, item}: {visible: bool
         <View style={styles.modalContainer} >
 
             <Modal
+                style={{ height: 'auto' }}
                 transparent={true}
                 animationType="slide"
                 onRequestClose={() => {}} // Handle outside tap to close modal
@@ -117,15 +120,15 @@ export const PurchaseLogsModal = ({ visible, setModalOpen, item}: {visible: bool
                     start={{ x: 0, y: 0 }}
                     end={{ x: 0.3, y: 0.9 }}
                     colors={['#f4F8', '#00fc', '#0578']}
-                    style={{ marginRight: 'auto', marginLeft: 'auto', marginTop: '20%', padding: 16, borderRadius: 4, height: '25%', width: '72%', justifyContent: 'center', alignItems: 'center' }}
+                    style={{ marginRight: 'auto', marginLeft: 'auto', marginTop: '20%', padding: 16, borderRadius: 4, height: 'auto', width: '72%', justifyContent: 'center', alignItems: 'center' }}
                 >
                     <View style={{ marginBottom: 'auto', marginRight: 'auto' }}>
                         <Text style={styles.headerText}>Purchase Logs</Text>
                         <Text style={styles.subheaderText}>Purchase logs will appear below</Text>
                     
-                    {purchaseLogs.map((item) => {
+                    {purchaseLogs.map((item, index) => {
                         return(
-                            <View style={styles.logItem}>
+                            <View key={index} style={styles.logItem}>
                                 <View style={styles.logItemContent}>
                                     <Text style={styles.text}>{new Date(item.log.purchase_date).toLocaleDateString('en-GB',{
                                         month: 'short',
@@ -133,18 +136,28 @@ export const PurchaseLogsModal = ({ visible, setModalOpen, item}: {visible: bool
                                         year: 'numeric'
                                     })}</Text>
                                     <Text style={styles.text}>{new Date(item ? item.log.purchase_date : null).toLocaleTimeString()}</Text>
-                                    <Text style={styles.text}>{item? item.vendor.name : null}</Text>
+                                    <Text style={styles.text}>as of {item? new Date(item.item.last_updated).toLocaleDateString('en-gb', {
+                                        month: 'short',
+                                        day: 'numeric',
+                                        year: '2-digit'
+                                    }) : null}</Text>
                                     <Text style={styles.text}>{item? item.item.name : null}</Text>
                                     {/* <Text style={styles.text}>${item? item.log.cost.toFixed(2) : null}</Text> */}
                                     {/* {item.log.notes && <Text>{item.log.notes}</Text>} */}
-
+                                    <Button
+                                        viewStyle={{  }}
+                                        title="Delete"
+                                        color="#d32f2f"          // red – feel free to change
+                                        onPress={() => handleDelete(item.log.id, item.item.type)}
+                                    />
                                 </View>
-                                <Button
-                                    viewStyle={{ margin: 'auto' }}
-                                    title="Delete"
-                                    color="#d32f2f"          // red – feel free to change
-                                    onPress={() => handleDelete(item.log.id, item.item.type)}
-                                />
+                                <View style={ styles.imageContainer }>
+                                    <Image 
+                                        style={{ width: size, height: size }}
+                                        source={{ uri: item.log.receipt_uri }}
+                                    />
+                                </View>
+                                
                             </View>
                         )}
                     )}
@@ -160,7 +173,6 @@ export const PurchaseLogsModal = ({ visible, setModalOpen, item}: {visible: bool
 
 const styles = StyleSheet.create({
     modalContainer: {
-        flex: 1, // Take up full screen space
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -194,7 +206,7 @@ const styles = StyleSheet.create({
     logItem: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        paddingVertical: 8,
+        paddingVertical: 16,
         // borderBottomWidth: 1,
         // borderBottomColor: '#ccc',
     },
@@ -207,11 +219,16 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: 16
     },
+    imageContainer: {
+        padding: 16,
+        justifyContent: 'flex-end'
+    },
     closeButton: {
         backgroundColor: 'red',
         borderRadius: 5,
         paddingHorizontal: 10,
         paddingVertical: 5,
+        marginTop: 35
     },
     closeButtonText: {
         color: 'white',

@@ -9,6 +9,8 @@ import { PurchaseLogsModal } from "./detail-modal";
 import { useSQLiteContext } from "expo-sqlite";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Item from '@db/items'
+import * as Usage from '@db/usage_logs'
+import { ItemProps } from "@db/items/types";
 
 export default function ItemerialInventory() {
   const db = useSQLiteContext();
@@ -58,7 +60,7 @@ export default function ItemerialInventory() {
     { key: "amount_on_hand", title: "Amount On Hand", unit: "inventory_unit" }
   ];
 
-  const openModal = (item) => {
+  const openModal = (item: ItemProps) => {
     setCurrentItem(item);
     setModalOpen(true);
   };

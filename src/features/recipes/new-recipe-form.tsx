@@ -46,11 +46,7 @@ export default function CreateRecipe({ setUnsaved }: { setUnsaved: (value: boole
         const ingredient = {
             'ingredientName': name,
             'ingredientId': ingredientId,
-            'amount': cnv
-                .convertToBase({
-                    value: (parseFloat(amount)),
-                    from: unit.toLowerCase(),
-                }),
+            'amount': parseFloat(amount),
             'unit': unit 
         }
         console.log(ingredient)
@@ -222,12 +218,7 @@ export default function CreateRecipe({ setUnsaved }: { setUnsaved: (value: boole
                             console.log(ingredient, index)
                             return(
                                 <Text key={index} style={styles.subtitle}>
-                                    {ingredient.ingredientName} — {
-                                        cnv.convertFromBase({
-                                            value: ingredient.amount,
-                                            to: ingredient.unit.toLowerCase()
-                                        })
-                                    } {ingredient.unit}
+                                    {ingredient.ingredientName} — {ingredient.amount} {ingredient.unit}
                                 </Text>
                             )
                             

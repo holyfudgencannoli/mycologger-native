@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useNavigation, usePreventRemove } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import { COLORS } from "@constants/colors";
+import { ScrollView } from "react-native-gesture-handler";
 
 export default function ExecuteRecipeBatch() {    
     const [unsaved, setUnsaved] = useState(false)
@@ -40,7 +41,6 @@ export default function ExecuteRecipeBatch() {
 
 
     return(
-      <ScreenPrimative edges={[]}>
         <View style={styles.container}>	
           <LinearGradient
             start={{ x: 0, y: 0 }}
@@ -51,14 +51,13 @@ export default function ExecuteRecipeBatch() {
             <CreateRecipeBatch setUnsaved={setUnsaved} />
           </LinearGradient>
         </View>
-      </ScreenPrimative>
     )
 }
 
 
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: "center", alignItems: "center", },
+  container: { flex: 1, justifyContent: "center"},
   text: { fontSize: 20, marginBottom: 20 },
   form: {
     backgroundColor: 'rgba(0, 17, 255, 0.3)',

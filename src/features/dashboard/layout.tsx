@@ -12,14 +12,14 @@ export default function Dashboard({ navigation }) {
 	return(
 		<ScreenPrimative edges={[]}>
 			<View style={styles.container}>
-        <LinearGradient 
-          start={{ x: 0, y: 0 }}
-          end={{ x: 0.3, y: 0.9 }}
-          colors={COLORS.BACKGROUND_GRADIENT.PRIMARY}
-          style={{ flex: 1 }}
-        >
-            <GalleryScreen navigation={navigation} />
-        </LinearGradient>  
+                <LinearGradient 
+                start={{ x: 0, y: 0 }}
+                end={{ x: 0.3, y: 0.9 }}
+                colors={COLORS.BACKGROUND_GRADIENT.PRIMARY}
+                style={{ flex: 1 }}
+                >
+                    <GalleryScreen navigation={navigation} />
+                </LinearGradient>  
 			</View>
 		</ScreenPrimative>      
 	)

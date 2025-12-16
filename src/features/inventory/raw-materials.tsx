@@ -102,6 +102,10 @@ export default function ItemerialInventory({ navigation, state }) {
               )}
               </Form.Control>
             </Surface>
+          </Surface>
+        </LinearGradient>
+      </View>
+
             {modalOpen && (
               <PurchaseLogsModal
                 visible={modalOpen}
@@ -109,9 +113,6 @@ export default function ItemerialInventory({ navigation, state }) {
                 item={currentItem}
               />
             )}
-          </Surface>
-        </LinearGradient>
-      </View>
       <MyTabBar navigation={navigation} state={navigation.getState()} tabs={tabs}/>
       
     </ScreenPrimative>
@@ -119,14 +120,13 @@ export default function ItemerialInventory({ navigation, state }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
+  container: { flex: 1, justifyContent: 'center', } ,
   surfaceContainer: {
     padding: 16,
     backgroundColor: "rgba(56,185,255,0.3)"
   },
   surfaceMetaContainer: {
     backgroundColor: "rgba(55,255,55,0.4)",
-    width: 350
   },
   label: {
     fontSize: 18,

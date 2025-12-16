@@ -10,7 +10,7 @@ export default function Button({
 }: {
     title: string,
     onPress: () => void, 
-    viewStyle?: FlexStyle, 
+    viewStyle?: FlexStyle | ViewStyle, 
     color?: ColorValue
 }){
     return(
