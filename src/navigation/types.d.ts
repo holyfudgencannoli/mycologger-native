@@ -10,6 +10,7 @@ export type RootDrawerParamsList = {
     'Cultures': undefined,
     'Tasks': {params: [{ startTime: any, endTime: any }]},
     'Inventory': undefined,
+    'Usage': undefined,
     'DB Management': undefined
 }
 
@@ -18,10 +19,26 @@ export type InventoryItemParamList = {
   "New Purchase Log": undefined;
 };
 
+export type InventoryParamList = {
+  "Raw Materials": undefined;
+  "Bio Materials": undefined;
+  "Supplies": undefined;
+  "Hardware": undefined;
+};
+
+
+export type UsageParamList = {
+  "Raw Materials": undefined;
+  "Bio Materials": undefined;
+  "Supplies": undefined;
+  "Recipe Batches": undefined;
+};
+
 export type RecipeParamList = {
   "New Recipe": undefined;
-  "Recipes": undefined;
+  "Recipe List": undefined;
   "Batches": undefined;
+  "Batch Inventory": undefined;
 };
 
 

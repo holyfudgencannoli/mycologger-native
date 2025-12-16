@@ -1,50 +1,64 @@
 import { useState, useCallback } from "react";
-import { Modal, Surface } from "react-native-paper";
 import { StyleSheet, View } from "react-native";
-import { useTheme } from "../../hooks/useTheme";
-import { useFocusEffect } from "@react-navigation/native";
+import { Surface } from "react-native-paper";
+import { useFocusEffect, useRoutePath } from "@react-navigation/native";
 import { ScrollableDataTable } from "@components/scrollable-data-table";
 import { ScreenPrimative } from "@components/screen-primative";
 import { PurchaseLogsModal } from "./detail-modal";
 import { useSQLiteContext } from "expo-sqlite";
 import { LinearGradient } from "expo-linear-gradient";
-import * as Item from '@db/items'
-import * as Usage from '@db/usage_logs'
+import * as Item from '@db/items';
+import * as Usage from '@db/usage_logs';
 import { ItemProps } from "@db/items/types";
+import { CaseHelper } from "@utils/case-helper";
+import { MyTabBar } from "@components/bottom-tabs";
+import { tabs } from "./types";
+import * as BatchLog from '@db/recipe-batches';
+import * as BatchInventory from '@db/recipe-batch-inventory-logs';
 
-export default function ItemerialInventory() {
+export default function RawMaterialUsage({ navigation }) {
   const db = useSQLiteContext();
-  const [Items, setItems] = useState([]);
   const [inventoryLogs, setInventoryLogs] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
-  const [currentItem, setCurrentItem] = useState(null);
-
-  const cleanRow = (row) => {
-    if (!row) return null;
-
-    const safeRow = {};
-
-    for (const key of Object.keys(row)) {
-      const val = row[key];
-
-      if (val === undefined) safeRow[key] = null;
-      else if (typeof val === "object") safeRow[key] = JSON.stringify(val);
-      else safeRow[key] = val;
-    }
-    return safeRow;
-  };
+  const [currentItem, setCurrentItem] = useState<ItemProps | null>(null);
+  const path = useRoutePath();
 
   const getRMData = async () => {
     try {
-      const rmData = await Item.getAllByType(db, 'raw_material');
-      setItems(rmData);
-      setInventoryLogs(rmData);
+      const TYPE = CaseHelper.toSnakeCase(decodeURIComponent(path.split('/')[3]).slice(0, -1));
+      let true_type: string;
+      let itemData: any[] = [];
+      let data: any[] = [];
+      let fullData: any[] = [];
 
-      const itemIds = rmData.map((d) => d.id);
+      if (TYPE === 'recipe_batche') {
+        true_type = 'recipe_batch';
+        itemData = (await BatchLog.readAll(db)) ?? [];
+        data = (await Usage.readAll(db)) ?? [];
+      } else if (TYPE === 'supplie') {
+        true_type = 'consumable_item';
+        itemData = (await Item.getAllByType(db, true_type)) ?? [];
+        data = (await Usage.getByType(db, true_type)) ?? [];
+      } else {
+        true_type = TYPE;
+        itemData = (await Item.getAllByType(db, true_type)) ?? [];
+        data = (await Usage.getByType(db, true_type)) ?? [];
+      }
 
-      return itemIds
+      // Safely merge usage & item data
+      fullData = data.map((datum, index) => {
+        const usage = { ...datum };
+        const item = itemData[index] ? { ...itemData[index] } : {};
+        return { ...usage, ...item };
+      });
+
+      setInventoryLogs(fullData);
+      console.log("Inventory Logs:", fullData);
+
+      return fullData.map((d) => d.id);
     } catch (err) {
       console.error("Inventory loading error:", err);
+      return [];
     }
   };
 
@@ -54,11 +68,18 @@ export default function ItemerialInventory() {
     }, [])
   );
 
-  const columns = [
-    { key: "name", title: "Item Name" },
-    { key: "category", title: "Category" },
-    { key: "amount_on_hand", title: "Amount On Hand", unit: "inventory_unit" }
-  ];
+  const TYPE = CaseHelper.toSnakeCase(decodeURIComponent(path.split('/')[3]).slice(0, -1));
+  const columns =
+    TYPE === 'recipe_batche'
+      ? [
+          { key: "name", title: "Item Name" },
+          { key: "total_usage", title: "Total Usage", unit: "usage_unit" },
+        ]
+      : [
+        
+          { key: "name", title: "Item Used" },
+          { key: "total_usage", title: "Total Usage", unit: "usage_unit" },
+      ];
 
   const openModal = (item: ItemProps) => {
     setCurrentItem(item);
@@ -66,62 +87,64 @@ export default function ItemerialInventory() {
   };
 
   return (
-    <ScreenPrimative edges={[]}>
-      <View style={styles.container}>
-        <LinearGradient
-          start={{ x: 0, y: 0 }}
-          end={{ x: 0.3, y: 0.9 }}
-          colors={["#94F8", "#00f", "#057"]}
-          style={{ flex: 1, padding: 16 }}
-        >
-          <Surface style={styles.surfaceMetaContainer}>
-            <Surface style={styles.surfaceContainer}>
-              {inventoryLogs.length > 0 && (
-                <>
-                  <ScrollableDataTable
-                    data={inventoryLogs}
-                    columns={columns}
-                    headerTextStyle={{
-                      textAlign: "center",
-                      color: "rgba(255,255,255,0.7)",
-                      textShadowColor: "blue",
-                      textShadowRadius: 4
-                    }}
-                    cellTextStyle={{
-                      textAlign: "center",
-                      color: "white",
-                      textShadowColor: "black",
-                      textShadowRadius: 4
-                    }}
-                    headerStyle={{ backgroundColor: "rgba(255,55,55,0.7)" }}
-                    onRowPress={openModal}
-                  />
-
-                  {modalOpen && (
-                    <PurchaseLogsModal
-                      visible={modalOpen}
-                      setModalOpen={setModalOpen}
-                      item={currentItem}
+    <>
+      <ScreenPrimative edges={[]}>
+        <View style={styles.container}>
+          <LinearGradient
+            start={{ x: 0, y: 0 }}
+            end={{ x: 0.3, y: 0.9 }}
+            colors={["#94F8", "#00f", "#057"]}
+            style={{ flex: 1, padding: 16 }}
+          >
+            <Surface style={styles.surfaceMetaContainer}>
+              <Surface style={styles.surfaceContainer}>
+                {inventoryLogs.length > 0 && (
+                  <>
+                    <ScrollableDataTable
+                      data={inventoryLogs}
+                      columns={columns}
+                      headerTextStyle={{
+                        textAlign: "center",
+                        color: "rgba(255,255,255,0.7)",
+                        textShadowColor: "blue",
+                        textShadowRadius: 4,
+                      }}
+                      cellTextStyle={{
+                        textAlign: "center",
+                        color: "white",
+                        textShadowColor: "black",
+                        textShadowRadius: 4,
+                      }}
+                      headerStyle={{ backgroundColor: "rgba(255,55,55,0.7)" }}
+                      onRowPress={openModal}
                     />
-                  )}
-                </>
-              )}
+                    {modalOpen && currentItem && (
+                      <PurchaseLogsModal
+                        visible={modalOpen}
+                        setModalOpen={setModalOpen}
+                        item={currentItem}
+                      />
+                    )}
+                  </>
+                )}
+              </Surface>
             </Surface>
-          </Surface>
-        </LinearGradient>
-      </View>
-    </ScreenPrimative>
+          </LinearGradient>
+        </View>
+      </ScreenPrimative>
+      <MyTabBar navigation={navigation} state={navigation.getState()} tabs={tabs} />
+    </>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: "center", alignItems: "center" },
+  container: { flex: 1 },
   surfaceContainer: {
     padding: 16,
-    backgroundColor: "rgba(56,185,255,0.3)"
+    backgroundColor: "rgba(56,185,255,0.3)",
   },
   surfaceMetaContainer: {
     backgroundColor: "rgba(55,255,55,0.4)",
-    width: 350
-  }
+    width: 350,
+  },
 });

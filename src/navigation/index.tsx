@@ -31,8 +31,10 @@ import { Text, PlatformPressable } from '@react-navigation/elements';
 import { COLORS } from "@constants/colors";
 import React from 'react';
 import { Ionicons } from '@expo/vector-icons'; // change to your icon library
-import { CultureParamList, InventoryItemParamList, RecipeParamList, RootDrawerParamsList, RootStackProps } from "@navigation/types";
+import { CultureParamList, InventoryItemParamList, InventoryParamList, RecipeParamList, RootDrawerParamsList, RootStackProps, UsageParamList } from "@navigation/types";
 import { StackScreenLifecycleState } from "react-native-screens";
+import RecipeBatchInventory from "@features/recipe-batches/recipe-batch-inventory";
+import RawMaterialUsage from "@features/usage/raw-materials";
 
 
 
@@ -207,6 +209,7 @@ function DrawerNavigator() {
             <Drawer.Screen component={CulturesNavigator} name='Cultures' options={{ popToTopOnBlur: true }} />
             {/* <Drawer.Screen component={DBManagement} name='DB Management'/> */}
             <Drawer.Screen component={InventoryNavigator} name='Inventory' options={{ popToTopOnBlur: true }} />
+            <Drawer.Screen component={UsageNavigator} name='Usage' options={{ popToTopOnBlur: true }} />
             {/* <Drawer.Screen component={ProductsNavGroup} name='Products'/>
             <Drawer.Screen component={TasksNavGroup} name='Tasks'/>
             <Drawer.Screen component={SterilizationRecordsNavGroup} name='Sterilizations'/> */}
@@ -332,15 +335,16 @@ const Recipes = createNativeStackNavigator<RecipeParamList, any>();
 function ReceipesNavigator() {
     return(
         <Recipes.Navigator
-            initialRouteName="Recipes"
+            initialRouteName="Recipe List"
             screenOptions={{
                 headerShown: false
             }}
             id={'recipe-stack'}
         >
-            <Recipes.Screen component={RecipeList} name="Recipes"/>
+            <Recipes.Screen component={RecipeList} name="Recipe List"/>
             <Recipes.Screen component={NewRecipe} name="New Recipe"/>
             <Recipes.Screen component={RecipeBatchList} name="Batches"/>
+            <Recipes.Screen component={RecipeBatchInventory} name="Batch Inventory"/>
         </Recipes.Navigator>
     )
 }
@@ -363,12 +367,7 @@ function CulturesNavigator() {
 }
 
 
-export type InventoryParamList = {
-  "Raw Materials": undefined;
-  "Bio Materials": undefined;
-  "Supplies": undefined;
-  "Hardware": undefined;
-};
+
 
 const Inventory = createNativeStackNavigator<InventoryParamList, any>();
 
@@ -385,6 +384,24 @@ function InventoryNavigator() {
             <Inventory.Screen component={ConsumableItemInventory} name="Supplies" />
             <Inventory.Screen component={HardwareItemInventory} name="Hardware" />
         </Inventory.Navigator>
+    )
+}
+
+const Usage = createNativeStackNavigator<UsageParamList, any>();
+
+function UsageNavigator() {
+    return(
+        <Usage.Navigator
+            id={'usage-stack'}    
+            screenOptions={{
+                headerShown: false
+            }}
+        >
+            <Usage.Screen component={RawMaterialUsage} name="Raw Materials" />
+            <Usage.Screen component={RawMaterialUsage} name="Bio Materials" />
+            <Usage.Screen component={RawMaterialUsage} name="Recipe Batches" />
+            <Usage.Screen component={RawMaterialUsage} name="Supplies" />
+        </Usage.Navigator>
     )
 }
 

@@ -128,14 +128,14 @@ export default function NewTaskForm() {
 
 
   /* ---------- Callback from TimeLogger ---------------------------- */
-  const onTimesSet = async({ startTime, endTime, category }: { startTime: Date; endTime: Date, category: string }) => {
+  const onTimesSet = async({ startTime, endTime, category }: { startTime: Date; endTime: Date, category: Category }) => {
     setTimes((prev) => [
       ...prev,
       {
         id: uuidv4(),
         startTime,
         endTime,
-        category: "recipe", // default – user can change it later
+        category, // default – user can change it later
       },
     ]);
     setStartTime(null);

@@ -50,12 +50,12 @@ export default function PurchaseLogForm() {
     
     const [purchaseDatetime, setPurchaseDatetime] = useState(new Date())
 
-    const { id,
+    const { id, setId,
         image,
         brand, setBrand,
         vendor, setVendor,
         item, setItem,
-        isNew,
+        isNew, setIsNew,
         name, setName,
         category, setCategory,
         subcategory, setSubcategory,
@@ -97,9 +97,28 @@ export default function PurchaseLogForm() {
             getData()
             getVendors()
             getBrands()
+            console.log(
+                image,
+                brand, 
+                vendor,
+                item, 
+                isNew,
+                name, 
+                category,
+                subcategory,
+                purchaseQuantity,
+                purchaseUnit,
+                inventoryQuantity,
+                inventoryUnit,
+                cost,
+                notes,
+                vendorId
+            )
             return() => {
+                setId(null)
                 setVendor(null)
                 setBrand(null)
+                setIsNew(false)
                 setName('')
 				setCategory('')
 				setSubcategory('')
@@ -150,10 +169,11 @@ export default function PurchaseLogForm() {
 
             const created_at = new Date().getTime();
             const item = await Item.getById(db, id)
+            console.log(item)
             const TYPE = CaseHelper.toSnakeCase(decodeURIComponent(path.split('/')[2])).slice(0, -1)
-            console.log("Item.unit", item.inventory_unit)
-            console.log("Inventory", inventoryUnit)
-            console.log("Item.unit", item.inventory_unit)
+            // console.log("Item.unit", item.inventory_unit)
+            // console.log("Inventory", inventoryUnit)
+            // console.log("Item.unit", item.inventory_unit)
 
             let Amount: number;
             let Unit: string;
@@ -165,7 +185,7 @@ export default function PurchaseLogForm() {
                         inventoryUnit
                 })
                 Unit = inventoryUnit
-                } else {
+            } else {
                     Amount = cnv.convertFromBase({
                         value: 
                             cnv.convertToBase({ value: item.amount_on_hand, from: item.inventory_unit  }) 
@@ -176,6 +196,7 @@ export default function PurchaseLogForm() {
                     Unit = item.inventory_unit
             }
 
+            let current_item_id: number;
             if (isNew) {
                 const itemId = await Item
                 .create(
@@ -185,13 +206,14 @@ export default function PurchaseLogForm() {
                     subcategory,
                     TYPE,
                     created_at,
-                    parseFloat(purchaseQuantity),
-                    purchaseUnit,
+                    Amount,
+                    Unit,
                     null,
                     created_at,
                     null,
                     null
                 )
+                current_item_id = itemId
             } else {
                 const itemId = await Item
                 .update(
@@ -204,6 +226,7 @@ export default function PurchaseLogForm() {
                     }
 
                 )
+                current_item_id = id
             }
             let current_brand_id: number;
             let current_vendor_id: number;
@@ -238,7 +261,7 @@ export default function PurchaseLogForm() {
             await PurchLog.create(
                 db,
                 TYPE,
-                item.id,
+                current_item_id,
                 created_at,
                 purchaseDatetime.getTime(),
                 purchaseUnit,
@@ -303,6 +326,7 @@ export default function PurchaseLogForm() {
                 />
                 <Form.Select
                     style={{ width: '50%', backgroundColor: 'transparent' }} 
+                    placeholder="Select Unit"
                     options={[...PUR_UNITS]}
                     onValueChange={(value: any) => {
                         setPurchaseUnit(value.value)
@@ -318,6 +342,7 @@ export default function PurchaseLogForm() {
                 />
                 <Form.Select
                     style={{ width: '50%', backgroundColor: 'transparent' }} 
+                    placeholder="Select Unit"
                     options={[...INV_UNITS]}
                     onValueChange={(value: any) => {
                         setInventoryUnit(value.value)

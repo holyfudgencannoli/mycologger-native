@@ -20,7 +20,7 @@
     "newArchEnabled": true,
     "splash": {
       "image": "./assets/icon.png",
-      "resizeMode": "contain",
+      "imageResizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "ios": {

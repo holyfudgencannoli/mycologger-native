@@ -1,20 +1,11 @@
 // src/data/db/migrations.ts
 import { SQLiteBindParams, SQLiteDatabase } from "expo-sqlite";
 import { safeRun, safeExec } from "./utils";
+import version_1_0_0 from "./__migrations__/version_1_0_0";
+import version_1_0_1 from "./__migrations__/version_1_0_1";
+import first_tables from "./__migrations__/version_1_0_0";
+import addUsageToRecipeBatches from "./__migrations__/version_1_0_1";
 
-export async function createIndexes(db: SQLiteDatabase) {
-	await safeExec(
-		db,
-		`CREATE INDEX IF NOT EXISTS idx_purchase_logs_type
-		ON purchase_logs (type);`
-	);
-
-	await safeExec(
-		db,
-		`CREATE INDEX IF NOT EXISTS idx_purchase_logs_receipt_uri
-		ON purchase_logs (receipt_uri);`
-	);
-}
 
 async function deleteEverything(db: SQLiteDatabase) {
 	await safeExec(db,
@@ -71,7 +62,8 @@ async function deleteEverything(db: SQLiteDatabase) {
 }
 
 export async function migrateDbIfNeeded(db: SQLiteDatabase) {
-  const DATABASE_VERSION = 1
+	
+  const DATABASE_VERSION: number = 10001
 
   const { user_version } = await db.getFirstAsync<{ user_version: number }>(
     "PRAGMA user_version"
@@ -83,264 +75,34 @@ export async function migrateDbIfNeeded(db: SQLiteDatabase) {
 
   if (user_version >= DATABASE_VERSION) return;
 
-  if (user_version === 0) {
-    await safeExec(db, "PRAGMA journal_mode = 'wal';")
-    
-	await safeExec(db,
-      `CREATE TABLE IF NOT EXISTS items (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-				name VARCHAR,
-        category VARCHAR,
-        subcategory VARCHAR,
-        type VARCHAR,
-        created_at INTEGER NOT NULL,
-        amount_on_hand REAL,
-				inventory_unit STRING,
-				par REAL,
-				last_updated INTEGER NOT NULL,
-				total_usage REAL,
-				usage_unit STRING
-      );`
-    )
-
-	// await safeExec(db, `CREATE INDEX IF NOT EXISTS idx_bio_material_purchase_logs_item_id ON bio_material_purchase_logs(item_id);`);
-	// await safeExec(db, `CREATE INDEX IF NOT EXISTS idx_consumable_item_purchase_logs_item_id ON consumable_item_purchase_logs(item_id);`);
-	// await safeExec(db, `CREATE INDEX IF NOT EXISTS idx_hardware_item_purchase_logs_item_id ON hardware_item_purchase_logs(item_id);`);
-
-
-		await safeExec(db, 
-			`CREATE TABLE IF NOT EXISTS purchase_logs (
-				id INTEGER PRIMARY KEY AUTOINCREMENT,
-				type STRING NOT NULL,
-				item_id INTEGER NOT NULL,
-				created_at INTEGER,
-				purchase_date INTEGER NOT NULL,
-				purchase_unit VARCHAR NOT NULL,
-				purchase_amount FLOAT NOT NULL,
-				inventory_unit VARCHAR,
-				inventory_amount FLOAT,
-				vendor_id INTEGER,
-				brand_id INTEGER,
-				receipt_uri STRING,
-				cost FLOAT NOT NULL,
-				FOREIGN KEY(item_id) REFERENCES items(id),
-				FOREIGN KEY(vendor_id) REFERENCES vendors(id),
-				FOREIGN KEY(brand_id) REFERENCES brands(id)
-			)`
-		)
-
-		
-
-
-		await safeExec(db, 
-			`CREATE TABLE IF NOT EXISTS usage_logs (
-				id INTEGER PRIMARY KEY AUTOINCREMENT,
-				type SRING NOT NULL,
-				item_id INTEGER NOT NULL,
-				task_id INTEGER NOT NULL,
-				usage_amout REAL NOT NULL,
-				usage_unit FLOAT NOT NULL,
-				notes STRING,
-				last_updated INTEGER NOT NULL,
-				FOREIGN KEY(item_id) REFERENCES items(id),
-				FOREIGN KEY(task_id) REFERENCES tasks(id)
-			)`
-		)  
-
-
-		await safeExec(db, 
-			`CREATE TABLE IF NOT EXISTS recipes (
-				id INTEGER PRIMARY KEY AUTOINCREMENT,
-				name VARCHAR NOT NULL,
-				type VARCHAR NOT NULL,
-				ingredients JSON NOT NULL,
-				yield_amount INTEGER NOT NULL,
-				yield_unit VARCHAR NOT NULL,
-				nute_concentration REAL,
-				created_at INTEGER NOT NULL
-			)`
-		)
-
-		
-		await safeExec(db, 
-			`CREATE TABLE IF NOT EXISTS recipe_batches (
-				id INTEGER PRIMARY KEY AUTOINCREMENT,
-				recipe_id INTEGER NOT NULL,
-				real_volume REAL NOT NULL,
-				real_volume_unit STRING NOT NULL,
-				quantity REAL NOT NULL,
-				real_weight REAL NOT NULL,
-				real_weight_unit STRING NOT NULL,
-				loss REAL NOT NULL,
-				name STRING NOT NULL,
-				notes STRING,
-				created_at INTEGER NOT NULL
-			)`
-		)
-
-        
-		await safeExec(db, 
-			`CREATE TABLE IF NOT EXISTS recipe_batch_inventory_logs (
-				id INTEGER PRIMARY KEY AUTOINCREMENT,
-				item_id INTEGER NOT NULL,
-				amount_on_hand REAL NOT NULL,
-				inventory_unit FLOAT NOT NULL,
-				par REAL,
-				last_updated INTEGER NOT NULL,
-				FOREIGN KEY(item_id) REFERENCES recipe_batches(id)
-			)`
-		)
-
-		// await safeExec(db, 
-		// 	`CREATE TABLE IF NOT EXISTS usage_logs (
-		// 		id INTEGER PRIMARY KEY AUTOINCREMENT,
-		// 		type SRING NOT NULL,
-		// 		item_id INTEGER NOT NULL,
-		// 		task_id INTEGER NOT NULL,
-		// 		usage_amout REAL NOT NULL,
-		// 		usage_unit FLOAT NOT NULL,
-		// 		notes STRING,
-		// 		last_updated INTEGER NOT NULL,
-		// 		FOREIGN KEY(item_id) REFERENCES items(id),
-		// 		FOREIGN KEY(task_id) REFERENCES tasks(id)
-		// 	)`
-		// )
-
-		await safeExec(db, 
-			`CREATE TABLE IF NOT EXISTS recipe_batch_usage_logs (
-				id INTEGER PRIMARY KEY AUTOINCREMENT,
-				item_id INTEGER NOT NULL,
-				task_id INTEGER NOT NULL,
-				usage_amout REAL NOT NULL,
-				usage_unit FLOAT NOT NULL,
-				inventory_before FLOAT NOT NULL,
-				inventory_before_unit STRING,
-				notes STRING,
-				created_at INTEGER NOT NULL,
-				FOREIGN KEY(item_id) REFERENCES recipe_batches(id),
-				FOREIGN KEY(task_id) REFERENCES tasks(id)
-			)`
-		)
-
-
-		await safeExec(db, 
-			`CREATE TABLE IF NOT EXISTS cultures (
-				id INTEGER PRIMARY KEY AUTOINCREMENT,
-				type VARCHAR,
-				created_at INTEGER NOT NULL,
-				recipe_batch_id INTEGER NOT NULL,
-				volume_amount REAL NOT NULL,
-				volume_unit STRING NOT NULL,
-				last_updated INTEGER NOT NULL,
-				sterilized_id INTEGER,
-				inoculated_id INTEGER,
-				germinated_id INTEGER,
-				colonized_id INTEGER,
-				contaminated_id INTEGER,
-				harvested_id INTEGER,
-				FOREIGN KEY(recipe_batch_id) REFERENCES recipe_batches(id),
-				FOREIGN KEY(sterilized_id) REFERENCES sterilizations(id),
-				FOREIGN KEY(inoculated_id) REFERENCES inoculatations(id),
-				FOREIGN KEY(germinated_id) REFERENCES germinatations(id),
-				FOREIGN KEY(colonized_id) REFERENCES colonizations(id),
-				FOREIGN KEY(contaminated_id) REFERENCES contaminatations(id),
-				FOREIGN KEY(harvested_id) REFERENCES harvests(id)
-			)`
-		)
-
-		await safeExec(db, 
-			`CREATE TABLE IF NOT EXISTS sterilizations (
-				id INTEGER PRIMARY KEY AUTOINCREMENT,
-				notes STRING,
-				created_at INTEGER NOT NULL
-			)`
-		)
-
-		await safeExec(db, 
-			`CREATE TABLE IF NOT EXISTS inoculations (
-				id INTEGER PRIMARY KEY AUTOINCREMENT,
-				notes STRING,
-				created_at INTEGER NOT NULL
-			)`
-		)
-
-		await safeExec(db, 
-			`CREATE TABLE IF NOT EXISTS germinations (
-				id INTEGER PRIMARY KEY AUTOINCREMENT,
-				notes STRING,
-				created_at INTEGER NOT NULL
-			)`
-		)
-
-		await safeExec(db, 
-			`CREATE TABLE IF NOT EXISTS colonizations (
-				id INTEGER PRIMARY KEY AUTOINCREMENT,
-				notes STRING,
-				created_at INTEGER NOT NULL
-			)`
-		)
-
-		await safeExec(db, 
-			`CREATE TABLE IF NOT EXISTS contaminations (
-				id INTEGER PRIMARY KEY AUTOINCREMENT,
-				notes STRING,
-				created_at INTEGER NOT NULL
-			)`
-		)
-
-		await safeExec(db, 
-			`CREATE TABLE IF NOT EXISTS harvests (
-				id INTEGER PRIMARY KEY AUTOINCREMENT,
-				notes STRING,
-				created_at INTEGER NOT NULL
-			)`
-		)
-        
-		await safeExec(db, 
-			`CREATE TABLE IF NOT EXISTS tasks (
-				id INTEGER PRIMARY KEY AUTOINCREMENT,
-				name STRING NOT NULL,
-				start INTEGER NOT NULL,
-				end INTEGER NOT NULL,
-				notes STRING
-			)`
-		)
-
-		await safeExec(db, 
-			`CREATE TABLE IF NOT EXISTS vendors (
-				id INTEGER PRIMARY KEY AUTOINCREMENT,
-				name STRING NOT NULL,
-				email STRING,
-				phone STRING,
-				address STRING,
-				contact_name STRING,
-				website STRING,
-				last_updated STRING
-			)`
-		)
-
-        
-		await safeExec(db, 
-			`CREATE TABLE IF NOT EXISTS brands (
-				id INTEGER PRIMARY KEY AUTOINCREMENT,
-				name STRING NOT NULL,
-				website STRING, 
-				last_updated STRING
-			)`
-		)
-		createIndexes(db)
-
-    // await safeExec(db, "PRAGMA foreign_keys = ON;");
-
-    await safeExec(db, `PRAGMA user_version = ${DATABASE_VERSION}`);
-
-    const tables: any = await db.getAllAsync(
-      `SELECT name FROM sqlite_master WHERE type='table';`
-    );
-
-    console.log("Tables in DB:", tables.map(t => t.name));
-
+  if (user_version < 10000) {
+		const result = await 
+			first_tables(
+				db, 
+				DATABASE_VERSION, 
+			)
+		if (DATABASE_VERSION === 10000) {
+			const [Version, Tables] = result
+			console.log("Database Version: ", Version)
+			console.log("Tables: ", Tables)
+		} else {
+			console.log(result)
+		}
   }
+
+	if (DATABASE_VERSION >= 10001) {
+		const result = await addUsageToRecipeBatches(
+			db,
+			DATABASE_VERSION,
+		)
+		if (DATABASE_VERSION === 10001) {
+			const [Version, Tables] = result
+			console.log("Database Version: ", Version)
+			console.log("Tables: ", Tables)
+		} else {
+			console.log(result)
+		}
+	}
 	
 
 

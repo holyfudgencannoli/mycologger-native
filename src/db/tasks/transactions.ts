@@ -13,6 +13,16 @@ import * as cnv from '@utils/unitConversion'
 import { RecipeBatchInventoryLog } from '@db/recipe-batch-inventory-logs/types'
 
 
+
+function add_usage (total_usage: number, total_usage_unit: string, new_usage_base: number, final_unit?: string): number {
+    let one = cnv.convertToBase({ value: total_usage, from: total_usage_unit })
+    let two = new_usage_base
+    let three = one + two
+    let four = cnv.convertFromBase({ value: three, to: final_unit? final_unit : total_usage_unit })
+
+    return four
+} 
+
 export async function ExecuteRecipe(params: any, {
     db,
     recipe_id,
@@ -67,7 +77,7 @@ export async function ExecuteRecipe(params: any, {
         const batchLogId = await BatchLog.create(
                 db,
                 recipeBatchId,
-                quantity * real_volume,
+                real_volume,
                 real_volume_unit,
                 0,
                 created_at
@@ -131,7 +141,6 @@ export async function ExecuteRecipe(params: any, {
             console.log('2: ', two)
             
             let Amount = cnv.convertFromBase({
-
                 value: 
                     (one - two),
                 to: 
@@ -145,7 +154,9 @@ export async function ExecuteRecipe(params: any, {
                     id: RM.id,
                     amount_on_hand: Amount,
                     inventory_unit: Unit,
-                    last_updated: created_at
+                    last_updated: created_at,
+                    total_usage: add_usage(RM.total_usage?? 0, RM.usage_unit ?? ingredient.unit, two, RM.usage_unit ?? ingredient.unit),
+                    usage_unit: ingredient.unit
                     
                 })
             
@@ -248,8 +259,10 @@ export async function ExecuteAgar(params: any, {
                         id: batch_log.id,
                         amount_on_hand: Amount,
                         inventory_unit: Unit,
-                        last_updated: created_at
-                        
+                        last_updated: created_at,
+                        total_usage: add_usage(parseFloat(usage_amount)?? 0, usage_unit ?? batch_log.inventory_unit, two, usage_unit ?? batch_log.inventory_unit),
+                        usage_unit: batch_log.inventory_unit
+                    
                     })
                 
                 console.log("Usage Log ID: ", usageLogId)

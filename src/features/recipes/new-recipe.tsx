@@ -42,9 +42,9 @@ export default function NewRecipe({ navigation, state }) {
 
 
   return(
-    <ScreenPrimative edges={[]}>
+    <ScreenPrimative  style={{ flex: 1 }} edges={[]}>
       <View style={styles.container}>	
-        <ScrollView style={{ flex: 1 }}>
+        <ScrollView>
           <LinearGradient
             start={{ x: 0, y: 0 }}
             end={{ x: 0.3, y: 0.9 }}

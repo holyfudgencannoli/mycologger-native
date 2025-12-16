@@ -48,7 +48,6 @@ export const ScrollableDataTable: React.FC<ScrollableDataTableProps> = ({
                     hour12: true,
                     hour: 'numeric',
                     minute: 'numeric',
-                    second: 'numeric',
                     month: "short",
                     day: 'numeric',
 

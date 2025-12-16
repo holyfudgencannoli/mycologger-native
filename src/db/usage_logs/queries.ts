@@ -65,6 +65,24 @@ export async function getById(
   }>(db, `SELECT * FROM usage_logs WHERE id = ?`, [id]);
 }
 
+export async function getByType(
+    db: SQLiteDatabase,
+    type: string,
+
+) {
+  return await safeSelectAll<{
+    id: number;
+    type: string;
+    item_id: number,
+    task_id: number,
+    usage_amout: number,
+    usage_unit: string,
+    notes: string,
+    last_updated: number,
+  }>(db, `SELECT * FROM usage_logs WHERE type = ?`, [type]);
+}
+
+
 export async function update(
     db: SQLiteDatabase,
     type: string,
