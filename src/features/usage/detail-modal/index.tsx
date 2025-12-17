@@ -12,10 +12,12 @@ import { ItemProps } from '@db/items/types';
 import { PurchaseLogData } from '@db/purchase-logs/types';
 import { LinearGradient } from 'expo-linear-gradient';
 import { COLORS } from '@constants/colors';
+import { UsageLogType } from '@db/usage_logs/types';
+import { CaseHelper } from '@utils/case-helper';
 
 
 export const UsageLogsModal = ({ visible, setModalOpen, item}: {visible: boolean, setModalOpen: (arg0: boolean) => void, item: ItemProps}) => {
-    const [purchaseLogs, setPurchaseLogs] = useState<{ item: ItemProps, log: PurchaseLogData, vendor: Vendor.VendorType  }[]>([]);
+    const [usageLogs, setUsageLogs] = useState<UsageLogType[]>([]);
     const [vendors, setVendors] = useState([]);
     const db = useSQLiteContext();
 
@@ -25,23 +27,16 @@ export const UsageLogsModal = ({ visible, setModalOpen, item}: {visible: boolean
         console.log('Modal closed'); // Replace with your actual close logic
     };
 
-    const getPurchaseLogs = async() => {
+    const getUsageLogs = async() => {
         const logs = await UsageLogs.getByItemId(db, item.id)
         const material = await Item.getById(db, item.id)
-        const vendorAddedLogs: {item: ItemProps, log: PurchaseLogData, vendor: Vendor.VendorType}[] = []            
-        for (let i = 0; i < logs.length; i++) {
-            const current = logs[i];
-            const vendorId = current.vendor_id
-            const vendor: Vendor.VendorType = await Vendor.getById(db, vendorId)
-            vendorAddedLogs.push({ item: {...item}, log: {...current}, vendor: {...vendor}})
-        }
-        setPurchaseLogs(vendorAddedLogs)
+        setUsageLogs(logs)
 
     }
 
     useFocusEffect(
         useCallback(() => {
-            getPurchaseLogs()
+            getUsageLogs()
         }, [])
     )
 
@@ -75,9 +70,10 @@ export const UsageLogsModal = ({ visible, setModalOpen, item}: {visible: boolean
                 visible={visible} // Make sure the modal is visible initially
             >
                 <View style={styles.modalContent}>
-                    <Text style={styles.headerText}>Purchase Logs</Text>
-                    <Text>Purchase logs will appear below</Text>
-                    {purchaseLogs.map((item) => {
+                    <Text style={styles.headerText}>Usage Logs</Text>
+                    <Text>Usage logs will appear below</Text>
+                    {usageLogs.map(async(log) => {
+                        const item = await Item.getById(db, log.item_id)
                         return(
                             <View style={styles.logItem}>
                                 <LinearGradient
@@ -86,15 +82,15 @@ export const UsageLogsModal = ({ visible, setModalOpen, item}: {visible: boolean
                                     colors={COLORS.BACKGROUND_GRADIENT.PRIMARY}
                                     style={{ flexDirection: 'column', padding: 16, borderRadius: 4, width: '75%' }}
                                 >
-                                    <Text style={styles.text}>{new Date(item.log.purchase_date).toLocaleDateString('en-GB',{
+                                    <Text style={styles.text}>{new Date(log.last_updated).toLocaleDateString('en-GB',{
                                         month: 'short',
                                         day: 'numeric',
                                         year: 'numeric'
                                     })}</Text>
-                                    <Text style={styles.text}>{new Date(item.log.purchase_date).toLocaleTimeString()}</Text>
-                                    <Text style={styles.text}>{item.vendor.name}</Text>
-                                    <Text style={styles.text}>{item.item.name}</Text>
-                                    <Text style={styles.text}>${item.log.cost.toFixed(2)}</Text>
+                                    <Text style={styles.text}>{new Date(log.last_updated).toLocaleTimeString()}</Text>
+                                    <Text style={styles.text}>{CaseHelper.toCleanCase(log.type)}</Text>
+                                    <Text style={styles.text}>{item.name}</Text>
+                                    <Text style={styles.text}>{log.usage_amout} {log.usage_unit}</Text>
                                     {/* {item.log.notes && <Text>{item.log.notes}</Text>} */}
 
                                     
@@ -103,7 +99,7 @@ export const UsageLogsModal = ({ visible, setModalOpen, item}: {visible: boolean
                                 viewStyle={{ margin: 'auto' }}
                                     title="Delete"
                                     color="#d32f2f"          // red – feel free to change
-                                    onPress={() => handleDelete(item.log.id)}
+                                    onPress={() => handleDelete(log.id)}
                                 />
                             </View>
                         )
@@ -135,7 +131,9 @@ const styles = StyleSheet.create({
         shadowRadius: 4,
     },
     text: {
-        color: 'white'
+        color: 'white',
+         fontWeight: 'bold',
+         fontSize: 18
     },
     headerText: {
         fontSize: 18,

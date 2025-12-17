@@ -1,6 +1,7 @@
 
 import { SQLiteDatabase } from "expo-sqlite";
 import { safeExec, safeRun, safeSelect, safeSelectOne, safeSelectAll } from "../utils";
+import { UsageLogType } from "./types";
 
 
 const VALID_TYPES = new Set([
@@ -70,16 +71,7 @@ export async function getByItemId(
     item_id: number,
 
 ) {
-  return await safeSelectOne<{
-    id: number;
-    type: string;
-    item_id: number,
-    task_id: number,
-    usage_amout: number,
-    usage_unit: string,
-    notes: string,
-    last_updated: number,
-  }>(db, `SELECT * FROM usage_logs WHERE item_id = ?`, [item_id]);
+  return await safeSelectAll<UsageLogType>(db, `SELECT * FROM usage_logs WHERE item_id = ?`, [item_id]);
 }
 
 export async function getByType(

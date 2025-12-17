@@ -46,10 +46,10 @@ export default function RawMaterialUsage({ navigation }) {
       }
 
       // Safely merge usage & item data
-      fullData = data.map((datum, index) => {
-        const usage = { ...datum };
-        const item = itemData[index] ? { ...itemData[index] } : {};
-        return { ...usage, ...item };
+      fullData = itemData.map((item, index) => {
+        const itemObj = { ...item };
+        const usage = data.find((u) => u.item_id === itemObj.id) || [];
+        return { ...item, usage };
       });
 
       setInventoryLogs(fullData);

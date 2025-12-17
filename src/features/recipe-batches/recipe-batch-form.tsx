@@ -189,7 +189,7 @@ export default function RecipeBatchForm({ setUnsaved }: { setUnsaved: (value: bo
         {/* Real Weight + Volume */}
         <View style={styles.surfaceContainer}>
           <View style={styles.surface}>
-            <Text style={styles.subtitle}>Real Yield</Text>
+            <Text style={FORM.TITLE}>Real Yield</Text>
           </View>
 
           {recipe.yield_unit == typeof WEIGHT_UNITS ? 

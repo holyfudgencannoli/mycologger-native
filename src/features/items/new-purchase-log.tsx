@@ -12,7 +12,7 @@ import { MyTabBar } from '@components/bottom-tabs';
 import { tabs } from './types';
 import { COLORS } from '@constants/colors';
 import { CaseHelper } from '@utils/case-helper';
-import { CONTAINER } from '@constants/styles';
+import { CONTAINER, FORM } from '@constants/styles';
 
 
 export default function NewPurchaseLog({ navigation, state }) {
@@ -70,51 +70,52 @@ export default function NewPurchaseLog({ navigation, state }) {
 
     return(
         <View style={CONTAINER.FULL}>
-            <ScreenPrimative edges={[]} scroll>
-                <View>
-                        <LinearGradient
-                            start={{ x: 0, y: 0 }}
-                            end={{ x: 0.3, y: 0.9 }}
-                            colors={COLORS.BACKGROUND_GRADIENT.PRIMARY}
-                            style={{ flex: 1, padding: 16}}
-                        >
-                            <Form.Control name='name'>
-                                <Form.Select
-                                    style={{ color: 'rgba(255, 0, 155, 1)', width: '100%' }}
-                                    type='embed'
-                                    size='lg'
-                                    onValueChange={async(value: any) => {
-                                        if (value.id === 999999) {
-                                            setIsNew(true)
-                                            setItem(null)
-                                            setId(null)
-                                            setName('')
-                                            setCategory('')
-                                            setSubcategory('')
-                                            setFormVisible(true)
+            
+            <LinearGradient
+                start={{ x: 0, y: 0 }}
+                end={{ x: 0.3, y: 0.9 }}
+                colors={COLORS.BACKGROUND_GRADIENT.PRIMARY}
+                style={{ flex: 1, padding: 16}}
+            >
+                <ScreenPrimative edges={[]} scroll>
+                    <View>
+                        <Form.Control name='name' label={`NEW ${CaseHelper.toCleanCase(decodeURIComponent(path.split('/')[2])).slice(0, -1).toUpperCase()} \n  PURCHASE LOG`} labelStyle={FORM.TITLE}>
+                            <Form.Select
+                                style={{ color: 'rgba(255, 0, 155, 1)', width: '100%' }}
+                                type='embed'
+                                size='lg'
+                                onValueChange={async(value: any) => {
+                                    if (value.id === 999999) {
+                                        setIsNew(true)
+                                        setItem(null)
+                                        setId(null)
+                                        setName('')
+                                        setCategory('')
+                                        setSubcategory('')
+                                        setFormVisible(true)
 
-                                        } else {
-                                            console.log(value)
-                                            setIsNew(false)                      
-                                            setItem(value)
-                                            setId(value.id)
-                                            setName(value.name)
-                                            setCategory(value.email)
-                                            setSubcategory(value.phone)
-                                            setFormVisible(true)
-                                        }
+                                    } else {
+                                        console.log(value)
+                                        setIsNew(false)                      
+                                        setItem(value)
+                                        setId(value.id)
+                                        setName(value.name)
+                                        setCategory(value.email)
+                                        setSubcategory(value.phone)
+                                        setFormVisible(true)
+                                    }
 
-                                    }}    
-                                    options={items}
-                                />
-                            </Form.Control>
-                        {formVisible ? 
-                            <PurchaseLogForm /> : 
-                            <></>
-                        }
-                        </LinearGradient>
+                                }}    
+                                options={items}
+                            />
+                        </Form.Control>
+                    {formVisible ? 
+                        <PurchaseLogForm /> : 
+                        <></>
+                    }
                     </View>                            
                 </ScreenPrimative>
+            </LinearGradient>
             <MyTabBar navigation={navigation} state={navigation.getState()} tabs={tabs} />
         </View>
     )

@@ -1,5 +1,5 @@
 import { useState, useCallback, useContext, JSX } from "react"
-import { StyleSheet, View, Button, Alert } from 'react-native';
+import { StyleSheet, View, Button, Alert, Text } from 'react-native';
 import { RouteProp, useFocusEffect, useRoute, useRoutePath } from '@react-navigation/native';
 import { ScreenPrimative } from "@components/screen-primative";
 import { LinearGradient } from "expo-linear-gradient";
@@ -12,7 +12,7 @@ import { MyTabBar } from "@components/bottom-tabs";
 import { tabs } from "./types";
 import { COLORS } from "@constants/colors";
 import { CaseHelper } from "@utils/case-helper";
-import { CONTAINER } from "@constants/styles";
+import { CONTAINER, FORM } from "@constants/styles";
 
 type NavigationProps = RouteProp<InventoryItemParamList, 'New Item'>
 
@@ -99,13 +99,14 @@ export default function NewItem({ navigation, state }): JSX.Element {
           colors={COLORS.BACKGROUND_GRADIENT.PRIMARY}
           style={{ ...CONTAINER.FULL, padding: 24}}
         >
-            <Form.Control label='Item Name' labelStyle={{ color: 'white' }} name='name'>
+					<Text style={FORM.TITLE}>NEW {CaseHelper.toCleanCase(decodeURIComponent(path.split('/')[2])).slice(0, -1).toLocaleUpperCase()}</Text>
+            <Form.Control label='Item Name' labelStyle={FORM.LABEL} name='name'>
               <Form.Input size='lg' style={{ color: 'white', flex: 1 }} value={name} onChangeText={setName}  />
             </Form.Control>
-            <Form.Control label='Item Category' labelStyle={{ color: 'white' }} name='category'>
+            <Form.Control label='Item Category' labelStyle={FORM.LABEL} name='category'>
               <Form.Input size='lg' style={{ color: 'white', flex: 1 }} value={category} onChangeText={setCategory}  />
             </Form.Control>
-            <Form.Control label='Item Subcategory' labelStyle={{ color: 'white' }} name='subcategory'>
+            <Form.Control label='Item Subcategory' labelStyle={FORM.LABEL} name='subcategory'>
               <Form.Input size='lg' value={subcategory} style={{ color: 'white', flex: 1 }} onChangeText={setSubcategory}  />
             </Form.Control>
             <View style={{ marginTop: 36 }}>
@@ -119,8 +120,3 @@ export default function NewItem({ navigation, state }): JSX.Element {
   )
 
 }
-
-
-const styles = StyleSheet.create({
-    container: { flex: 1 }
-});

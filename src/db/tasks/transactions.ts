@@ -164,7 +164,7 @@ export async function ExecuteRecipe(params: any, {
                     amount_on_hand: Amount,
                     inventory_unit: Unit,
                     last_updated: created_at,
-                    total_usage: add_usage(RM.total_usage?? 0, RM.usage_unit ?? ingredient.unit, two, RM.usage_unit ?? ingredient.unit),
+                    total_usage: add_usage(RM.total_usage, RM.usage_unit, two, ingredient.unit),
                     usage_unit: ingredient.unit
                     
                 })

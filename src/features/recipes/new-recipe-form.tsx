@@ -52,9 +52,9 @@ export default function CreateRecipe({ setUnsaved }: { setUnsaved: (value: boole
         }
         console.log(ingredient)
         setIngredients((prev) => [...prev, ingredient])
-        setIngredientName('')
+        setIngredientName(null)
         setAmount('')
-        setUnit('')
+        setUnit(null)
     }
 
     // useEffect(() => {
@@ -181,6 +181,7 @@ export default function CreateRecipe({ setUnsaved }: { setUnsaved: (value: boole
                 <Form.Control label="Select Ingredient" name="" labelStyle={FORM.LABEL}>
                     <Form.Select 
                         style={styles.input}
+                        selectedValue={ingredientName}
                         options={rawMaterialNames}
                         placeholder="Select Ingredient"
                         onValueChange={(value: any) => {
@@ -197,7 +198,8 @@ export default function CreateRecipe({ setUnsaved }: { setUnsaved: (value: boole
                         style={{ width: '50%', backgroundColor: 'transparent', color: 'white' }}
                     />
                     <Form.Select
-                        style={{ width: '50%', backgroundColor: 'transparent' }} 
+                        style={{ width: '50%', backgroundColor: 'transparent' }}
+                        selectedValue={unit} 
                         options={[...INV_UNITS]}
                         placeholder="Select Unit"
                         onValueChange={(value: any) => {

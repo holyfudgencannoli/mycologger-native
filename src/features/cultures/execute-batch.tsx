@@ -22,7 +22,7 @@ import Button from "@components/button";
 import { COLORS } from "@constants/colors";
 import { FormStateContext } from "src/context/FormContext";
 import { CaseHelper } from "@utils/case-helper";
-import { FORM } from "@constants/styles";
+import { CONTAINER, FORM } from "@constants/styles";
 
 type formattedRecipe ={
     _id: string,
@@ -76,46 +76,6 @@ export default function ExecuteBatch({}) {
             end_time: new Date(endTime).getTime(),
             notes
         })
-        // const qty = parseInt(quantity);
-        // // const name = 
-        // if (isNaN(qty) || qty <= 0) {
-        //     Alert.alert('Invalid Quantity', 'Please enter a valid positive number.');
-        //     return;
-        // }
-
-        // setLoading(true); // Optional: add loading state
-
-
-        // try {
-        //     for (let i=0; i<qty; i++) {
-
-        //         const cultureId = await Culture.create({
-        //             db, 
-        //             type: 'agar_culture', 
-        //             recipe_batch_id: selectedRecipeBatchId,
-        //             volume_amount: parseFloat(volume),
-        //             volume_unit: volumeUnit, 
-        //             last_updated: new Date().getTime(),
-        //             created_at:  new Date().getTime()
-        //         });
-        //         console.log('Using recipebatch ID:', selectedRecipeBatchId);
-
-        //     }                
-        //     const use = convertToBase({value: quantity ? parseInt(quantity) * parseFloat(volume) : parseFloat(volume), from: volumeUnit.toLowerCase()})
-        //     console.log(use)
-            
-        //     const taskId = await Task.create(db, selectedRecipeBatchName, startTime, endTime, notes)
-        //     console.log(taskId)
-            
-        //     await Usage.create(db, 'recipe_batch', selectedRecipeBatchId, taskId, use, volumeUnit, notes, new Date().getTime() )
-
-        //     navigation.navigate('Dashboard');
-        // } catch (error) {
-        //     console.error('Failed to create cultures:', error);
-        //     Alert.alert('Error', 'Failed to create one or more cultures. Please try again.');
-        // } finally {
-        //     setLoading(false);
-        // }
         navigation.navigate('Dashboard');
     };
     
@@ -134,8 +94,8 @@ export default function ExecuteBatch({}) {
 
     
     return(
-        <ScreenPrimative edges={[]}>
-            <View style={styles.container}>
+        <ScreenPrimative scroll  edges={[]}>
+            <View style={CONTAINER.FULL}>
                 <LinearGradient
                     start={{ x: 0, y: 0 }}
                     end={{ x: 0.3, y: 0.9 }}
@@ -143,7 +103,7 @@ export default function ExecuteBatch({}) {
                     style={{ flex: 1, padding: 16}}
                 >
                     <Surface style={{ backgroundColor: '#0008', margin: 16, padding: 16 }}>
-                        <Text style={styles.title}>Execute New {CaseHelper.toCleanCase(type)} Batch</Text>
+                        <Text style={FORM.TITLE}>Execute New {CaseHelper.toCleanCase(type)} Batch</Text>
                     </Surface>
                     <Form.Control labelStyle={FORM.LABEL} label="Start Time" name="startTime" >
 
@@ -211,7 +171,7 @@ export default function ExecuteBatch({}) {
                             }}
                         />
                     </Form.Control>
-                    <Button title="Submit" viewStyle={{ marginTop: 72, }} color={COLORS.button.primary} onPress={handleExecute}/>
+                    <Button title="Submit" viewStyle={{ margin: 72, }} color={COLORS.button.primary} onPress={handleExecute}/>
                 </LinearGradient>
             </View>
         </ScreenPrimative>
@@ -260,12 +220,5 @@ const styles = StyleSheet.create({
     textShadowRadius: 16,
   },
   
-  title: {
-    fontSize: 24,
-    textAlign:  'center',
-    fontWeight: 'bold',
-    color: 'red',
-    textShadowColor: 'blue',
-    textShadowRadius: 16,
-  },
+  
 });

@@ -1,3 +1,4 @@
+import { FORM } from '@constants/styles';
 import * as Form from '@custom/react-native-forms/src'
 import { useFocusEffect } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -23,7 +24,7 @@ export default function NewVendorForm() {
                     <Form.Control
                         name='vendorName'
                         label='Vendor Name'
-                        labelStyle={}
+                        labelStyle={FORM.LABEL}
                     >
                         <Form.Input
                             style={{ backgroundColor: 'transparent', width: '100%' }} 
@@ -35,7 +36,7 @@ export default function NewVendorForm() {
                     <Form.Control
                         name='vendorEmail'
                         label='Vendor Email'
-                        labelStyle={}
+                        labelStyle={FORM.LABEL}
                     >
                         <Form.Input
                             style={{ backgroundColor: 'transparent', width: '100%' }} 
@@ -48,7 +49,7 @@ export default function NewVendorForm() {
                     <Form.Control
                         name='vendorPhone'
                         label='Vendor Phone'
-                        labelStyle={}
+                        labelStyle={FORM.LABEL}
                     >
                         <Form.Input
                             style={{ backgroundColor: 'transparent', width: '100%' }} 
@@ -60,7 +61,7 @@ export default function NewVendorForm() {
                     <Form.Control
                         name='vendorAddress'
                         label='Vendor Name'
-                        labelStyle={}
+                        labelStyle={FORM.LABEL}
                     >
                         <Form.Input
                             style={{ backgroundColor: 'transparent', width: '100%' }} 
@@ -73,7 +74,7 @@ export default function NewVendorForm() {
                     <Form.Control
                         name='vendorContact'
                         label='Vendor Contact Name'
-                        labelStyle={}
+                        labelStyle={FORM.LABEL}
                     >
                         <Form.Input
                             style={{ backgroundColor: 'transparent', width: '100%' }} 
@@ -84,7 +85,7 @@ export default function NewVendorForm() {
                     <Form.Control
                         name='vendorWebsite'
                         label='Vendor Website'
-                        labelStyle={}
+                        labelStyle={FORM.LABEL}
                     >
                         <Form.Input
                             style={{ backgroundColor: 'transparent', width: '100%' }}

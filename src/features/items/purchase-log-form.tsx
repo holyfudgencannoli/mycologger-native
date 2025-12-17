@@ -91,7 +91,7 @@ async function getOrCreateBrand(
   state: NewBrandFormState,
   currentId?: number
 ): Promise<number> {
-  if (currentId && currentId !== NEW_ID) return currentId;
+  if (currentId && currentId !== NEW_ID && currentId !== SELF_ID) return currentId;
 
   // New brand – create it in the DB.
   const brandId = await Brand.create(
@@ -111,7 +111,7 @@ async function getOrCreateVendor(
   state: NewVendorFormState,
   currentId?: number
 ): Promise<number> {
-  if (currentId && currentId !== NEW_ID) return currentId;
+  if (currentId && currentId !== NEW_ID && currentId !== SELF_ID) return currentId;
 
   const vendorId = await Vendor.create(
     db,
@@ -256,7 +256,7 @@ export default function PurchaseLogForm() {
 				let amountOnHand: number;
 				let inventoryUnitUsed: string;
 
-				if (id !== null && id !== 0) {
+				if (id !== null && id !== 999999) {
 					// Existing item – update its quantity.
 					const existing = await Item.getById(db, id);
 
