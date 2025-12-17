@@ -16,6 +16,7 @@ import { INV_UNITS } from "@constants/units";
 import { LinearGradient } from "expo-linear-gradient";
 import { ScrollView } from "react-native-gesture-handler";
 import { FormStateContext } from "src/context/FormContext";
+import { FORM } from "@constants/styles";
 
 
 type ingredientProps = {
@@ -132,14 +133,14 @@ export default function CreateRecipe({ setUnsaved }: { setUnsaved: (value: boole
 
     return(
         <>
-            <Form.Control name="name" label="Recipe Name" labelStyle={styles.label}>
+            <Form.Control name="name" label="Recipe Name" labelStyle={FORM.LABEL}>
                 <Form.Input 
                     style={styles.input} 
                     value={name}
                     onChangeText={setName}
                 />
             </Form.Control>
-            <Form.Control name="recipeType" label="Recipe Type" labelStyle={styles.label}>
+            <Form.Control name="recipeType" label="Recipe Type" labelStyle={FORM.LABEL}>
                 <Form.Input 
                     style={styles.input} 
                     value={type}
@@ -147,7 +148,7 @@ export default function CreateRecipe({ setUnsaved }: { setUnsaved: (value: boole
 
                 />
             </Form.Control>
-            <Form.Control labelStyle={styles.label} label="Recipe Yield" name="recipeYield" >
+            <Form.Control labelStyle={FORM.LABEL} label="Recipe Yield" name="recipeYield" >
                 <Form.Input
                     value={yieldAmount}
                     onChangeText={setYieldAmount} 
@@ -163,7 +164,7 @@ export default function CreateRecipe({ setUnsaved }: { setUnsaved: (value: boole
                     }}
                 />
             </Form.Control>
-            <Form.Control name="nute_concentration" label="Nutrient Concentration" labelStyle={styles.label}>
+            <Form.Control name="nute_concentration" label="Nutrient Concentration" labelStyle={FORM.LABEL}>
                 <Form.Input 
                     style={styles.input} 
                     value={nuteConcentration}
@@ -177,7 +178,7 @@ export default function CreateRecipe({ setUnsaved }: { setUnsaved: (value: boole
                 colors={['#880', '#088', '#808']}
                 style={{ flex: 1, padding: 16, borderRadius: 4}}
             >
-                <Form.Control label="Select Ingredient" name="" labelStyle={styles.label}>
+                <Form.Control label="Select Ingredient" name="" labelStyle={FORM.LABEL}>
                     <Form.Select 
                         style={styles.input}
                         options={rawMaterialNames}
@@ -189,7 +190,7 @@ export default function CreateRecipe({ setUnsaved }: { setUnsaved: (value: boole
                         }}
                     />
                 </Form.Control>
-                <Form.Control labelStyle={styles.label} label="Ingredient Usage" name="ingredientUsage" >
+                <Form.Control labelStyle={FORM.LABEL} label="Ingredient Usage" name="ingredientUsage" >
                     <Form.Input
                         value={amount}
                         onChangeText={setAmount} 
@@ -210,7 +211,7 @@ export default function CreateRecipe({ setUnsaved }: { setUnsaved: (value: boole
                 </View>
 
                 <ScrollView style={{ display: 'flex', flexDirection: 'column', backgroundColor: '#fff5', height: 'auto', padding: 16 }}>
-                        <Text style={styles.label}>
+                        <Text style={FORM.LABEL}>
                             Ingredients
                         </Text>
 

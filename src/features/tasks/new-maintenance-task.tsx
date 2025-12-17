@@ -16,6 +16,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import * as Form from '@custom/react-native-forms/src'
 import Button from "@components/button";
 import { COLORS } from "@constants/colors";
+import { FORM } from "@constants/styles";
 
 
 type NavigationProps = DrawerNavigationProp<RootDrawerParamsList>
@@ -93,7 +94,7 @@ export default function CreateMaintenanceTask({id}: {id: number}) {
               <Surface style={styles.surfaceContainer}>
                     <Text style={theme.formTitle}>New Maintenance Task</Text>        
                 </Surface>
-              <Form.Control label="Task Name" name="taskName" labelStyle={styles.label}>
+              <Form.Control label="Task Name" name="taskName" labelStyle={FORM.LABEL}>
                 <Form.Input
 
                   value={name}
@@ -103,7 +104,7 @@ export default function CreateMaintenanceTask({id}: {id: number}) {
                 />
               </Form.Control>
               
-              <Form.Control label="Stat Time" name="startName" labelStyle={styles.label}>
+              <Form.Control label="Stat Time" name="startName" labelStyle={FORM.LABEL}>
                 <Form.Input
                   value={start}
                   style={{ width: '100%', backgroundColor: 'transparent', color: 'white' }}
@@ -111,7 +112,7 @@ export default function CreateMaintenanceTask({id}: {id: number}) {
                 />
               </Form.Control>
               
-              <Form.Control label="End Time" name="endName" labelStyle={styles.label}>
+              <Form.Control label="End Time" name="endName" labelStyle={FORM.LABEL}>
                 <Form.Input
                   value={end}
                   style={{ width: '100%', backgroundColor: 'transparent', color: 'white' }}
@@ -119,7 +120,7 @@ export default function CreateMaintenanceTask({id}: {id: number}) {
                 />
               </Form.Control>
               
-              <Form.Control label="Notes" name="notes" labelStyle={styles.label}>
+              <Form.Control label="Notes" name="notes" labelStyle={FORM.LABEL}>
                 <Form.Input
                   value={notes}
                   onChangeText={setName}

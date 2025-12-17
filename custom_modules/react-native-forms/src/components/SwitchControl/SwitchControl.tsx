@@ -2,6 +2,7 @@ import React, { forwardRef } from 'react';
 import { View, Text, StyleSheet, Switch, SwitchProps } from 'react-native';
 import { useTheme } from '../../theme/ThemeProvider';
 
+
 export interface SwitchControlProps extends Omit<SwitchProps, 'size'> {
   label?: string;
   size?: 'sm' | 'md' | 'lg';

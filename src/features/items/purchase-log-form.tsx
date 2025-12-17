@@ -30,6 +30,7 @@ import NewBrandForm from "@features/brands/new-brand-form";
 import NewVendorForm from "@features/vendors/new-vendor-form";
 import {default as BrandType} from "@features/brands/type";
 import { NewBrandFormState, NewVendorFormState } from "src/context/FormState";
+import { FORM } from "@constants/styles";
 
 type NavigationProps = DrawerNavigationProp<RootDrawerParamsList>
 
@@ -338,18 +339,18 @@ export default function PurchaseLogForm() {
         <>
             {
                 isNew ?
-                <Form.Control labelStyle={styles.label} label='Item Name' name='name'>
+                <Form.Control labelStyle={FORM.LABEL} label='Item Name' name='name'>
                     <Form.Input style={{ backgroundColor:'transparent', width: '100%' }} value={name} onChangeText={setName}  />
                 </Form.Control> :
                 <></>
             }
-            <Form.Control labelStyle={styles.label} label='Item Category' name='category'>
+            <Form.Control labelStyle={FORM.LABEL} label='Item Category' name='category'>
                 <Form.Input style={{ backgroundColor:'transparent', width: '100%' }} value={isNew ? category : item.category} onChangeText={isNew ? setCategory : null}  />
             </Form.Control>
-            <Form.Control label='Item Subcategory' labelStyle={styles.label} name='subcategory'>
+            <Form.Control label='Item Subcategory' labelStyle={FORM.LABEL} name='subcategory'>
                 <Form.Input style={{ backgroundColor:'transparent', width: '100%' }} value={isNew ? subcategory : item.subcategory} onChangeText={isNew ? setSubcategory : null}  />
             </Form.Control>
-            <Form.Control name="brand" label="Brand" labelStyle={styles.label} >
+            <Form.Control name="brand" label="Brand" labelStyle={FORM.LABEL} >
                 <Form.Select
                     size="sm" 
                     style={{ width: '100%', backgroundColor: 'transparent' }}
@@ -370,7 +371,7 @@ export default function PurchaseLogForm() {
                 <NewBrandForm /> :
                 <></>
             }
-            <Form.Control labelStyle={styles.label} label="Purchase Quantity" name="purchase_quantity" >
+            <Form.Control labelStyle={FORM.LABEL} label="Purchase Quantity" name="purchase_quantity" >
                 <Form.Input
                     value={purchaseQuantity}
                     onChangeText={setPurchaseQuantity} 
@@ -386,7 +387,7 @@ export default function PurchaseLogForm() {
                     }}
                 />
             </Form.Control>
-            <Form.Control labelStyle={styles.label} label="Inventory Quantity" name="inventory_quantity" >
+            <Form.Control labelStyle={FORM.LABEL} label="Inventory Quantity" name="inventory_quantity" >
                 <Form.Input
                     value={inventoryQuantity}
                     onChangeText={setInventoryQuantity} 
@@ -402,14 +403,14 @@ export default function PurchaseLogForm() {
                     }}
                 />
             </Form.Control>
-            <Form.Control labelStyle={styles.label} label="Cost" name="cost" >
+            <Form.Control labelStyle={FORM.LABEL} label="Cost" name="cost" >
                 <Form.Input 
                     value={cost}
                     onChangeText={setCost}
                      style={{ backgroundColor: 'transparent', width: '100%' }} 
                 />
             </Form.Control>
-            <Form.Control name="vendor" label="Vendor" labelStyle={styles.label}>
+            <Form.Control name="vendor" label="Vendor" labelStyle={FORM.LABEL}>
                 <Form.Select 
                     style={{ width: '100%', backgroundColor: 'transparent' }}
                     onValueChange={(value: any)=> {
@@ -429,7 +430,7 @@ export default function PurchaseLogForm() {
                 <NewVendorForm /> :
                 <></>
             }
-            <Form.Control name="notes" label="Notes" labelStyle={styles.label}>
+            <Form.Control name="notes" label="Notes" labelStyle={FORM.LABEL}>
                 <Form.Input 
                     multiline
                     value={notes}
@@ -454,74 +455,12 @@ export default function PurchaseLogForm() {
 
 
 
-const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: "center", alignItems: "center", },
-  text: { fontSize: 20, marginBottom: 20 },
-  form: {
-    backgroundColor: 'rgba(0, 17, 255, 0.3)',
-    width:66    
-  },
-  backgroundImage:{
-    paddingBottom: 300
-  },
-  input: {
-    // margin: 8,
-    // padding: 8,
-    // gap: 16,
-    fontSize: 16 
-  },
-  surface: {
-    padding: 16,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    // marginBottom: 8
-  },
-  surfaceBottom: {
-    padding: 16,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    marginBottom: 24
-  },
-  surfaceContainer: {
-    padding: 16,
-    backgroundColor: 'rgba(56,185,255,0.3)'
-  },
-  surfaceMetaContainer: {
-    backgroundColor: 'rgba(55,255,55,0.4)',
-    width:350,
-    margin: 'auto',
-    marginTop: 16,
-  },
-  title: {
-    fontSize: 24,
-    textAlign:  'center',
-    fontWeight: 'bold',
-    color: 'red',
-    textShadowColor: 'blue',
-    textShadowRadius: 16,
-  },
-  label: {
-    fontSize: 18,
-    textAlign:  'center',
-    fontWeight: 'bold',
-    color: 'red',
-    textShadowColor: 'blue',
-    textShadowRadius: 16,
-  },
-  subtitle: {
-    fontSize: 18,
-    textAlign:  'center',
-    fontWeight: 'bold',
-    color: 'red',
-    textShadowColor: 'blue',
-    textShadowRadius: 16,
-  },
-
-  item: {
-    width: "30%",        // 3 items per row
-    aspectRatio: 1,      // makes it square
-    marginBottom: 10,
-    backgroundColor: "#4682B4",
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 8,
-  },
-});
+  // item: {
+  //   width: "30%",        // 3 items per row
+  //   aspectRatio: 1,      // makes it square
+  //   marginBottom: 10,
+  //   backgroundColor: "#4682B4",
+  //   justifyContent: "center",
+  //   alignItems: "center",
+  //   borderRadius: 8,
+  // },

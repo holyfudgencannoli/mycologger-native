@@ -9,12 +9,13 @@ import { PurchaseLogsModal } from "./detail-modal";
 import { useSQLiteContext } from "expo-sqlite";
 import * as Item from '@db/items';
 import { LinearGradient } from "expo-linear-gradient";
-import ConsumableItem from "@features/consumables/types";
 import InventoryLogType from "./types/inventory-log";
 import { ItemProps } from "@db/items/types";
 import { MyTabBar } from "@components/bottom-tabs";
 import { tabs } from "./types";
 import * as Form from '@custom/react-native-forms/src'
+import { FORM } from "@constants/styles";
+
 
 export default function ConsumableItemInventory({ navigation, state }) {
   const db = useSQLiteContext();

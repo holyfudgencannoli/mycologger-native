@@ -22,6 +22,7 @@ import Button from "@components/button";
 import { COLORS } from "@constants/colors";
 import { FormStateContext } from "src/context/FormContext";
 import { CaseHelper } from "@utils/case-helper";
+import { FORM } from "@constants/styles";
 
 type formattedRecipe ={
     _id: string,
@@ -144,7 +145,7 @@ export default function ExecuteBatch({}) {
                     <Surface style={{ backgroundColor: '#0008', margin: 16, padding: 16 }}>
                         <Text style={styles.title}>Execute New {CaseHelper.toCleanCase(type)} Batch</Text>
                     </Surface>
-                    <Form.Control labelStyle={styles.label} label="Start Time" name="startTime" >
+                    <Form.Control labelStyle={FORM.LABEL} label="Start Time" name="startTime" >
 
                         <Form.Input
                             value={new Date(startTime).toLocaleString()}
@@ -153,14 +154,14 @@ export default function ExecuteBatch({}) {
                         />
                     </Form.Control>
                     
-                    <Form.Control labelStyle={styles.label} label="End Time" name="endTime" >
+                    <Form.Control labelStyle={FORM.LABEL} label="End Time" name="endTime" >
                         <Form.Input
                             value={new Date(endTime).toLocaleString()}
                             disabled
                             style={{ width: '100%', textAlign: 'center', backgroundColor: 'transparent', color: 'white' }}
                         />
                     </Form.Control>
-                    <Form.Control labelStyle={styles.label} label="Select Batch to Use" name="batch">
+                    <Form.Control labelStyle={FORM.LABEL} label="Select Batch to Use" name="batch">
                         <Form.Select 
                             placeholder="Select Recipe Batch"
                             options={recipeBatches}
@@ -171,7 +172,7 @@ export default function ExecuteBatch({}) {
                             }}
                         />
                     </Form.Control>
-                    <Form.Control labelStyle={styles.label} label="Volume Per Container" name="volumePer" >
+                    <Form.Control labelStyle={FORM.LABEL} label="Volume Per Container" name="volumePer" >
                         <Form.Input
                             value={volume}
                             onChangeText={setVolume} 
@@ -186,7 +187,7 @@ export default function ExecuteBatch({}) {
                             }}
                         />
                     </Form.Control>
-                    <Form.Control labelStyle={styles.label} label="Number of Containers" name="quantity" >
+                    <Form.Control labelStyle={FORM.LABEL} label="Number of Containers" name="quantity" >
                         <Form.Input
                             value={quantity}
                             onChangeText={setQuantity} 
@@ -194,7 +195,7 @@ export default function ExecuteBatch({}) {
                         />
                     </Form.Control>
                     
-                    <Form.Control labelStyle={styles.label} label="Total Usage" name="usage" >
+                    <Form.Control labelStyle={FORM.LABEL} label="Total Usage" name="usage" >
                         <Form.Input
                             value={usageAmount}
                             onChangeText={setUsageAmount} 

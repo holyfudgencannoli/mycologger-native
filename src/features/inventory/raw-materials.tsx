@@ -12,6 +12,8 @@ import * as Item from '@db/items'
 import { MyTabBar } from "@components/bottom-tabs";
 import { tabs } from "./types";
 import * as Form from '@custom/react-native-forms/src'
+import { FORM } from "@constants/styles";
+
 
 export default function ItemerialInventory({ navigation, state }) {
   const db = useSQLiteContext();

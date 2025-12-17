@@ -21,6 +21,7 @@ import { ScreenPrimative } from "@components/screen-primative";
 import { MyTabBar } from "@components/bottom-tabs";
 import { tabs } from ".";
 import { COLORS } from "@constants/colors";
+import { FORM } from "@constants/styles";
 
 /* ------------------------------------------------------------------ */
 /* Types (optional – remove if you’re not using TS)                   */
@@ -220,7 +221,7 @@ export default function NewTaskForm() {
                     <Form.Control 
                       label={`${time.startTime.toLocaleTimeString()} – ${time.endTime.toLocaleTimeString()}`}
                       name="taskTime"  
-                      labelStyle={styles.label}
+                      labelStyle={FORM.LABEL}
                     >
                       {/* Category picker */}
                     <View style={styles.row}>

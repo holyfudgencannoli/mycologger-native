@@ -23,7 +23,7 @@ export default function NewVendorForm() {
                     <Form.Control
                         name='vendorName'
                         label='Vendor Name'
-                        labelStyle={styles.label}
+                        labelStyle={}
                     >
                         <Form.Input
                             style={{ backgroundColor: 'transparent', width: '100%' }} 
@@ -35,7 +35,7 @@ export default function NewVendorForm() {
                     <Form.Control
                         name='vendorEmail'
                         label='Vendor Email'
-                        labelStyle={styles.label}
+                        labelStyle={}
                     >
                         <Form.Input
                             style={{ backgroundColor: 'transparent', width: '100%' }} 
@@ -48,7 +48,7 @@ export default function NewVendorForm() {
                     <Form.Control
                         name='vendorPhone'
                         label='Vendor Phone'
-                        labelStyle={styles.label}
+                        labelStyle={}
                     >
                         <Form.Input
                             style={{ backgroundColor: 'transparent', width: '100%' }} 
@@ -60,7 +60,7 @@ export default function NewVendorForm() {
                     <Form.Control
                         name='vendorAddress'
                         label='Vendor Name'
-                        labelStyle={styles.label}
+                        labelStyle={}
                     >
                         <Form.Input
                             style={{ backgroundColor: 'transparent', width: '100%' }} 
@@ -73,7 +73,7 @@ export default function NewVendorForm() {
                     <Form.Control
                         name='vendorContact'
                         label='Vendor Contact Name'
-                        labelStyle={styles.label}
+                        labelStyle={}
                     >
                         <Form.Input
                             style={{ backgroundColor: 'transparent', width: '100%' }} 
@@ -84,7 +84,7 @@ export default function NewVendorForm() {
                     <Form.Control
                         name='vendorWebsite'
                         label='Vendor Website'
-                        labelStyle={styles.label}
+                        labelStyle={}
                     >
                         <Form.Input
                             style={{ backgroundColor: 'transparent', width: '100%' }}

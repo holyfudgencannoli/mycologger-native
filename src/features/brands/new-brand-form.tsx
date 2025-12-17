@@ -4,6 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useCallback, useContext } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { BrandFormStateContext } from 'src/context/FormContext';
+import { FORM } from "@constants/styles";
 
 
 export default function NewBrandForm() {

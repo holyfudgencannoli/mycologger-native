@@ -9,12 +9,13 @@ import { PurchaseLogsModal } from "./detail-modal";
 import { useSQLiteContext } from "expo-sqlite";
 import * as BioMat from '@db/items';
 import { LinearGradient } from "expo-linear-gradient";
-import BioMaterial from "@features/bio-materials/types";
 import { PurchaseLogProp, tabs } from "./types";
 import InventoryLogType from "./types/inventory-log";
 import { ItemProps } from "@db/items/types";
 import { MyTabBar } from "@components/bottom-tabs";
 import * as Form from '@custom/react-native-forms/src'
+import { FORM } from "@constants/styles";
+
 
 export default function BioMaterialInventory({ navigation, state }) {
   const db = useSQLiteContext();

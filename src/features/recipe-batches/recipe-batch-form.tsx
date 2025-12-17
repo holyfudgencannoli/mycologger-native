@@ -22,6 +22,7 @@ import { ScreenPrimative } from "@components/screen-primative";
 import { COLORS } from "@constants/colors";
 import Button from "@components/button";
 import { RecipeBatchFormStateContext } from "src/context/FormContext";
+import { FORM } from "@constants/styles";
 
 
 export type RootStackParamList = {
@@ -165,7 +166,7 @@ export default function RecipeBatchForm({ setUnsaved }: { setUnsaved: (value: bo
           type="embed"
         />
       </Form.Control>
-      <Form.Control name='batchName' label="Batch Name" labelStyle={styles.label}>
+      <Form.Control name='batchName' label="Batch Name" labelStyle={FORM.LABEL}>
         <Form.Input 
           value={name}
           style={{ width: '100%' }}
@@ -195,7 +196,7 @@ export default function RecipeBatchForm({ setUnsaved }: { setUnsaved: (value: bo
           <>
 
             {/* //  Weight  */}
-            <Form.Control labelStyle={styles.label} label="Recipe Yield Weight" name="recipeRealWeight">
+            <Form.Control labelStyle={FORM.LABEL} label="Recipe Yield Weight" name="recipeRealWeight">
               <Form.Input
                 value={realWeightAmount}
                 onChangeText={setRealWeightAmount}
@@ -210,7 +211,7 @@ export default function RecipeBatchForm({ setUnsaved }: { setUnsaved: (value: bo
             </Form.Control>
 
             {/* //  Volume */}
-            <Form.Control labelStyle={styles.label} label="Recipe Yield Volume" name="recipeYieldVolume">
+            <Form.Control labelStyle={FORM.LABEL} label="Recipe Yield Volume" name="recipeYieldVolume">
               <Form.Input
                 value={realVolume}
                 onChangeText={setRealVolume}
@@ -226,7 +227,7 @@ export default function RecipeBatchForm({ setUnsaved }: { setUnsaved: (value: bo
           </> :
           <>
             {/* Volume */}
-            <Form.Control labelStyle={styles.label} label="Recipe Yield Volume" name="recipeYieldVolume">
+            <Form.Control labelStyle={FORM.LABEL} label="Recipe Yield Volume" name="recipeYieldVolume">
               <Form.Input
                 value={realVolume}
                 onChangeText={setRealVolume}
@@ -240,7 +241,7 @@ export default function RecipeBatchForm({ setUnsaved }: { setUnsaved: (value: bo
               />
             </Form.Control>
             {/* Weight */}
-            <Form.Control labelStyle={styles.label} label="Recipe Yield Weight" name="recipeRealWeight">
+            <Form.Control labelStyle={FORM.LABEL} label="Recipe Yield Weight" name="recipeRealWeight">
               <Form.Input
                 value={realWeightAmount}
                 onChangeText={setRealWeightAmount}

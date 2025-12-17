@@ -13,6 +13,8 @@ import { CultureObject, tabs } from "./types";
 import { MyTabBar } from "@components/bottom-tabs";
 import { COLORS } from "@constants/colors";
 import { CaseHelper } from "@utils/case-helper";
+import { FORM } from "@constants/styles";
+
 
 export default function AgarCulturesListScreen({ navigation, state }) {
     const db = useSQLiteContext();    
