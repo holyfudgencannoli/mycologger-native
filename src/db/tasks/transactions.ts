@@ -23,6 +23,15 @@ function add_usage (total_usage: number, total_usage_unit: string, new_usage_bas
     return four
 } 
 
+function subtract_usage (total: number, unit: string, new_usage_base: number, final_unit?: string): number {
+    let one = cnv.convertToBase({ value: total, from: unit })
+    let two = new_usage_base
+    let three = one - two
+    let four = cnv.convertFromBase({ value: three, to: final_unit? final_unit : unit })
+
+    return four
+} 
+
 export async function ExecuteRecipe(params: any, {
     db,
     recipe_id,
@@ -254,12 +263,19 @@ export async function ExecuteAgar(params: any, {
                 let Unit = batch_log.inventory_unit
 
                 await BatchLog.update(
-                    db, 
+                    db,
                     {
-                        id: batch_log.id,
+                        id: batch_log.item_id,
                         amount_on_hand: Amount,
                         inventory_unit: Unit,
                         last_updated: created_at,
+                        
+                    }
+                )
+                await Item.update(
+                    db, 
+                    {
+                        id: batch_log.item_id,
                         total_usage: add_usage(parseFloat(usage_amount)?? 0, usage_unit ?? batch_log.inventory_unit, two, usage_unit ?? batch_log.inventory_unit),
                         usage_unit: batch_log.inventory_unit
                     

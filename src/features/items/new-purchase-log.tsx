@@ -87,6 +87,7 @@ export default function NewPurchaseLog({ navigation, state }) {
                                         if (value.id === 999999) {
                                             setIsNew(true)
                                             setItem(null)
+                                            setId(null)
                                             setName('')
                                             setCategory('')
                                             setSubcategory('')

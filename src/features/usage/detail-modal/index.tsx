@@ -1,9 +1,9 @@
-import Itemerial from '@features/raw-materials/types/raw-material';
+// import Itemerial from '@features/raw-materials/types/raw-material';
 import { useFocusEffect } from '@react-navigation/native';
 import React, { useCallback, useState } from 'react';
 import { View, Modal, Text, StyleSheet, TouchableOpacity, FlatList, Alert } from 'react-native';
 import * as Item from '@db/items'
-import * as PurchLogs from '@db/purchase-logs'
+import * as UsageLogs from '@db/usage_logs'
 import * as Vendor from '@db/vendors'
 import { useSQLiteContext } from 'expo-sqlite';
 import { PurchaseLogProp } from '../types/purchase-log';
@@ -14,7 +14,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { COLORS } from '@constants/colors';
 
 
-export const PurchaseLogsModal = ({ visible, setModalOpen, item}: {visible: boolean, setModalOpen: (arg0: boolean) => void, item: ItemProps}) => {
+export const UsageLogsModal = ({ visible, setModalOpen, item}: {visible: boolean, setModalOpen: (arg0: boolean) => void, item: ItemProps}) => {
     const [purchaseLogs, setPurchaseLogs] = useState<{ item: ItemProps, log: PurchaseLogData, vendor: Vendor.VendorType  }[]>([]);
     const [vendors, setVendors] = useState([]);
     const db = useSQLiteContext();
@@ -26,7 +26,7 @@ export const PurchaseLogsModal = ({ visible, setModalOpen, item}: {visible: bool
     };
 
     const getPurchaseLogs = async() => {
-        const logs = await PurchLogs.getByItemId(db, 'raw_material', item.id)
+        const logs = await UsageLogs.getByItemId(db, item.id)
         const material = await Item.getById(db, item.id)
         const vendorAddedLogs: {item: ItemProps, log: PurchaseLogData, vendor: Vendor.VendorType}[] = []            
         for (let i = 0; i < logs.length; i++) {
@@ -161,5 +161,5 @@ const styles = StyleSheet.create({
     },
 });
 
-export default PurchaseLogsModal;
+export default UsageLogsModal;
         

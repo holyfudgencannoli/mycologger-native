@@ -76,8 +76,7 @@ export async function migrateDbIfNeeded(db: SQLiteDatabase) {
   if (user_version >= DATABASE_VERSION) return;
 
   if (user_version < 10000) {
-		const result = await 
-			first_tables(
+		const result = await first_tables(
 				db, 
 				DATABASE_VERSION, 
 			)

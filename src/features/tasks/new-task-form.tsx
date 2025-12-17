@@ -227,6 +227,7 @@ export default function NewTaskForm() {
 
                       <Form.Select 
                         options={opts}
+                        placeholder="Select Category"
                         onValueChange={(value: any) => {
                           // Update the specific pair in state
                           console.log("Category", value.value)

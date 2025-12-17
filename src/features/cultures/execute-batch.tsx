@@ -71,8 +71,8 @@ export default function ExecuteBatch({}) {
             volume_unit: volumeUnit,
             usage_amount: usageAmount,
             usage_unit: usageUnit,
-            start_time: startTime,
-            end_time: endTime,
+            start_time: new Date(startTime).getTime(),
+            end_time: new Date(endTime).getTime(),
             notes
         })
         // const qty = parseInt(quantity);
@@ -115,6 +115,7 @@ export default function ExecuteBatch({}) {
         // } finally {
         //     setLoading(false);
         // }
+        navigation.navigate('Dashboard');
     };
     
     useFocusEffect(
@@ -143,6 +144,22 @@ export default function ExecuteBatch({}) {
                     <Surface style={{ backgroundColor: '#0008', margin: 16, padding: 16 }}>
                         <Text style={styles.title}>Execute New {CaseHelper.toCleanCase(type)} Batch</Text>
                     </Surface>
+                    <Form.Control labelStyle={styles.label} label="Start Time" name="startTime" >
+
+                        <Form.Input
+                            value={new Date(startTime).toLocaleString()}
+                            disabled
+                            style={{ width: '100%', textAlign: 'center', backgroundColor: 'transparent', color: 'white' }}
+                        />
+                    </Form.Control>
+                    
+                    <Form.Control labelStyle={styles.label} label="End Time" name="endTime" >
+                        <Form.Input
+                            value={new Date(endTime).toLocaleString()}
+                            disabled
+                            style={{ width: '100%', textAlign: 'center', backgroundColor: 'transparent', color: 'white' }}
+                        />
+                    </Form.Control>
                     <Form.Control labelStyle={styles.label} label="Select Batch to Use" name="batch">
                         <Form.Select 
                             placeholder="Select Recipe Batch"

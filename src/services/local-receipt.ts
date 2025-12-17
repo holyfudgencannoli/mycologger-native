@@ -56,11 +56,11 @@ export async function saveReceiptLocally(tempUri: string): Promise<ReceiptMeta> 
 /**
  * Load all stored receipts (metadata only).
  */
-export async function loadAllReceipts(): Promise<PurchaseLogData[]> {
+export async function loadAllReceipts(): Promise<ReceiptMeta[]> {
   const keys = await AsyncStorage.getAllKeys();
   const receiptKeys = keys.filter(k => k.startsWith('receipt-'));
   const stores = await AsyncStorage.multiGet(receiptKeys);
   return stores
     .map(([_, value]) => (value ? JSON.parse(value) : null))
-    .filter(Boolean) as PurchaseLogData[];
+    .filter(Boolean) as ReceiptMeta[];
 }

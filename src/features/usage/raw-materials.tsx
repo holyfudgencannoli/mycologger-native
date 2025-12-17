@@ -4,7 +4,7 @@ import { Surface } from "react-native-paper";
 import { useFocusEffect, useRoutePath } from "@react-navigation/native";
 import { ScrollableDataTable } from "@components/scrollable-data-table";
 import { ScreenPrimative } from "@components/screen-primative";
-import { PurchaseLogsModal } from "./detail-modal";
+import { PurchaseLogsModal, UsageLogsModal } from "./detail-modal";
 import { useSQLiteContext } from "expo-sqlite";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Item from '@db/items';
@@ -119,7 +119,7 @@ export default function RawMaterialUsage({ navigation }) {
                       onRowPress={openModal}
                     />
                     {modalOpen && currentItem && (
-                      <PurchaseLogsModal
+                      <UsageLogsModal
                         visible={modalOpen}
                         setModalOpen={setModalOpen}
                         item={currentItem}

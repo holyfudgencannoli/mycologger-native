@@ -11,6 +11,7 @@ import { SQLiteProvider } from 'expo-sqlite';
 import Navigation from '@navigation';
 import { Platform } from 'react-native';
 import { FormStateProvider } from 'src/context/FormStateProvider';
+import { StrictMode } from 'react';
 
 export default function App() {
 
@@ -25,17 +26,17 @@ export default function App() {
     }
 
 	return (
-		<SQLiteProvider databaseName='mycologger_v2.3_dev.db' onInit={handleInit}>
-			<FormStateProvider>
-				<PaperProvider>
-					<ThemeProvider>
-						<FormProvider>
-							<Navigation />
-						</FormProvider>	
-					</ThemeProvider>
-				</PaperProvider>
-			</FormStateProvider>
-		</SQLiteProvider>
+        <SQLiteProvider databaseName='mycologger_v1.0.1_production.db' onInit={handleInit}>
+            <FormStateProvider>
+                <PaperProvider>
+                    <ThemeProvider>
+                        <FormProvider>
+                            <Navigation />
+                        </FormProvider>	
+                    </ThemeProvider>
+                </PaperProvider>
+            </FormStateProvider>
+        </SQLiteProvider>
 	);
 }
 

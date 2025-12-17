@@ -28,9 +28,102 @@ import { COLORS } from "@constants/colors";
 import { PurchaseLogType } from "@db/purchase-logs/types";
 import NewBrandForm from "@features/brands/new-brand-form";
 import NewVendorForm from "@features/vendors/new-vendor-form";
+import {default as BrandType} from "@features/brands/type";
+import { NewBrandFormState, NewVendorFormState } from "src/context/FormState";
 
 type NavigationProps = DrawerNavigationProp<RootDrawerParamsList>
 
+
+
+const NEW_ID = 999_999;   // value used by the picker for “New …”
+const SELF_ID = 0;        // value used by the picker for “Self”
+
+
+
+/**
+ * Show an alert and return true if we should abort the submit flow.
+ */
+function abortWithAlert(title: string, message: string): boolean {
+  Alert.alert(title, message);
+  return true;
+}
+
+/**
+ * Check if a name already exists in a list of objects that have a `name` field.
+ */
+function isDuplicateName<T extends { name: string }>(
+  items: T[],
+  nameToCheck: string
+): boolean {
+  return items.some((item) => item.name.toLowerCase() === nameToCheck.trim().toLowerCase());
+}
+
+/**
+ * Convert purchase + inventory quantities into the unit used by the item.
+ */
+function calculateAmount(
+  baseUnit: string,
+  purchaseQty: number,
+  inventoryQty: number,
+  inventoryUnit: string
+): { amount: number; unit: string } {
+  const raw = purchaseQty * inventoryQty;
+  // If we already have an inventory unit, convert to that unit.
+  if (baseUnit) {
+    return {
+      amount: cnv.convertFromBase({
+        value: cnv.convertToBase({ value: raw, from: inventoryUnit }),
+        to: baseUnit,
+      }),
+      unit: baseUnit,
+    };
+  }
+  // No existing unit – keep the inventory unit.
+  return { amount: raw, unit: inventoryUnit };
+}
+
+/**
+ * Persist a brand if it is new; otherwise just return its id.
+ */
+async function getOrCreateBrand(
+  db: any,
+  state: NewBrandFormState,
+  currentId?: number
+): Promise<number> {
+  if (currentId && currentId !== NEW_ID) return currentId;
+
+  // New brand – create it in the DB.
+  const brandId = await Brand.create(
+    db,
+    state.brandName,
+    state.brandWebsite,
+    Date.now()
+  );
+  return brandId;
+}
+
+/**
+ * Persist a vendor if it is new; otherwise just return its id.
+ */
+async function getOrCreateVendor(
+  db: any,
+  state: NewVendorFormState,
+  currentId?: number
+): Promise<number> {
+  if (currentId && currentId !== NEW_ID) return currentId;
+
+  const vendorId = await Vendor.create(
+    db,
+    state.name,
+    state.email,
+    state.phone,
+    state.address,
+    state.contactName,
+    state.website,
+    Date.now()
+  );
+  return vendorId;
+}
 
 
 export default function PurchaseLogForm() {
@@ -82,13 +175,13 @@ export default function PurchaseLogForm() {
 
     async function getVendors() {
         const vendor_rows = await Vendor.readAll(db)
-        setVendors([{id: 999999, name: 'New Vendor'}, ...vendor_rows])
+        setVendors([{id: 999999, name: 'New Vendor'}, {id: 0, name: 'Self'}, ...vendor_rows])
         return vendor_rows
     }
 
     async function getBrands() {
         const brand_rows = await Brand.readAll(db)
-        setBrands([{id: 999999, name: 'New Brand'}, ...brand_rows])
+        setBrands([{id: 999999, name: 'New Brand'}, {id: 0, name: 'Self'}, ...brand_rows])
         return brand_rows
     }
 
@@ -133,154 +226,113 @@ export default function PurchaseLogForm() {
         }, [])
     )
 
-    const handleSubmit = async () => {
-        try {
-            
-            if (isNew) {
-                const itemNames: string[] = items.map((item) => item.name)
-                if (itemNames.includes(name)) {
-                    Alert.alert("Duplicate Item Creation", "Item Already Exists!")
-                    return
-                }
-            }
-            if (newBrand) {
-                const brandNames: string[] = brands.map((brand) => brand.name)
-                if (brandNames.includes(brandState.brandName)) {
-                    Alert.alert("Duplicate Brand Creation", "Brand Already Exists!")
-                    return
-                } 
-            }
-            if (newVendor) {
-                const vendorNames: string[] = vendors.map((vendor) => vendor.name)
-                if (vendorNames.includes(vendorState.name)) {
-                    Alert.alert("Duplicate Vendor Creation", "Vendor Already Exists!")
-                    return
-                } 
-            }
 
-            if (!image) {
-                Alert.alert("Error", "Please select a receipt image");
-                return;
-            }
+		const handleSubmit = async () => {
+			try {
+				/* ---------- 1. Validation ---------- */
+				if (!image) return abortWithAlert("Error", "Please select a receipt image");
 
+				// Duplicate checks – only run when creating new entities.
+				if (isNew && isDuplicateName(items, name))
+					return abortWithAlert("Duplicate Item Creation", "Item Already Exists!");
 
+				if (newBrand && isDuplicateName(brands, brandState.brandName))
+					return abortWithAlert("Duplicate Brand Creation", "Brand Already Exists!");
 
+				if (newVendor && isDuplicateName(vendors, vendorState.name))
+					return abortWithAlert("Duplicate Vendor Creation", "Vendor Already Exists!");
 
+				/* ---------- 2. Resolve IDs ---------- */
+				const createdAt = Date.now();
+				const type = CaseHelper.toSnakeCase(decodeURIComponent(path.split("/")[2])).slice(0, -1);
 
-            const created_at = new Date().getTime();
-            const item = await Item.getById(db, id)
-            console.log(item)
-            const TYPE = CaseHelper.toSnakeCase(decodeURIComponent(path.split('/')[2])).slice(0, -1)
-            // console.log("Item.unit", item.inventory_unit)
-            // console.log("Inventory", inventoryUnit)
-            // console.log("Item.unit", item.inventory_unit)
+				// Brand & Vendor – create if needed.
+				const brandId = await getOrCreateBrand(db, brandState, brand?.id);
+				const vendorId = await getOrCreateVendor(db, vendorState, vendor?.id);
 
-            let Amount: number;
-            let Unit: string;
-            if (item.inventory_unit === null) { 
-                Amount = cnv.convertFromBase({
-                    value: 
-                        (cnv.convertToBase({ value: parseFloat(purchaseQuantity) * parseFloat(inventoryQuantity), from: inventoryUnit })),
-                    to: 
-                        inventoryUnit
-                })
-                Unit = inventoryUnit
-            } else {
-                    Amount = cnv.convertFromBase({
-                        value: 
-                            cnv.convertToBase({ value: item.amount_on_hand, from: item.inventory_unit  }) 
-                            + (cnv.convertToBase({ value: parseFloat(purchaseQuantity) * parseFloat(inventoryQuantity), from: item.inventory_unit })),
-                        to: 
-                            item.inventory_unit
-                    })
-                    Unit = item.inventory_unit
-            }
+				/* ---------- 3. Item handling ---------- */
+				let itemId: number | undefined;
+				let amountOnHand: number;
+				let inventoryUnitUsed: string;
 
-            let current_item_id: number;
-            if (isNew) {
-                const itemId = await Item
-                .create(
-                    db,
-                    name,
-                    category,
-                    subcategory,
-                    TYPE,
-                    created_at,
-                    Amount,
-                    Unit,
-                    null,
-                    created_at,
-                    null,
-                    null
-                )
-                current_item_id = itemId
-            } else {
-                const itemId = await Item
-                .update(
-                    db,                
-                    {
-                        id, 
-                        amount_on_hand: Amount,
-                        inventory_unit: Unit,
-                        last_updated: created_at
-                    }
+				if (id !== null && id !== 0) {
+					// Existing item – update its quantity.
+					const existing = await Item.getById(db, id);
 
-                )
-                current_item_id = id
-            }
-            let current_brand_id: number;
-            let current_vendor_id: number;
-            if (newBrand) {
-                const brandId = await Brand.create(
-                    db,
-                    brandState.brandName,
-                    brandState.brandWebsite,
-                    created_at
-                )
-                current_brand_id = brandId
-            } else {
-                current_brand_id = brand.id
-            }
-            if (newVendor) {
-                const vendorId = await Vendor.create(
-                    db,
-                    vendorState.name,
-                    vendorState.email,
-                    vendorState.phone,
-                    vendorState.address,
-                    vendorState.contactName,
-                    vendorState.website,
-                    created_at
-                )
-                current_vendor_id = vendorId
-            } else {
-                current_vendor_id = vendor.id
-            }
-            const savedPath = await saveReceiptWithSAF(image, `receipt_image_${created_at}`)
-            console.log(savedPath)    
-            await PurchLog.create(
-                db,
-                TYPE,
-                current_item_id,
-                created_at,
-                purchaseDatetime.getTime(),
-                purchaseUnit,
-                parseFloat(purchaseQuantity),
-                inventoryUnit,
-                parseFloat(inventoryQuantity),
-                vendorId,
-                current_brand_id,
-                savedPath,
-                parseFloat(cost)
-            )
-    		navigation.navigate("Dashboard")
+					const { amount, unit } = calculateAmount(
+						existing.inventory_unit ?? "",
+						parseFloat(purchaseQuantity),
+						parseFloat(inventoryQuantity),
+						inventoryUnit
+					);
 
-            console.log(`Success! ${purchaseQuantity} ${purchaseUnit} of ${CaseHelper.toCleanCase(TYPE)} ${name} added to your inventory. Great Work!` )
+					await Item.update(db, {
+						id,
+						amount_on_hand: amount,
+						inventory_unit: unit,
+						last_updated: createdAt,
+					});
 
-        } catch(error) {
-            console.error(error)
-        }
-    }
+					itemId = id;
+					amountOnHand = amount;
+					inventoryUnitUsed = unit;
+				} else if (isNew) {
+					// New item – create it.
+					const { amount, unit } = calculateAmount(
+						"",
+						parseFloat(purchaseQuantity),
+						parseFloat(inventoryQuantity),
+						inventoryUnit
+					);
+
+					itemId = await Item.create(
+						db,
+						name,
+						category,
+						subcategory,
+						type,
+						createdAt,
+						amount,
+						unit,
+						0, // TODO: decide what this field is
+						createdAt,
+						0,
+						unit
+					);
+					amountOnHand = amount;
+					inventoryUnitUsed = unit;
+				}
+
+				/* ---------- 4. Persist receipt image ---------- */
+				const receiptPath = await saveReceiptWithSAF(image, `receipt_image_${createdAt}`);
+
+				/* ---------- 5. Create purchase log ---------- */
+				await PurchLog.create(
+					db,
+					type,
+					itemId!,
+					createdAt,
+					purchaseDatetime.getTime(),
+					purchaseUnit,
+					parseFloat(purchaseQuantity),
+					inventoryUnit,
+					parseFloat(inventoryQuantity),
+					vendor?.id ?? null, // original vendor id (may be 0 for “Self”)
+					brandId,
+					receiptPath,
+					parseFloat(cost)
+				);
+
+				/* ---------- 6. Success & navigation ---------- */
+				navigation.navigate("Dashboard");
+				console.log(
+					`Success! ${purchaseQuantity} ${purchaseUnit} of ${CaseHelper.toCleanCase(type)} ${name} added to your inventory. Great Work!`
+				);
+			} catch (error) {
+				console.error(error);
+				Alert.alert("Unexpected error", "Something went wrong while saving the purchase log.");
+			}
+		};
 
     return (
         <>

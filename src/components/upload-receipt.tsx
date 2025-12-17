@@ -16,7 +16,7 @@ import { FormStateContext } from 'src/context/FormContext';
 import { PurchaseLogData } from '@db/purchase-logs/types';
 
 export const ReceiptUploader: React.FC = () => {
-  const [receipts, setReceipts] = useState<PurchaseLogData[]>([]);
+  const [receipts, setReceipts] = useState<ReceiptMeta[]>([]);
   const [previewUri, setPreviewUri] = useState<string | null>(null);
   
   // Load existing receipts on mount
@@ -57,12 +57,11 @@ export const ReceiptUploader: React.FC = () => {
         />
       </Form.Control>
       {/* List of saved receipts */}
-      <FlatList
-        data={receipts}
-        keyExtractor={item => item.id}
-        renderItem={renderItem}
-        contentContainerStyle={styles.list}
-      />
+			{receipts.map((receipt) => {
+				return (
+					renderItem({ item: receipt })
+				)
+			})}
     </View>
   );
 };
