@@ -1,25 +1,30 @@
 // import Itemerial from '@features/raw-materials/types/raw-material';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useRoutePath } from '@react-navigation/native';
 import React, { useCallback, useState } from 'react';
 import { View, Modal, Text, StyleSheet, TouchableOpacity, FlatList, Alert } from 'react-native';
 import * as Item from '@db/items'
 import * as UsageLogs from '@db/usage_logs'
 import * as Vendor from '@db/vendors'
+import * as Batch from '@db/recipe-batches'
 import { useSQLiteContext } from 'expo-sqlite';
 import { PurchaseLogProp } from '../types/purchase-log';
 import Button from '@components/button';
-import { ItemProps } from '@db/items/types';
+import { Item as ItemType, ItemProps } from '@db/items/types';
 import { PurchaseLogData } from '@db/purchase-logs/types';
 import { LinearGradient } from 'expo-linear-gradient';
 import { COLORS } from '@constants/colors';
 import { UsageLogType } from '@db/usage_logs/types';
 import { CaseHelper } from '@utils/case-helper';
+import { ScrollView } from 'react-native-gesture-handler';
+import RecipeBatch from  '@db/recipe-batches/types'
 
 
 export const UsageLogsModal = ({ visible, setModalOpen, item}: {visible: boolean, setModalOpen: (arg0: boolean) => void, item: ItemProps}) => {
     const [usageLogs, setUsageLogs] = useState<UsageLogType[]>([]);
     const [vendors, setVendors] = useState([]);
+    const [itemObject, setItemObject] = useState<ItemType>();
     const db = useSQLiteContext();
+    const path = useRoutePath();
 
     const closeModal = () => {
         // Close the modal (e.g., using a parent component's state)
@@ -27,8 +32,30 @@ export const UsageLogsModal = ({ visible, setModalOpen, item}: {visible: boolean
         console.log('Modal closed'); // Replace with your actual close logic
     };
 
+    const defineType = () => { 
+        const TYPE = CaseHelper.toSnakeCase(decodeURIComponent(path.split('/')[3]));
+        let trueType: string;
+
+        if (TYPE === 'recipe_batches') {
+            trueType = TYPE.slice(0, -2);
+        } else {
+            trueType = TYPE.slice(0, -1);
+        }
+        console.log(trueType)
+        return trueType;
+    }
+
     const getUsageLogs = async() => {
-        const logs = await UsageLogs.getByItemId(db, item.id)
+        const TYPE = defineType()
+        let itemObj: any;
+        if (TYPE === 'recipe_batch') {
+            itemObj = await Batch.getById(db, item.id)
+            setItemObject(itemObj)
+        } else {
+            itemObj = await Item.getById(db, item.id)
+            setItemObject(itemObj)
+        }
+        const logs = await UsageLogs.getByItemIdAndType(db, item.id, defineType())
         const material = await Item.getById(db, item.id)
         setUsageLogs(logs)
 
@@ -37,6 +64,7 @@ export const UsageLogsModal = ({ visible, setModalOpen, item}: {visible: boolean
     useFocusEffect(
         useCallback(() => {
             getUsageLogs()
+            console.log(path)
         }, [])
     )
 
@@ -69,13 +97,13 @@ export const UsageLogsModal = ({ visible, setModalOpen, item}: {visible: boolean
                 onRequestClose={() => {}} // Handle outside tap to close modal
                 visible={visible} // Make sure the modal is visible initially
             >
+                <ScrollView>
                 <View style={styles.modalContent}>
                     <Text style={styles.headerText}>Usage Logs</Text>
                     <Text>Usage logs will appear below</Text>
-                    {usageLogs.map(async(log) => {
-                        const item = await Item.getById(db, log.item_id)
+                    {usageLogs.map((log, index) => {
                         return(
-                            <View style={styles.logItem}>
+                            <View style={styles.logItem} key={index}>
                                 <LinearGradient
                                     start={{ x: 0, y: 0 }}
                                     end={{ x: 0.3, y: 0.9 }}
@@ -109,6 +137,8 @@ export const UsageLogsModal = ({ visible, setModalOpen, item}: {visible: boolean
                         <Text style={styles.closeButtonText}>Close</Text>
                     </TouchableOpacity>
                 </View>
+            </ScrollView>
+
             </Modal>
         </View>
     );
@@ -117,8 +147,8 @@ export const UsageLogsModal = ({ visible, setModalOpen, item}: {visible: boolean
 const styles = StyleSheet.create({
     modalContainer: {
         flex: 1, // Take up full screen space
-        justifyContent: 'center',
-        alignItems: 'center',
+        // justifyContent: 'center',
+        // alignItems: 'center',
     },
     modalContent: {
         backgroundColor: 'white',
@@ -151,6 +181,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'red',
         borderRadius: 5,
         paddingHorizontal: 10,
+        marginVertical: 24,
         paddingVertical: 5,
     },
     closeButtonText: {

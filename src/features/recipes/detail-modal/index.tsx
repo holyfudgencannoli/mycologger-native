@@ -3,6 +3,7 @@ import React, { useCallback, useState } from 'react';
 import { View, Modal, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
 import * as cnv from '@utils/unitConversion'
 import { LinearGradient } from 'expo-linear-gradient';
+import { ingredientProps } from '@db/recipes/types';
 
 interface RecipeData {
     id: number;
@@ -11,8 +12,8 @@ interface RecipeData {
 }
 
 
-const RecipeModal = ({ visible, setModalOpen, item}) => {
-    const [ingredients, setIngredients] = useState([]);
+const RecipeModal = ({ visible, setModalOpen, item: ingredient}) => {
+    const [ingredients, setIngredients] = useState<ingredientProps[]>([]);
 
     const closeModal = () => {
         // Close the modal (e.g., using a parent component's state)
@@ -22,15 +23,23 @@ const RecipeModal = ({ visible, setModalOpen, item}) => {
 
     useFocusEffect(
         useCallback(() => {
-            setIngredients(JSON.parse(item.ingredients))
-            console.log(JSON.parse(item.ingredients))
+            const parsed = JSON.parse(ingredient.ingredients)
+            const ingredientObjs = parsed.map((ingredient: ingredientProps, index: number) => {
+                return(
+                    { key: String(index), ...ingredient } 
+                )
+            })
+            setIngredients(ingredientObjs)
+            console.log(ingredientObjs)
         }, [])
     )
 
     return(
-        <View style={styles.modalContainer} >
+        <View >
 
             <Modal
+                // style={styles.modalContainer} 
+                statusBarTranslucent={true}
                 transparent={true}
                 animationType="slide"
                 onRequestClose={() => {}} // Handle outside tap to close modal
@@ -41,17 +50,17 @@ const RecipeModal = ({ visible, setModalOpen, item}) => {
                     start={{ x: 0, y: 0 }}
                     end={{ x: 0.3, y: 0.9 }}
                     colors={['#f4F8', '#00fc', '#0578']}
-                    style={{ marginRight: 'auto', marginLeft: 'auto', marginTop: '20%', padding: 16, borderRadius: 4, height: '25%', width: '72%', justifyContent: 'center', alignItems: 'center' }}
+                    style={{ marginRight: 'auto', marginLeft: 'auto', marginTop: '20%', padding: 16, borderRadius: 4, height: '40%', width: '100%', justifyContent: 'center', alignItems: 'center' }}
                 >
                     <View style={styles.modalContent}>
-                        <Text style={styles.headerText}>{item.name}</Text>
+                        <Text style={styles.headerText}>{ingredient.name}</Text>
                         <FlatList
                             data={ingredients}
-                            keyExtractor={(ing) => ing.ingredientId} // Use a unique key for each item
-                            renderItem={({ item, }: {item: {amount: number, ingredientId: number, ingredientName: string, unit: string}}) => (
+                            // keyExtractor={}
+                            renderItem={({ item }: {item: {amount: number, ingredientId: number, ingredientName: string, unit: string}}) => (
                                 <View style={styles.logItem}>
-                                    <Text style={styles.logItemText} >
-                                        {item.ingredientId}: {cnv.convertFromBase({value: item.amount, to: item.unit.toLowerCase()})} {item.unit} of {item.ingredientName}
+                                    <Text  style={styles.logItemText} >
+                                        {parseInt(item.key) + 1}: {item.amount} {item.unit} of {item.ingredientName}
                                     </Text>
                                 </View>
                             )}
@@ -62,16 +71,14 @@ const RecipeModal = ({ visible, setModalOpen, item}) => {
                         </TouchableOpacity>
                     </View>
                 </LinearGradient>
-                </Modal>
-            </View>
+            </Modal>
+        </View>
     );
 };
 
 const styles = StyleSheet.create({
     modalContainer: {
         flex: 1, // Take up full screen space
-        justifyContent: 'center',
-        alignItems: 'center',
     },
     modalContent: {
         backgroundColor: 'transparent',
@@ -103,6 +110,7 @@ const styles = StyleSheet.create({
     closeButton: {
         backgroundColor: 'red',
         borderRadius: 5,
+        marginTop: 16,
         paddingHorizontal: 10,
         paddingVertical: 5,
     },

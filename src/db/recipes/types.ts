@@ -12,6 +12,7 @@ export interface recipeProps {
 
 
 export interface ingredientProps {
+    index?: string;
     ingredientName: string;
     ingredientId: number;
     amount: number;

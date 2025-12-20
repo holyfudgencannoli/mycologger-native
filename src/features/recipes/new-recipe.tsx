@@ -42,22 +42,20 @@ export default function NewRecipe({ navigation, state }) {
 
 
   return(
-    <ScreenPrimative  style={{ flex: 1 }} edges={[]}>
-      <View style={styles.container}>	
-        <ScrollView>
-          <LinearGradient
-            start={{ x: 0, y: 0 }}
-            end={{ x: 0.3, y: 0.9 }}
-            colors={COLORS.BACKGROUND_GRADIENT.PRIMARY}
-            style={{ flex: 1, padding: 16}}
-          >
-            <CreateRecipe setUnsaved={setUnsaved} />
-          </LinearGradient>
-        </ScrollView>
-      </View>
-      <MyTabBar navigation={navigation} state={navigation.getState()} tabs={tabs}/>
+		<View style={styles.container}>	
+			<LinearGradient
+				start={{ x: 0, y: 0 }}
+				end={{ x: 0.3, y: 0.9 }}
+				colors={COLORS.BACKGROUND_GRADIENT.PRIMARY}
+				style={{ flex: 1, padding: 16}}
+			>
+    		<ScreenPrimative scroll edges={[]}>
+					<CreateRecipe setUnsaved={setUnsaved} />
+    		</ScreenPrimative>
+			</LinearGradient>
+		<MyTabBar navigation={navigation} state={navigation.getState()} tabs={tabs}/>
+		</View>
       
-    </ScreenPrimative>
   )
 }
 

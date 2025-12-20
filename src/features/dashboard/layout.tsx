@@ -6,6 +6,12 @@ import { COLORS } from "@constants/colors";
 
 
 export default function Dashboard({ navigation }) {
+
+    const isFocused = navigation.isFocused();
+
+    if (!isFocused) {
+        return null;
+    }
   
 
 

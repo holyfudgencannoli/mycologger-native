@@ -52,52 +52,32 @@ export async function getByName(
   db: SQLiteDatabase,
   name: string
 ) {
-  return await safeSelectOne<{
-		id: number;        
-	  recipe_id: number,
-    real_volume: number,
-    real_volume_unit: string,
-    real_weight: number,
-    real_weight_unit: string,
-    loss: number,
-    name: string,
-    notes: string,
-    created_at: number
-  }>(db, "SELECT * FROM recipe_batches WHERE name = ?", [name]);
+  return await safeSelectOne<RecipeBatch>(db, "SELECT * FROM recipe_batches WHERE name = ?", [name]);
 }
 
-export async function update(
-    db: SQLiteDatabase,
-	  recipe_id: number,
-    real_volume: number,
-    real_volume_unit: string,
-    real_weight: number,
-    real_weight_unit: string,
-    loss: number,
-    name: string,
-    notes: string,
-    created_at: number
-) {
-  const result = await safeRun(
-    db,
-    `UPDATE recipe_batches
-       SET name = ?, type = ?, ingredients = ?, real_volume = ?, real_volume_unit = ?,real_weight = ?, real_weight_unit = ?, nute_concentration = ?
-       WHERE id = ?`,
-        [
-            recipe_id,
-            real_volume,
-            real_volume_unit,
-            real_weight,
-            real_weight_unit,
-            loss,
-            name,
-            notes,
-            created_at
-		]
-  );
 
-  return result.changes; // number of rows updated
+export async function update(db: SQLiteDatabase, data: { id: number; [key: string]: any }) {
+  const { id, ...fields } = data;
+
+  const setClauses: string[] = [];
+  const values: any[] = [];
+
+  for (const key in fields) {
+    if (fields[key] !== undefined) {
+      setClauses.push(`${key} = ?`);
+      values.push(fields[key]);
+    }
+  }
+
+  if (setClauses.length === 0) return 0; // nothing to update
+
+  values.push(id); // for WHERE clause
+  const query = `UPDATE recipe_batches SET ${setClauses.join(', ')} WHERE id = ?`;
+
+  const result = await safeRun(db, query, values);
+  return result.changes;
 }
+
 
 export async function destroy(db: SQLiteDatabase, id: number) {
   const result = await safeRun(

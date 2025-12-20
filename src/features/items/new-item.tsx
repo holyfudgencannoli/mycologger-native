@@ -1,6 +1,6 @@
 import { useState, useCallback, useContext, JSX } from "react"
 import { StyleSheet, View, Button, Alert, Text } from 'react-native';
-import { RouteProp, useFocusEffect, useRoute, useRoutePath } from '@react-navigation/native';
+import { RouteProp, useFocusEffect, useIsFocused, useRoute, useRoutePath } from '@react-navigation/native';
 import { ScreenPrimative } from "@components/screen-primative";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Form from '@custom/react-native-forms/src'
@@ -45,6 +45,7 @@ export default function NewItem({ navigation, state }): JSX.Element {
 
     }
 
+    const isFocused = useIsFocused();
 
 
   useFocusEffect(
@@ -89,16 +90,21 @@ export default function NewItem({ navigation, state }): JSX.Element {
       navigation.navigate("Dashboard")
     }
   };
+  
+    if (!isFocused) {
+        return null;
+    }
 
   return(
-    <ScreenPrimative edges={[]}>
-      <View style={CONTAINER.FULL}>	
-        <LinearGradient
-          start={{ x: 0, y: 0 }}
-          end={{ x: 0.3, y: 0.9 }}
-          colors={COLORS.BACKGROUND_GRADIENT.PRIMARY}
-          style={{ ...CONTAINER.FULL, padding: 24}}
-        >
+		<View style={CONTAINER.FULL}>	
+			<LinearGradient
+				start={{ x: 0, y: 0 }}
+				end={{ x: 0.3, y: 0.9 }}
+				colors={COLORS.BACKGROUND_GRADIENT.PRIMARY}
+				style={{ ...CONTAINER.FULL, padding: 24}}
+			>
+	  	  <ScreenPrimative scroll edges={[]}>
+
 					<Text style={FORM.TITLE}>NEW {CaseHelper.toCleanCase(decodeURIComponent(path.split('/')[2])).slice(0, -1).toLocaleUpperCase()}</Text>
             <Form.Control label='Item Name' labelStyle={FORM.LABEL} name='name'>
               <Form.Input size='lg' style={{ color: 'white', flex: 1 }} value={name} onChangeText={setName}  />
@@ -112,11 +118,12 @@ export default function NewItem({ navigation, state }): JSX.Element {
             <View style={{ marginTop: 36 }}>
               <Button color={'#f74a63cc'} title='Submit' onPress={onSubmit} />
             </View>
-        </LinearGradient>	
-      </View>
-      <MyTabBar navigation={navigation} state={navigation.getState()} tabs={tabs} />
       
-    </ScreenPrimative>
+				</ScreenPrimative>
+			</LinearGradient>	
+      <MyTabBar navigation={navigation} state={navigation.getState()} tabs={tabs} />
+
+		</View>
   )
 
 }

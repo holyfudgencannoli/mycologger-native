@@ -44,7 +44,9 @@ export default function CreateRecipe({ setUnsaved }: { setUnsaved: (value: boole
     const [rawMaterialNames, setRawMaterialNames] = useState([])
 
     const addIngredient = (name: string, ingredientId: number, amount: string, unit: string) => {
+        const length = ingredients.length
         const ingredient = {
+            'index': String(length),
             'ingredientName': name,
             'ingredientId': ingredientId,
             'amount': parseFloat(amount),

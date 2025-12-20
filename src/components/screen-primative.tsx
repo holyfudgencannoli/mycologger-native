@@ -19,7 +19,7 @@ export const ScreenPrimative: React.FC<ScreenProps> = ({
   style,
   contentContainerStyle,
   edges,
-  keyboardOffset = 0
+  keyboardOffset = 100
 }) => {
   const { theme } = useTheme();
 
@@ -28,6 +28,7 @@ export const ScreenPrimative: React.FC<ScreenProps> = ({
   return (
     <SafeAreaView style={[styles.safeArea]} edges={edges}>
       <KeyboardAvoidingView
+        enabled
         style={{...styles.flex}}
         behavior={Platform.OS === "ios" ? "padding" : 'height'}
         keyboardVerticalOffset={keyboardOffset}

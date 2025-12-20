@@ -92,6 +92,28 @@ export async function getByType(
 }
 
 
+/**
+ * Return all usage‑log rows that match both an item id and a type.
+ *
+ * @param db      The SQLite database instance (any wrapper you use).
+ * @param itemId  The numeric ID of the item.
+ * @param type    The string value of the “type” column (e.g. 'recipe batch').
+ */
+export async function getByItemIdAndType(
+  db: SQLiteDatabase,
+  itemId: number,
+  type: string
+) {
+  const sql = `
+    SELECT *
+      FROM usage_logs
+     WHERE item_id = ?
+       AND type   = ?
+  `;
+  return await safeSelectAll<UsageLogType>(db, sql, [itemId, type]);
+}
+
+
 export async function update(
     db: SQLiteDatabase,
     type: string,

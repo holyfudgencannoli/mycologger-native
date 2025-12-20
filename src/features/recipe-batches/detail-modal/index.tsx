@@ -21,7 +21,7 @@ const RecipeBatchModal = ({ visible, setModalOpen, item}: {visible: boolean, set
         console.log('Modal closed'); // Replace with your actual close logic
     };
 
-    const { name,   real_volume, real_volume_unit, loss, notes, recipe_id,  } = item
+    const { name,   real_volume, real_volume_unit, loss, notes, recipe_id, total_usage, usage_unit  } = item
     return (
         <View style={styles.modalContainer}>
             <Modal
@@ -32,6 +32,7 @@ const RecipeBatchModal = ({ visible, setModalOpen, item}: {visible: boolean, set
             >
                 <View style={styles.modalContent}>
                     <Text>{name}</Text>
+                    <Text>Total Usage: {total_usage} {usage_unit}</Text>
                     <Text>Real Yield: {real_volume} {real_volume_unit}</Text>
                     <Text>Loss: {loss} </Text>
                     <Text>Notes: {notes ? notes: "No recorded notes"}</Text>

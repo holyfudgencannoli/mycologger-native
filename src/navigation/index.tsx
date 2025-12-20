@@ -32,7 +32,7 @@ import { COLORS } from "@constants/colors";
 import React from 'react';
 import { Ionicons } from '@expo/vector-icons'; // change to your icon library
 import { CultureParamList, InventoryItemParamList, InventoryParamList, RecipeParamList, RootDrawerParamsList, RootStackProps, UsageParamList } from "@navigation/types";
-import { StackScreenLifecycleState } from "react-native-screens";
+import { enableScreens, StackScreenLifecycleState } from "react-native-screens";
 import RecipeBatchInventory from "@features/recipe-batches/recipe-batch-inventory";
 import RawMaterialUsage from "@features/usage/raw-materials";
 
@@ -230,7 +230,7 @@ function RawMatStackNav() {
             id="raw-mat-stack"
             screenOptions={{ headerShown: false }}
         >
-            <RawMatStack.Screen name="New Item" component={Items.NewItem}  initialParams={{ msg: 'Hello World', msg2: 'Fuck yeah this is awesome'}}/>
+            <RawMatStack.Screen  name="New Item" component={Items.NewItem}  initialParams={{ msg: 'Hello World', msg2: 'Fuck yeah this is awesome'}}/>
             <RawMatStack.Screen name="New Purchase Log" component={Items.NewPurchaseLog} />
         </RawMatStack.Navigator>
     )
@@ -279,7 +279,9 @@ function BioMaterialNavigator() {
                 headerShown: false
             }}
         >
-            <BioMaterial.Screen component={Items.NewItem} name="New Item" initialParams={{ msg: 'Hello World', msg2: 'Fuck yeah this is awesome'}} />
+            <BioMaterial.Screen options={{ freezeOnBlur: false }}
+                component={Items.NewItem} name="New Item" initialParams={{ msg: 'Hello World', msg2: 'Fuck yeah this is awesome'}}
+            />
             {/* <BioMaterial.Screen component={BioMat} name="Bio-Material List" /> */}
             <BioMaterial.Screen component={Items.NewPurchaseLog} name="New Purchase Log" />
         </BioMaterial.Navigator>

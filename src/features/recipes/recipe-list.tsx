@@ -73,18 +73,20 @@ export default function RecipeList({ navigation, state }) {
                         </>
                         )}
                     </Surface>
-                    {modalOpen && (
-                      <RecipeModal
-                        visible={modalOpen}
-                        setModalOpen={setModalOpen}
-                        item={currentItem}
-                      />
-                    )}
+                    
                 </Surface>
               </LinearGradient>
+              
             </View>
+						
           <MyTabBar navigation={navigation} state={navigation.getState()} tabs={tabs}/>
-          
+          {modalOpen && (
+						<RecipeModal
+						visible={modalOpen}
+						setModalOpen={setModalOpen}
+						item={currentItem}
+						/>
+					)}
       </ScreenPrimative>
     )
 

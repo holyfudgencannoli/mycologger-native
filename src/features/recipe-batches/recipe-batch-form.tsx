@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native";
+import { Alert, StyleSheet, Text, View } from "react-native";
 import { Surface, TextInput } from "react-native-paper";
 import { useTheme } from "../../hooks/useTheme";
 import { useCallback, useEffect, useState, useMemo, useContext } from "react";
@@ -111,12 +111,10 @@ export default function RecipeBatchForm({ setUnsaved }: { setUnsaved: (value: bo
   useEffect(() => {
     if (!recipe) return;
 
-    const qty = parseFloat(quantity) || 1;
-    const batchAmount = qty * recipe.yield_amount;
 
     const newName = recipe.nute_concentration
-      ? `${recipe.nute_concentration * 100}% ${recipe.name} Batch ${batchAmount} ${recipe.yield_unit}`
-      : `${recipe.name} Batch ${batchAmount} ${recipe.yield_unit}`;
+      ? `${recipe.nute_concentration * 100}% ${recipe.name} Batch`
+      : `${recipe.name} Batch`;
 
     if (name !== newName) setName(newName);
   }, [recipe, quantity]);
@@ -124,24 +122,44 @@ export default function RecipeBatchForm({ setUnsaved }: { setUnsaved: (value: bo
 
   // ------------ SUBMIT ------------
   const handleSubmit = async () => {
-    await Task.ExecuteRecipe({ db }, {
-      db,
-      recipe_id: recipeId,
-      quantity: parseFloat(quantity),
-      real_volume: parseFloat(realVolume),
-      real_volume_unit: realVolumeUnit,
-      real_weight: parseFloat(realWeightAmount),
-      real_weight_unit: realWeightUnit,
-      loss: parseFloat(loss),
-      name,
-      batch_notes: notes,
-      start_time: startTime,
-      end_time: endTime,
-      task_notes: notes,
-      usage_notes: notes
-    });
+    try {
+      // basic validation
+      if (!recipeId || recipeId === 0) {
+        Alert.alert('Select Recipe', 'Please select a recipe to execute.');
+        return;
+      }
 
-    navigation.navigate("Dashboard");
+      const qty = parseFloat(quantity as any);
+      if (isNaN(qty) || qty <= 0) {
+        Alert.alert('Invalid Quantity', 'Please enter a valid quantity greater than 0.');
+        return;
+      }
+
+      await Task.ExecuteRecipe({
+        db,
+        recipe_id: recipeId,
+        quantity: qty,
+        real_volume: parseFloat(realVolume),
+        real_volume_unit: realVolumeUnit,
+        real_weight: parseFloat(realWeightAmount),
+        real_weight_unit: realWeightUnit,
+        loss: parseFloat(loss),
+        name,
+        batch_notes: notes,
+        start_time: startTime,
+        end_time: endTime,
+        task_notes: notes,
+        usage_notes: notes
+      });
+
+      Alert.alert('Success', 'Recipe executed and batch created.');
+      if (setUnsaved) setUnsaved(false);
+      navigation.navigate("Dashboard")
+    } catch (err) {
+      console.error('ExecuteRecipe handleSubmit error', err);
+      Alert.alert('Error', 'Failed to execute recipe. See logs for details.');
+    }
+
   };
 
   // -----------------------------------------------------------------------
@@ -166,31 +184,25 @@ export default function RecipeBatchForm({ setUnsaved }: { setUnsaved: (value: bo
           type="embed"
         />
       </Form.Control>
-      <Form.Control name='batchName' label="Batch Name" labelStyle={FORM.LABEL}>
-        <Form.Input 
-          value={name}
-          style={{ width: '100%' }}
-        />
-      </Form.Control>
       {recipe ? 
-      <>
-      <Form.Control name="recipeQuantity">
-        <Form.Input />
-      </Form.Control>
-        <View style={styles.surface}>
-          <TextInput
-            label="Quantity of Recipe"
-            value={quantity}
-            onChangeText={setQuantity}
-            mode="outlined"
-          />
-        </View>
+        <>
 
-        {/* Real Weight + Volume */}
-        <View style={styles.surfaceContainer}>
-          <View style={styles.surface}>
+        <Form.Control name='batchName' label="Batch Name" labelStyle={FORM.LABEL}>
+            <Form.Input 
+            value={name}
+            style={{ width: '100%' }}
+            />
+        </Form.Control>
+        <Form.Control name="recipeQuantity" label="Quantity of Recipe">
+            <Form.Input
+                value={quantity}
+                onChangeText={setQuantity}
+                style={{ width: '100%' }}
+            />
+        </Form.Control>
+
+
             <Text style={FORM.TITLE}>Real Yield</Text>
-          </View>
 
           {recipe.yield_unit == typeof WEIGHT_UNITS ? 
           <>
@@ -206,6 +218,7 @@ export default function RecipeBatchForm({ setUnsaved }: { setUnsaved: (value: bo
               <Form.Select
                 style={{ width: "50%", backgroundColor: "transparent" }}
                 options={[...WEIGHT_UNITS]}
+                placeholder="Select Unit"
                 onValueChange={(v: any) => setRealWeightUnit(v.value)}
               />
             </Form.Control>
@@ -221,6 +234,7 @@ export default function RecipeBatchForm({ setUnsaved }: { setUnsaved: (value: bo
               <Form.Select
                 style={{ width: "50%", backgroundColor: "transparent" }}
                 options={[...VOLUME_UNITS]}
+                placeholder="Select Unit"
                 onValueChange={(v: any) => setRealVolumeUnit(v.value)}
               />
             </Form.Control>
@@ -237,6 +251,7 @@ export default function RecipeBatchForm({ setUnsaved }: { setUnsaved: (value: bo
               <Form.Select
                 style={{ width: "50%", backgroundColor: "transparent" }}
                 options={[...VOLUME_UNITS]}
+                placeholder="Select Unit"
                 onValueChange={(v: any) => setRealVolumeUnit(v.value)}
               />
             </Form.Control>
@@ -251,33 +266,32 @@ export default function RecipeBatchForm({ setUnsaved }: { setUnsaved: (value: bo
               <Form.Select
                 style={{ width: "50%", backgroundColor: "transparent" }}
                 options={[...WEIGHT_UNITS]}
+                placeholder="Select Unit"
                 onValueChange={(v: any) => setRealWeightUnit(v.value)}
               />
             </Form.Control>
           </>
           }
-        </View>
 
         {/* Loss */}
-        <View style={styles.surface}>
-          <TextInput
-            label="Loss"
+				<Form.Control label="Loss" labelStyle={FORM.LABEL} name="loss">
+					<Form.Input
             value={loss}
-            mode="outlined"
+            style={{ width: '100%' }}
             disabled
           />
-        </View>
+        </Form.Control>
 
         {/* Notes */}
-        <View style={styles.surface}>
-          <TextInput
-            label="Batch Notes"
+				<Form.Control label="Batch Notes" labelStyle={FORM.LABEL} name="notes">
+          <Form.Input
+						multiline
             value={notes}
             onChangeText={setNotes}
-            mode="outlined"
+            style={{ width: '100%' }}
           />
-        </View>
-        <Button viewStyle={{ margin: 36 }} title="Submit" color={COLORS.button.primary} onPress={handleSubmit} />
+        </Form.Control>
+        <Button viewStyle={{ margin: 36 }} title="Submit" color={COLORS.button.primary} onPress={() => { void handleSubmit(); }} />
       </>:
       <></>
       }

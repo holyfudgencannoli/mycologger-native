@@ -1,4 +1,4 @@
-export interface RecipeBatch {
+export default interface RecipeBatch {
     id: number;
     recipe_id: number,
     real_volume: number,
@@ -8,5 +8,7 @@ export interface RecipeBatch {
     loss: number,
     name: string,
     notes: string,
+    total_usage: number,
+    usage_unit: string,
     created_at: number
 }

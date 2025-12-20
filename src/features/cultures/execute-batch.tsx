@@ -61,22 +61,80 @@ export default function ExecuteBatch({}) {
         setRecipeBatches(formatted);
     };
 
-    const handleExecute = async () => {
-        // const type = CaseHelper.toSnakeCase(decodeURIComponent(path.split('/')[3])).split('?')[0].slice(4)
-        await Task.ExecuteAgar({ db }, {
-            db,
-            quantity,
-            type,
-            recipe_batch_id: selectedRecipeBatchId,
-            volume_amount: volume,
-            volume_unit: volumeUnit,
-            usage_amount: usageAmount,
-            usage_unit: usageUnit,
-            start_time: new Date(startTime).getTime(),
-            end_time: new Date(endTime).getTime(),
-            notes
-        })
-        navigation.navigate('Dashboard');
+    const handleExecute = async() => {
+        try {
+            setLoading(true)
+            // validate minimal inputs
+            const qty = parseInt(quantity as any)
+            if (isNaN(qty) || qty <= 0) {
+                Alert.alert('Invalid input', 'Please enter a valid quantity greater than 0.')
+                return
+            }
+
+            if (!selectedRecipeBatchId || selectedRecipeBatchId === 0) {
+                Alert.alert('Select Batch', 'Please select a recipe batch to use.')
+                return
+            }
+
+            if (!volume || volume.trim() === '') {
+                Alert.alert('Missing volume', 'Please enter a volume per container.')
+                return
+            }
+
+            if (!volumeUnit || volumeUnit.trim() === '') {
+                Alert.alert('Missing volume unit', 'Please enter a volume unit per container.')
+                return
+            }
+            const use_amt = parseInt(usageAmount as any)
+            if (isNaN(use_amt) || use_amt <= 0) {
+                Alert.alert('Missing usage amount', 'Please enter a valid usage amount.')
+                return
+            }
+            if (!usageUnit || usageUnit.trim() === '') {
+                Alert.alert('Missing usage unit', 'Please enter a usage unit.')
+                return
+            }
+            if (!volume || volume.trim() === '') {
+                Alert.alert('Missing volume', 'Please enter a volume per container.')
+                return
+            }
+            if (!startTime || new Date(startTime) === undefined) {
+                Alert.alert('Missing start time', 'Please enter a valid start time.')
+                return
+            }
+            if (!endTime || new Date(endTime) === undefined) {
+                Alert.alert('Missing end time', 'Please enter a valid end time.')
+                return
+            }
+
+
+            console.log(usageUnit)
+            console.log(usageAmount)
+
+            // execute and notify
+            await Task.ExecuteAgar({
+                db,
+                quantity,
+                type,
+                recipe_batch_id: selectedRecipeBatchId,
+                volume_amount: volume,
+                volume_unit: volumeUnit,
+                usage_amount: usageAmount,
+                usage_unit: usageUnit,
+                start_time: new Date(startTime).getTime(),
+                end_time: new Date(endTime).getTime(),
+                notes
+            })
+
+            Alert.alert('Success', 'Batch executed successfully.')
+            navigation.navigate("Dashboard")
+            console.log("Executed Agar Batch!")
+        } catch (err) {
+            console.error('handleExecute error', err)
+            Alert.alert('Error', 'Failed to execute batch. See logs for details.')
+        } finally {
+            setLoading(false)
+        }
     };
     
     useFocusEffect(
@@ -94,14 +152,14 @@ export default function ExecuteBatch({}) {
 
     
     return(
-        <ScreenPrimative scroll  edges={[]}>
-            <View style={CONTAINER.FULL}>
-                <LinearGradient
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 0.3, y: 0.9 }}
-                    colors={COLORS.BACKGROUND_GRADIENT.PRIMARY}
-                    style={{ flex: 1, padding: 16}}
-                >
+        <View style={CONTAINER.FULL}>
+            <LinearGradient
+                start={{ x: 0, y: 0 }}
+                end={{ x: 0.3, y: 0.9 }}
+                colors={COLORS.BACKGROUND_GRADIENT.PRIMARY}
+                style={{ flex: 1, padding: 16}}
+            >
+                <ScreenPrimative scroll  edges={[]}>
                     <Surface style={{ backgroundColor: '#0008', margin: 16, padding: 16 }}>
                         <Text style={FORM.TITLE}>Execute New {CaseHelper.toCleanCase(type)} Batch</Text>
                     </Surface>
@@ -165,60 +223,16 @@ export default function ExecuteBatch({}) {
                         <Form.Select
                             style={{ width: '50%', backgroundColor: 'transparent' }} 
                             options={[...INV_UNITS]}
+                            placeholder="Select Unit"       
                             onValueChange={(value: any) => {
                                 setUsageUnit(value.value)
                                 console.log(value.value)
                             }}
                         />
                     </Form.Control>
-                    <Button title="Submit" viewStyle={{ margin: 72, }} color={COLORS.button.primary} onPress={handleExecute}/>
-                </LinearGradient>
-            </View>
-        </ScreenPrimative>
+                    <Button title="Submit" viewStyle={{ margin: 72, }} color={COLORS.button.primary} onPress={() => { void handleExecute(); }}/>
+                </ScreenPrimative>
+            </LinearGradient>
+        </View>
     )
 }
-
-
-
-const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: "center", alignItems: "center", },
-  text: { fontSize: 20, marginBottom: 20 },
-  surface: {
-    padding: 16,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    // marginBottom: 8
-  },
-  surfaceBottom: {
-    padding: 16,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    marginBottom: 24
-  },
-  surfaceContainer: {
-    padding: 16,
-    backgroundColor: 'rgba(56,185,255,0.3)'
-  },
-  surfaceMetaContainer: {
-    backgroundColor: 'rgba(55,255,55,0.4)',
-    width:350,
-    margin: 'auto',
-    marginTop: 16,
-  },
-  subtitle: {
-    fontSize: 18,
-    textAlign:  'center',
-    fontWeight: 'bold',
-    color: 'red',
-    textShadowColor: 'blue',
-    textShadowRadius: 16,
-  },
-  label: {
-    fontSize: 18,
-    textAlign:  'center',
-    fontWeight: 'bold',
-    color: 'red',
-    textShadowColor: 'blue',
-    textShadowRadius: 16,
-  },
-  
-  
-});

@@ -64,17 +64,17 @@ export const CultureDetailModal = ({ visible, setModalOpen, item}) => {
                 <View style={styles.modalContent}>
                     <Text style={styles.headerText}>Culture Data</Text>
                     <Surface>
-                        <Text>Sterilized: {sterilized === null ? 'Not Yet Sterilized' : `${new Date(sterilized.created_at)}`}</Text>
-                        <Text>Inoculated: {inoc === null ? 'Not Yet Inoculated' : `${new Date(inoc.created_at)}`}</Text>
-                        <Text>Germinated: {germed === null ? 'Not Yet Germinated' : `${new Date(germed.created_at)}`}</Text>
-                        <Text>Colonized: {colony === null ? 'Not Yet Colonized' : `${new Date(colony.created_at)}`}</Text>
-                        <Text>Contaminations: {contam === null ? 'No Contaminations' : `${new Date(contam.created_at)}`}</Text>
-                        <Text>Harvested: {harvest === null ? 'Not Yet Harvested' : `${new Date(harvest.created_at)}`}</Text>
+                        <Text>Sterilized: {sterilized === null || sterilized === undefined ? 'Not Yet Sterilized' : `${new Date(sterilized.created_at)}`}</Text>
+                        <Text>Inoculated: {inoc === null || sterilized === undefined ? 'Not Yet Inoculated' : `${new Date(inoc.created_at)}`}</Text>
+                        <Text>Germinated: {germed === null || sterilized === undefined ? 'Not Yet Germinated' : `${new Date(germed.created_at)}`}</Text>
+                        <Text>Colonized: {colony === null || sterilized === undefined ? 'Not Yet Colonized' : `${new Date(colony.created_at)}`}</Text>
+                        <Text>Contaminations: {contam === null || sterilized === undefined ? 'No Contaminations' : `${new Date(contam.created_at)}`}</Text>
+                        <Text>Harvested: {harvest === null || sterilized === undefined ? 'Not Yet Harvested' : `${new Date(harvest.created_at)}`}</Text>
                     </Surface>
                     <TouchableOpacity style={styles.closeButton} onPress={closeModal}>
                         <Text style={styles.closeButtonText}>Close</Text>
                     </TouchableOpacity>
-                </View>
+                </View> 
             </Modal>
         </View>
     );
